@@ -1,0 +1,519 @@
+# Workflow Catalog
+# Used by /saas-help to determine where a user is and what comes next.
+#
+# Artifact checks:
+#   glob: file glob pattern — complete if ≥1 file matches (or min_count)
+#   pattern: text pattern that must appear in the file (checked after glob)
+#   min_count: minimum matching files required (default: 1)
+#   note: human-readable fallback when completion can't be auto-detected
+#   any_of: list of alternative {glob, pattern} specs — the step is complete if
+#           ANY one of them matches. Use when a setting has migrated and may
+#           legitimately live in either the new or the legacy location.
+#
+# required: true → blocks progression to next phase (shown as REQUIRED)
+# required: false → optional enhancement (shown as OPTIONAL)
+# repeatable: true → runs multiple times (one per system, story, etc.)
+#
+# Phase gates (/saas-gate-check): verdicts are ADVISORY — they guide the decision
+# but never hard-block advancement. The user always decides whether to proceed.
+
+# Tier paths: a tier whose route is not the phase ladder. At `workflow: minimal`
+# nothing on the path runs /saas-gate-check, so project.stage never leaves Concept —
+# and walking the Concept phase names the concept doc, design system and features map
+# (all REQUIRED there) as blockers on a project that already has stories.
+# /saas-help reads paths.minimal instead of the ladder at that tier. Same step schema
+# as phases; artifact-check.sh reports a path only when asked with --path <id>.
+
+paths:
+
+  minimal:
+    label: "Minimal path"
+    description: "Stack setup, one-page brief, stories, then build — the brief's build order is the plan"
+    steps:
+      - id: stack-setup
+        name: "Stack Setup"
+        command: /saas-setup-stack
+        required: true
+        artifact:
+          any_of:
+            - glob: "project.yaml"
+              pattern: '(name:[[:space:]]*"?(SaaS-Studio|Next.js|FastAPI|Cloudflare)|frontend:[[:space:]]*"?|stack:)'
+            - glob: ".claude/docs/technical-preferences.md"
+              pattern: '\*\*(Stack|Engine)\*\*: [^[]'
+        description: "Configure the tech stack (Next.js, FastAPI, Go) and pin versions"
+
+      - id: product-brief
+        name: "Product Brief"
+        command: /saas-brainstorm
+        required: true
+        artifact:
+          any_of:
+            - glob: "docs/specs/product-brief.md"
+            - glob: "design/product-brief.md"
+            - glob: "design/product-brief.md"
+        description: "One page: pitch, ICP, MVP features, build order. Replaces the concept doc, design system, features map and full PRDs at this tier"
+
+      - id: create-stories
+        name: "Stories"
+        command: /saas-create-stories
+        required: true
+        artifact:
+          glob: "production/epics/*/story-*.md"
+        description: "One story per MVP feature, in build order. No /saas-create-epics or /saas-sprint-plan at this tier"
+
+      - id: implement
+        name: "Build the Next Story"
+        command: /saas-dev-story
+        required: true
+        repeatable: true
+        artifact:
+          note: "Each story's Status line (Ready / In Progress / Complete) is the record — story files are numbered in build order"
+        description: "Implement the next story in build order: /saas-dev-story [story-path]"
+
+      - id: story-done
+        name: "Close the Story"
+        command: /saas-story-done
+        required: true
+        repeatable: true
+        description: "Verify the acceptance criteria and mark the story Complete, then build the next one"
+
+phases:
+
+  concept:
+    label: "Concept"
+    description: "Develop your SaaS product idea into a documented concept"
+    next_phase: systems-design
+    steps:
+      - id: brainstorm
+        name: "Brainstorm"
+        command: /saas-brainstorm
+        required: false
+        description: "Explore the product concept using JTBD, ICP pain points, and value proposition frameworks"
+
+      - id: stack-setup
+        name: "Stack Setup"
+        command: /saas-setup-stack
+        required: true
+        artifact:
+          any_of:
+            - glob: "project.yaml"
+              pattern: '(name:[[:space:]]*"?(SaaS-Studio|Next.js|FastAPI|Cloudflare)|frontend:[[:space:]]*"?|stack:)'
+            - glob: ".claude/docs/technical-preferences.md"
+              pattern: '\*\*(Stack|Engine)\*\*: [^[]'
+        description: "Configure SaaS stack, pin versions, set naming conventions and performance budgets"
+
+      - id: product-concept
+        name: "Product Concept Document"
+        command: /saas-brainstorm
+        required: true
+        artifact:
+          any_of:
+            - glob: "docs/specs/product-concept.md"
+            - glob: "docs/specs/concept.md"
+            - glob: "design/prd/product-concept.md"
+        description: "Formalize concept with product pillars, customer problem-solution fit, and scope tiers"
+
+      - id: design-review-concept
+        name: "Concept Review"
+        command: /saas-design-review
+        required: false
+        description: "Validate the product concept (recommended before proceeding)"
+
+      - id: design-tokens
+        name: "Design System & Tokens"
+        command: /saas-design-system
+        required: true
+        artifact:
+          any_of:
+            - glob: "design/tokens/tokens.json"
+            - glob: "design/tokens/saas-design-system-tokens.md"
+            - glob: "design/art/saas-design-tokens.md"
+        description: "Author the visual design system specification, color palettes, typography, and UI tokens"
+
+      - id: map-features
+        name: "Features & Modules Map"
+        command: /saas-map-features
+        required: true
+        artifact:
+          any_of:
+            - glob: "docs/specs/features-modules-index.md"
+            - glob: "docs/specs/features-index.md"
+            - glob: "design/prd/features-modules-index.md"
+        description: "Decompose concept into modules/features with dependency ordering and priority tiers"
+
+  systems-design:
+    label: "Systems Design"
+    description: "Author a PRD for each feature module in the features index"
+    next_phase: technical-setup
+    steps:
+      - id: design-system
+        name: "Feature PRDs"
+        command: /saas-design-system
+        required: true
+        repeatable: true
+        artifact:
+          note: "Check docs/specs/features-modules-index.md — each MVP feature needs Status: Approved"
+        description: "Author per-module PRDs (guided, section-by-section). Run once per module."
+
+      - id: design-review
+        name: "Per-PRD Review"
+        command: /saas-design-review
+        required: true
+        repeatable: true
+        description: "Validate each PRD (required sections per workflow tier, no MAJOR REVISION verdict). Run per module."
+
+      - id: review-all-prds
+        name: "Cross-PRD Review"
+        command: /saas-review-all-prds
+        required: true
+        artifact:
+          any_of:
+            - glob: "docs/specs/prd-cross-review-*.md"
+            - glob: "design/prd/prd-cross-review-*.md"
+        description: "Holistic consistency check + requirements integrity review across all PRDs simultaneously"
+
+      - id: consistency-check
+        name: "Consistency Check"
+        command: /saas-consistency-check
+        required: false
+        repeatable: true
+        description: "Scan all PRDs for contradictions, missing database relationships, and business logic conflicts"
+
+  technical-setup:
+    label: "Technical Setup"
+    description: "Architecture decisions, system modeling, database schemas, and testing foundations"
+    next_phase: pre-production
+    steps:
+      - id: create-architecture
+        name: "System Architecture Document"
+        command: /saas-create-architecture
+        required: true
+        artifact:
+          any_of:
+            - glob: "docs/architecture/system-architecture.md"
+            - glob: "docs/architecture/architecture.md"
+        description: "Author master system architecture blueprint covering C4 models, layers, APIs, and data modeling"
+
+      - id: architecture-decision
+        name: "Architecture Decisions (ADRs)"
+        command: /saas-architecture-decision
+        required: true
+        repeatable: true
+        artifact:
+          glob: "docs/architecture/adr-*.md"
+          min_count: 3
+        description: "Document key technical decisions as ADRs. Minimum 3 Foundation-layer ADRs required."
+
+      - id: architecture-review
+        name: "Architecture Review"
+        command: /saas-architecture-review
+        required: true
+        artifact:
+          glob: "docs/architecture/saas-architecture-review-*.md"
+        description: "Validate completeness, layer separation, stack compatibility, and security boundaries"
+
+      - id: control-manifest
+        name: "Control Manifest"
+        command: /saas-create-control-manifest
+        required: true
+        artifact:
+          any_of:
+            - glob: "docs/architecture/control-manifest.md"
+            - glob: "docs/architecture/engineering-control-manifest.md"
+        description: "Flat engineering rules sheet (Must-Do / Never-Do) generated from all Accepted ADRs"
+
+      - id: accessibility-doc
+        name: "Accessibility Requirements"
+        command: /saas-ux-design
+        required: true
+        artifact:
+          any_of:
+            - glob: "docs/specs/wcag-accessibility-spec.md"
+            - glob: "design/accessibility-requirements.md"
+        description: "Define accessibility tier (WCAG 2.2 AA) and keyboard/screen reader compliance matrix"
+
+      - id: interaction-patterns
+        name: "UI Component Pattern Library"
+        command: /saas-ux-design
+        required: true
+        artifact:
+          any_of:
+            - glob: "docs/specs/ui-component-patterns.md"
+            - glob: "design/ux/interaction-patterns.md"
+        description: "Author standard UI pattern library (modals, forms, tables, toast notifications, drawers)"
+
+      - id: test-setup
+        name: "Test Framework Setup"
+        command: /saas-test-setup
+        required: true
+        artifact:
+          any_of:
+            - glob: ".github/workflows/tests.yml"
+            - glob: "tests/README.md"
+        description: "Scaffold test frameworks (Vitest/Jest, Playwright, Pytest), CI workflow and smoke suite"
+
+  pre-production:
+    label: "Pre-Production"
+    description: "Component inventory, UX specs, core workflow spike / vertical slice, epics, and story breakdown"
+    next_phase: production
+    steps:
+      - id: screen-inventory
+        name: "Screen & Component Inventory"
+        command: /saas-asset-spec
+        required: false
+        artifact:
+          any_of:
+            - glob: "design/assets/entity-inventory.md"
+            - glob: "docs/specs/screen-inventory.md"
+        description: "Enumerate key screens, forms, dashboards, and shared components required for the product"
+
+      - id: component-spec
+        name: "Component & Asset Specs"
+        command: /saas-asset-spec
+        required: false
+        repeatable: true
+        artifact:
+          any_of:
+            - glob: "design/assets/asset-manifest.md"
+            - glob: "design/tokens/component-spec.md"
+        description: "Generate specifications for UI components, icon sets, illustrations, and state machines"
+
+      - id: ux-design
+        name: "UX Specs (Key Screens)"
+        command: /saas-ux-design
+        required: true
+        repeatable: true
+        artifact:
+          any_of:
+            - glob: "design/ux/*.md"
+            - glob: "docs/specs/screen-*.md"
+          min_count: 3
+        description: "Author UX specs for core screens: auth/login, main dashboard/workspace, and primary tool/view"
+
+      - id: ux-review
+        name: "UX Review"
+        command: /saas-ux-review
+        required: true
+        description: "Validate UX specs for usability, accessibility compliance, and design token adherence"
+
+      - id: prototype
+        name: "Prototype / Technical Spike"
+        command: /saas-prototype
+        required: false
+        artifact:
+          glob: "prototypes/*-concept/REPORT.md"
+          min_count: 1
+        description: "Build a throwaway spike or interactive prototype to validate high-risk technical feasibility"
+
+      - id: create-epics
+        name: "Create Epics"
+        command: /saas-create-epics
+        required: true
+        repeatable: true
+        artifact:
+          glob: "production/epics/*/EPIC.md"
+          min_count: 1
+        description: "Translate PRDs + ADRs into epics — one per architectural module/layer"
+
+      - id: create-stories
+        name: "Create Stories"
+        command: /saas-create-stories
+        required: true
+        repeatable: true
+        artifact:
+          glob: "production/epics/*/story-*.md"
+          min_count: 1
+        description: "Break each epic into implementable story files with strict Gherkin acceptance criteria"
+
+      - id: sprint-plan
+        name: "First Sprint Plan"
+        command: /saas-sprint-plan
+        required: true
+        artifact:
+          glob: "production/sprints/sprint-*.md"
+          min_count: 1
+        description: "Plan the first sprint with prioritized stories from epics"
+
+      - id: vertical-slice
+        name: "Vertical Slice"
+        command: /saas-vertical-slice
+        required: false
+        artifact:
+          glob: "prototypes/*-vertical-slice/REPORT.md"
+          min_count: 1
+        description: "Build an end-to-end slice of the core loop (Signup -> Onboard -> Core Action -> Value Delivery)"
+
+  production:
+    label: "Production"
+    description: "Sprint-based feature development — pick, implement, test, and close stories"
+    next_phase: polish
+    steps:
+      - id: sprint-plan
+        name: "Sprint Plan"
+        command: /saas-sprint-plan
+        required: true
+        repeatable: true
+        artifact:
+          glob: "production/sprints/sprint-*.md"
+        description: "Plan the current sprint with prioritized, ready stories"
+
+      - id: story-readiness
+        name: "Story Readiness Check"
+        command: /saas-story-readiness
+        required: false
+        description: "Validate a story is implementation-ready before a developer picks it up"
+
+      - id: implement
+        name: "Implement Stories"
+        command: /saas-dev-story
+        required: true
+        repeatable: true
+        artifact:
+          note: "Check code root (src/) for active implementation and production/epics/**/*.md for In Progress stories"
+        description: "Pick the next ready story and implement it with /saas-dev-story [story-path]. Routes to the specialist agent."
+
+      - id: code-review
+        name: "Code Review"
+        command: /saas-code-review
+        required: false
+        repeatable: true
+        description: "Architectural and security code review after each story implementation before closing"
+
+      - id: story-done
+        name: "Story Done Review"
+        command: /saas-story-done
+        required: true
+        repeatable: true
+        description: "Verify all acceptance criteria, run unit/integration tests, capture QA evidence, and close story"
+
+      - id: qa-plan
+        name: "QA Plan"
+        command: /saas-qa-plan
+        required: false
+        repeatable: true
+        description: "Generate a QA test plan per epic or sprint. Produces test cases for smoke and regression testing"
+
+      - id: bug-report
+        name: "Bug Report / Triage"
+        command: /saas-bug-report
+        required: false
+        repeatable: true
+        description: "Log and prioritize bugs found during implementation (P0 Blocker to P3 Minor)"
+
+      - id: retrospective
+        name: "Sprint Retrospective"
+        command: /saas-retrospective
+        required: false
+        repeatable: true
+        description: "Post-sprint review to capture velocity, blockers, and operational improvements"
+
+      - id: team-feature
+        name: "Team Orchestration (optional)"
+        required: false
+        repeatable: true
+        description: "Coordinate multiple agents on a complex feature: /saas-team-core-feature, /saas-team-auth-access, /saas-team-billing, /saas-team-growth, /saas-team-ui, /saas-team-qa, /saas-team-release"
+
+      - id: scope-check
+        name: "Scope Check"
+        command: /saas-scope-check
+        required: false
+        repeatable: true
+        artifact:
+          glob: "production/sprints/sprint-*.md"
+          note: "Run when stories are added mid-sprint, or before sprint retrospectives"
+        description: "Detect scope creep by comparing current sprint scope to original epic scope"
+
+      - id: sprint-status
+        name: "Sprint Status"
+        command: /saas-sprint-status
+        required: false
+        description: "Quick 30-line snapshot of sprint progress, burndown, and blockers"
+
+  polish:
+    label: "Polish"
+    description: "Performance optimization, security hardening, usability testing, and bug remediation"
+    next_phase: release
+    steps:
+      - id: perf-profile
+        name: "Performance & Latency Profile"
+        command: /saas-perf-profile
+        required: false
+        description: "Profile and optimize Core Web Vitals (LCP, FID, CLS), database queries, and API p95 latencies"
+
+      - id: pricing-audit
+        name: "Pricing & Quota Model Audit"
+        command: /saas-pricing-audit
+        required: true
+        description: "Audit SaaS pricing tiers, margins, infrastructure costs per tenant, and usage quotas"
+
+      - id: asset-audit
+        name: "Component & Bundle Audit"
+        command: /saas-asset-audit
+        required: false
+        description: "Verify design token conformance, CSS bundle sizes, and image/SVG optimization"
+
+      - id: usability-sessions
+        name: "Usability Testing Sessions"
+        command: /saas-usability-test
+        required: true
+        artifact:
+          any_of:
+            - glob: "docs/specs/usability-report*.md"
+            - glob: "production/qa/usability tests/*.md"
+          min_count: 1
+        description: "Document user testing feedback covering onboarding friction, activation, and core user flows"
+
+      - id: team-polish
+        name: "Polish Team Pass"
+        command: /saas-team-polish
+        required: true
+        description: "Coordinated polish pass across UI polish, micro-interactions, empty states, and accessibility"
+
+      - id: security-audit
+        name: "Security Audit"
+        command: /saas-security-audit
+        required: true
+        artifact:
+          glob: "production/security/saas-security-audit-*.md"
+        description: "Run OWASP top 10 audit, RLS tenant isolation check, dependency audit: no open CRITICAL or HIGH findings"
+
+      - id: localize-qa
+        name: "Localization QA"
+        command: /saas-localize
+        required: false
+        description: "Run /saas-localize qa for every supported language to ensure complete translations"
+
+      - id: release-checklist
+        name: "Release Checklist"
+        command: /saas-release-checklist
+        required: true
+        description: "Pre-release validation across code, database migrations, environment variables, SSL, and legal"
+
+      - id: changelog
+        name: "Changelog"
+        command: /saas-changelog
+        required: true
+        description: "Technical changelog generated from git commits, PRs, and sprint records"
+
+      - id: patch-notes
+        name: "Customer Release Notes"
+        command: /saas-patch-notes
+        required: false
+        description: "Customer-facing 'What's New' release notes; finalized during release"
+
+  release:
+    label: "Release"
+    description: "Production deployment, smoke tests, DNS/domain routing, and launch monitoring"
+    next_phase: null
+    steps:
+      - id: launch-checklist
+        name: "Launch Checklist"
+        command: /saas-launch-checklist
+        required: true
+        description: "Final launch readiness checklist across infrastructure, monitoring, support, and marketing"
+
+      - id: team-release
+        name: "Coordinated Release & Deploy"
+        command: /saas-team-release
+        required: false
+        description: "Release candidate deployment, production smoke check, and Go/No-Go sign-off across release leads"

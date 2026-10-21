@@ -1,0 +1,20 @@
+# project.local.yaml.example — Personal developer overrides (gitignored)
+# Copy this file to project.local.yaml to customize your personal workflow.
+# Only personal-experience settings are allowed here (see .claude/docs/effects-map.md).
+#
+# Examples:
+# modes:
+#   rigor: standard        # minimal | standard | full
+#   automation: collaborative # collaborative | guided | autonomous
+#   review_mode: solo      # solo | lean | full
+#
+# testing:
+#   strict:
+#     e2e: false
+
+# project:
+#   locale: pt-BR           # pt-BR | en
+
+updates:
+  check: true # true | false - check for newer studio updates
+  auto: "prompt" # prompt | true | false - auto-apply framework updates

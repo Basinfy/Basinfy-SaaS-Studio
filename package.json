@@ -1,0 +1,66 @@
+{
+  "name": "basinfy-saas-studio",
+  "version": "1.0.0",
+  "description": "Autonomous SaaS Engineering Studio for Claude, Cursor, Antigravity, Windsurf & AI Coding Agents",
+  "bin": {
+    "basinfy-saas-studio": "./bin/cli.js"
+  },
+  "main": "./bin/cli.js",
+  "type": "commonjs",
+  "files": [
+    "bin",
+    ".agents",
+    ".claude",
+    ".continue",
+    ".cursor",
+    ".devin",
+    ".github",
+    ".windsurf",
+    "design",
+    "docs",
+    "production",
+    "studio-tests",
+    ".clinerules",
+    ".cursorrules",
+    ".windsurfrules",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "CONVENTIONS.md",
+    "GEMINI.md",
+    "project.yaml",
+    "project.local.yaml.example",
+    "README.md",
+    "README.en.md"
+  ],
+  "scripts": {
+    "test": "python studio-tests/verify-integrity.py",
+    "cli": "node bin/cli.js",
+    "cli:help": "node bin/cli.js --help"
+  },
+  "keywords": [
+    "saas",
+    "ai-agents",
+    "claude-code",
+    "cursor",
+    "antigravity",
+    "gemini",
+    "windsurf",
+    "cline",
+    "basinfy",
+    "developer-tools",
+    "scaffold"
+  ],
+  "author": "Basinfy Community",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Basinfy/Basinfy-SaaS-Studio.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Basinfy/Basinfy-SaaS-Studio/issues"
+  },
+  "homepage": "https://github.com/Basinfy/Basinfy-SaaS-Studio#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

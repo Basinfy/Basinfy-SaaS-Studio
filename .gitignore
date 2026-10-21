@@ -1,0 +1,173 @@
+# ==============================================================================
+# Basinfy SaaS Studio — .gitignore
+# ==============================================================================
+
+# === Operating System Files ===
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+ehthumbs_vista.db
+Thumbs.db
+Thumbs.db:encryptable
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# === IDEs and Editors ===
+.vs/
+.idea/
+*.sublime-workspace
+*.sublime-project
+*.code-workspace
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json.example
+*.swp
+*.swo
+*~
+*.bak
+*.orig
+
+# === Basinfy Indexer Local Tooling (Local machine only) ===
+.basinfy/
+.basinfy-cache/
+.basinfyignore
+.agents/skills/basinfy/
+.cursor/skills/basinfy/
+.cursor/rules/basinfy.mdc
+.windsurf/rules/basinfy.md
+.agents/mcp_config.json
+.cursor/mcp.json
+
+# === Claude Code / AI Agent Local State ===
+.claude/settings.local.json
+CLAUDE.local.md
+project.local.yaml
+production/session-logs/
+production/session-state/
+.claude/agent-memory/
+.claude/worktrees/
+.scratch/
+.cursor/rules/*.local*
+.copilot/
+
+# === Local Sandboxes & Temporary Scaffolding ===
+examples/
+sandbox/
+sandboxes/
+tests/sandboxes/
+qa-sandbox/
+tmp/
+temp/
+
+# === Runtime Artifacts ===
+docs/consistency-failures.md
+audit_report*.txt
+
+# === Node / JavaScript / TypeScript Ecosystem ===
+node_modules/
+jspm_packages/
+.npm
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp
+.pnp.js
+.pnpm-store/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.tsbuildinfo
+next-env.d.ts
+
+# === Web Frameworks & Build Outputs ===
+.next/
+.nuxt/
+.output/
+.turbo/
+.parcel-cache/
+.cache/
+dist/
+build/
+out/
+# bin/
+!bin/cli.js
+obj/
+
+# === Python Ecosystem ===
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv/
+venv/
+ENV/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.pytype/
+.ipynb_checkpoints/
+
+# === Databases & Local Stores ===
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+supabase/.temp/
+
+# === Secrets, Credentials & Environment Variables ===
+.env
+.env.*
+!.env.example
+!.env.template
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+id_rsa*
+id_ed25519*
+service-account*.json
+credentials.json
+client_secret*.json
+
+# === Logs & Diagnostics ===
+*.log
+logs/
+*.dump
+*.stackdump
+
+# === Testing, Browser Automation & Coverage ===
+coverage/
+.nyc_output/
+playwright-report/
+blob-report/
+test-results/
+cypress/videos/
+cypress/screenshots/

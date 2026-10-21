@@ -1,0 +1,58 @@
+# Basinfy SaaS Studio project configuration — single source of truth for project settings.
+# See .claude/docs/effects-map.md for full schema.
+
+schema_version: 1
+
+framework:
+  name: "Basinfy-SaaS-Studio"
+  version: "1.0.0"
+  last_upgraded: "2026-10-19"
+
+project:
+  name: "My Next.js SaaS"
+  slug: "my-nextjs-saas"
+  domain: "mynextjssaas.com"
+  stage: "concept" # concept | systems-design | technical-setup | pre-production | production | polish | release
+  locale: "pt-BR" # pt-BR | en — controls interactive prompts and AskUserQuestion language
+
+stack:
+  frontend: "nextjs" # nextjs | react-vite | vue-nuxt | sveltekit
+  backend: "nextjs-server-actions" # nextjs-server-actions | fastapi | node-fastify | go-gin
+  database: "supabase-postgres" # supabase-postgres | neon-postgres | postgres-prisma
+  orm: "prisma" # prisma | drizzle | sqlalchemy
+  auth: "supabase-auth" # supabase-auth | clerk | authjs | workos
+  billing: "stripe" # stripe | paddle | lemonsqueezy
+  deployment: "vercel" # vercel | cloudflare | flyio | aws-fargate
+  styling: "tailwind-shadcn" # tailwind-shadcn | chakra | css-modules
+
+modes:
+  rigor: "minimal" # minimal (speed/hackathon) | standard (balanced MVP) | full (enterprise compliance)
+  automation: "collaborative" # collaborative (always ask) | guided (ask on major) | autonomous (log & go)
+  review_mode: "solo" # solo | lean | full
+  automation_always_ask:
+    - "schema_changes"
+    - "billing_changes"
+    - "file_deletions"
+    - "auth_policies"
+
+performance:
+  target_lcp_ms: 2000
+  target_fid_ms: 100
+  target_cls: 0.1
+  max_initial_bundle_kb: 200
+  api_p95_latency_ms: 250
+
+testing:
+  strict:
+    unit: true
+    integration: true
+    e2e: false
+    security: true
+
+cadence:
+  sprint_weeks: 2
+  milestone_sprints: 3
+
+updates:
+  check: true # true | false - check for newer studio updates
+  auto: "prompt" # prompt | true | false - auto-apply framework updates
