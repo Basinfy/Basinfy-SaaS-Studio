@@ -38,7 +38,7 @@ PRD_GLOB=':(glob)design/prd/*.md'
 not_a_system_prd() {
     case "$(basename "$1")" in
         product-concept.md|features-modules-index.md|product-pillars.md|prd-cross-review-*.md) return 0 ;;
-        core business workflow-tags.md|fixture-swap-ledger.md|entity-registry.md)             return 0 ;;
+        "core business workflow-tags.md"|fixture-swap-ledger.md|entity-registry.md)             return 0 ;;
         brand-voice-tone-guide.md)                                                         return 0 ;;
         *) return 1 ;;
     esac

@@ -9,8 +9,10 @@
   "type": "commonjs",
   "files": [
     "bin",
+    "scripts",
     ".agents",
     ".claude",
+    ".codex",
     ".continue",
     ".cursor",
     ".devin",
@@ -34,6 +36,8 @@
   ],
   "scripts": {
     "test": "python studio-tests/verify-integrity.py",
+    "test:bench": "python studio-tests/bench/run-bench.py",
+    "sync:skills": "python scripts/sync-agent-skills.py",
     "cli": "node bin/cli.js",
     "cli:help": "node bin/cli.js --help"
   },

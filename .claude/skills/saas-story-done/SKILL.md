@@ -300,6 +300,8 @@ close.
    The close answer covers it.
 5. Print a suggested commit: `git add [the changed code and test files] [story path]`
    and `git commit -m "feat: [story title] ([TR-ID])"`.
+6. **Distill Domain Experience**:
+   If this story involved non-trivial debugging or framework friction (e.g., RLS bypass, Stripe signature parsing, Next.js route handler dynamics, Prisma locks), distill the **Experience Triad** (`cue`, `lesson`, `evidence`) and append it to `.basinfy/experience/<domain>/EXPERIENCE.md` so future stories automatically benefit from this learning.
 
 **On "Don't close yet":** change no story file. List what the user flagged. Never
 fix a failing criterion yourself: report it and ask what to do.

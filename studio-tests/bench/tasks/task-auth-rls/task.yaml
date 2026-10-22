@@ -1,0 +1,24 @@
+id: task-auth-rls
+title: "Multi-Tenant PostgreSQL Row Level Security (RLS) Isolation"
+domain: auth
+description: >
+  Implement a multi-tenant schema with PostgreSQL RLS where Tenant A cannot query,
+  update, or delete records belonging to Tenant B, verified via automated test queries.
+inputs:
+  schema_type: "postgresql"
+  tenant_context_setting: "app.current_tenant_id"
+expected_deliverables:
+  - path: "src/db/schema.sql"
+    description: "PostgreSQL table definitions with ENABLE ROW LEVEL SECURITY"
+  - path: "tests/integration/auth/rls.test.ts"
+    description: "Automated test asserting tenant boundary enforcement"
+rubrics:
+  - name: "RLS Enabled"
+    weight: 0.3
+    criterion: "Schema executes 'ALTER TABLE ... ENABLE ROW LEVEL SECURITY'"
+  - name: "Isolation Boundary"
+    weight: 0.5
+    criterion: "Queries with Tenant A session return exactly 0 records for Tenant B"
+  - name: "Defense in Depth"
+    weight: 0.2
+    criterion: "Schema includes unique constraints scoped to tenant_id (e.g., UNIQUE(tenant_id, slug))"

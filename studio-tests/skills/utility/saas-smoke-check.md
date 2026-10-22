@@ -80,8 +80,7 @@ Fixture defaults.
 
 **Expected behavior:**
 1. Phase 1 reports environment: Next.js, tests found, QA plan path
-2. Runs `nextjs --headless --path . --import`, then `commands.test`
-   (`npm test -- --run`)
+2. Runs `commands.test` (`npm test -- --run`)
    under `timeout 900`; the report says `commands.test` was the command run
 3. Exit 0 with tests found → automated tests PASS (12/12)
 4. Coverage scan: all stories COVERED or EXPECTED
@@ -91,7 +90,7 @@ Fixture defaults.
 8. Writes after approval; delivers "Smoke check passed cleanly. The build is ready for manual QA."
 
 **Assertions:**
-- [ ] Automated test runner is invoked via Bash, after the Next.js import
+- [ ] Automated test runner is invoked via Bash, via the build runner
 - [ ] `AskUserQuestion` is used for manual smoke check batches
 - [ ] "May I write" is asked before writing the report file
 - [ ] Report is written to `production/qa/smoke-[date].md`
@@ -187,7 +186,7 @@ Fixture defaults.
 **Fixture:**
 - No `modes.rigor` set (the default, `minimal`, so `qa.level` resolves to `minimal`)
 - Engine is Next.js; no automated test files under `tests/unit/`, `tests/integration/` or `tests/smoke/`
-- `commands.smoke` is `nextjs --headless --quit-after 5`; it exits 0 with no `SCRIPT ERROR` line
+- `commands.smoke` is `npm run build`; it exits 0 with no `SCRIPT ERROR` line
 - The user says the build was launched this session and confirms every Batch 1, Batch 2 and Batch 3 check
 
 **Input:** `/saas-smoke-check`
@@ -195,7 +194,7 @@ Fixture defaults.
 **Expected behavior:**
 1. Phase 1 finds no automated test files and, at `qa.level: minimal`, records the automated row as `WAIVED — qa.level: minimal, no automated tests`
 2. Phase 2's test run and Phase 3 are skipped, each with a one-line note saying why
-3. Phase 2's build check runs `commands.smoke` (after the Next.js import) under a timeout: `Build check: PASS`
+3. Phase 2's build check runs `commands.smoke` (via the build runner) under a timeout: `Build check: PASS`
 4. Phase 4 runs Batches 1–3; every check passes
 5. Verdict: PASS — the report's Automated Tests status reads WAIVED
 

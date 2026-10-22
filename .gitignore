@@ -32,7 +32,8 @@ $RECYCLE.BIN/
 *.orig
 
 # === Basinfy Indexer Local Tooling (Local machine only) ===
-.basinfy/
+.basinfy/*
+!.basinfy/experience/
 .basinfy-cache/
 .basinfyignore
 .agents/skills/basinfy/

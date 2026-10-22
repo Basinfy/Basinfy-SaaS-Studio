@@ -212,7 +212,7 @@ the count moved.
 - `lean` → skip (not a PHASE-GATE). Note: "PR-MILESTONE skipped — Lean mode." Present the Go/No-Go section without a delivery-producer verdict.
 - `full` → spawn as normal.
 
-Before generating the Go/No-Go recommendation, spawn `delivery-producer` via `Agent` using gate **PR-MILESTONE** (`.claude/docs/director-gates/pr-milestone.md`).
+Before generating the Go/No-Go recommendation, spawn `delivery-producer` via `Agent` using gate **PR-MILESTONE** (`.claude/docs/director-gates/dp-milestone-review.md`).
 
 Pass: milestone name and target date, current completion percentage, blocked story count, velocity data from sprint reports (if available), list of cut candidates.
 

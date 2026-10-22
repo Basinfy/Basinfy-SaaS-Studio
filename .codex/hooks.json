@@ -1,0 +1,29 @@
+{
+  "version": "1.0",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "command": "bash .claude/hooks/validate-write.sh",
+        "timeout": 10
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "command": "bash .claude/hooks/validate-assets.sh",
+        "timeout": 10
+      },
+      {
+        "matcher": "Write|Edit",
+        "command": "bash .claude/hooks/validate-skill-change.sh",
+        "timeout": 5
+      },
+      {
+        "matcher": "Bash|PowerShell",
+        "command": "bash .claude/hooks/classify-error.sh",
+        "timeout": 5
+      }
+    ]
+  }
+}

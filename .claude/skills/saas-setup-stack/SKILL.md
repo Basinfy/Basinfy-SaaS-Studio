@@ -3,7 +3,7 @@ name: saas-setup-stack
 description: "Configure engine and version. Pins it in CLAUDE.md; WebSearch fills reference docs when the version is beyond LLM training data."
 argument-hint: "[engine] | [engine version] | refresh | upgrade [old-version] [new-version] | no args for guided selection"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, WebSearch, WebFetch, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-setup-stack/../../hooks/yaml-helper.sh" resolve_config *), Bash(nextjs --version), Bash(nextjs --headless --path . --import), Bash(command -v nextjs), Bash(uname -s), Bash(bash .claude/scripts/project-coherence.sh*)
+allowed-tools: Read, Glob, Grep, Write, Edit, WebSearch, WebFetch, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-setup-stack/../../hooks/yaml-helper.sh" resolve_config *), Bash(nextjs --version), Bash(node --version), Bash(npm --version), Bash(command -v nextjs), Bash(uname -s), Bash(bash .claude/scripts/project-coherence.sh*)
 model: sonnet
 ---
 

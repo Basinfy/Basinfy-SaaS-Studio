@@ -29,8 +29,8 @@ depends on `workflow`:
 - **`standard` or `full`:** read `references/full-concept.md` and follow it. It writes
   `design/prd/product-concept.md` from `.claude/docs/templates/product-concept.md`. Its gates follow
   `.claude/docs/director-gates.md`; each director agent is given its own gate file,
-  `.claude/docs/director-gates/<gate-id in lower case>.md` (`cd-pillars.md`,
-  `ad-concept-visual.md`, `td-feasibility.md`, `pr-scope.md`), and you do not read those files
+  `.claude/docs/director-gates/<gate-id in lower case>.md` (`pd-product-pillars.md`,
+  `ds-branding-ui.md`, `td-feasibility.md`, `dp-scope-assessment.md`), and you do not read those files
   yourself.
 
 `--review` in the text typed after the skill name overrides `review_mode` for this run.

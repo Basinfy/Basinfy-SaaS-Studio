@@ -409,6 +409,7 @@ phases:
 
       - id: team-feature
         name: "Team Orchestration (optional)"
+        command: /saas-team-core-feature
         required: false
         repeatable: true
         description: "Coordinate multiple agents on a complex feature: /saas-team-core-feature, /saas-team-auth-access, /saas-team-billing, /saas-team-growth, /saas-team-ui, /saas-team-qa, /saas-team-release"

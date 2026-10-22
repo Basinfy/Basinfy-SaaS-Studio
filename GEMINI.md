@@ -54,8 +54,7 @@ Always determine the code discovery mechanism before reading, searching, or modi
   - New Files: basinfy_prepare_create
   - Impact & Architecture: basinfy_impact or basinfy_orbit
   - Fallback Ladder: CLI basinfy search / basinfy read -> IDE Grep/Read only for binaries or paths outside the index.
-- **Fallback Mode (No .basinfy/ directory)**: If .basinfy/ is not present, seamlessly use standard IDE tools (Grep, 
-ipgrep, Glob, Read).
+- **Fallback Mode (No .basinfy/ directory)**: If .basinfy/ is not present, seamlessly use standard IDE tools (Grep, ripgrep, Glob, Read).
 
 ## 7. Dynamic Human Interface (Portuguese & English) / English Engine
 The studio provides full dynamic bilingual support for the human developer while keeping the technical engine in English:
@@ -64,3 +63,17 @@ The studio provides full dynamic bilingual support for the human developer while
   - **CRITICAL OVERRIDE**: This rule strictly OVERRIDES any English question strings or templates found in skills or documentation (e.g., if a skill says `Ask: "Does this rule summary look complete?" Options: Yes...`, you MUST translate to: `Pergunta: "O resumo das regras do control manifest parece completo e pronto para ser escrito?" Opções: (Recomendado) Sim — revisar e escrever docs/architecture/control-manifest.md`). NEVER display English questions or options to a Portuguese developer.
   - If the user communicates in **English** (or `locale: en`): All questions, options, and dialogs are rendered in **English**.
 - **English Engineering Engine**: In both cases, the agent's internal reasoning, code generation, unit tests, PRD/ADR authoring, git commits, and subagent delegation execute in **English** (EN) to maximize reasoning depth and benchmark code quality.
+
+## 8. Unskippable Workflow Autotrigger Table
+Always-on prose is budget-capped. Prefer loading on-demand skills immediately when initiating any of the following lifecycle actions:
+- **Onboarding & Setup**: Read `.claude/skills/saas-start/SKILL.md` or `.claude/skills/saas-setup-stack/SKILL.md`
+- **Architecture & ADRs**: Read `.claude/skills/saas-create-architecture/SKILL.md` or `.claude/skills/saas-architecture-decision/SKILL.md`
+- **PRDs & Design System**: Read `.claude/skills/saas-design-system/SKILL.md` or `.claude/skills/saas-design-tokens/SKILL.md`
+- **Auth, RBAC & Multi-Tenancy**: Read `.claude/skills/saas-team-auth-access/SKILL.md`
+- **Stripe Billing & Webhooks**: Read `.claude/skills/saas-team-billing/SKILL.md`
+- **Sprint & Epics Planning**: Read `.claude/skills/saas-sprint-plan/SKILL.md` or `.claude/skills/saas-create-stories/SKILL.md`
+- **Story Implementation**: Read `.claude/skills/saas-dev-story/SKILL.md`
+- **Story Sign-off & QA**: Read `.claude/skills/saas-story-done/SKILL.md` or `.claude/skills/saas-qa-plan/SKILL.md`
+- **Security Audit & RLS Gate**: Read `.claude/skills/saas-security-audit/SKILL.md`
+- **Release & Deployment**: Read `.claude/skills/saas-release-checklist/SKILL.md`
+

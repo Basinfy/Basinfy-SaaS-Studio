@@ -159,7 +159,7 @@ I need to review the ADRs first.
 **The technical review.** Read the `review_gate` line above. `skill-gates=skip`
 (solo or lean): no agent; note `TD-MANIFEST skipped — [Solo | Lean] mode`.
 `skill-gates=run`: hand the review to the `technical-director` agent with gate
-**TD-MANIFEST** (`.claude/docs/director-gates/td-manifest.md`; the agent reads it
+**TD-MANIFEST** (`.claude/docs/director-gates/td-control-manifest.md`; the agent reads it
 itself). Brief:
 
 - **Objective:** check the extracted rules before they are written.

@@ -415,6 +415,11 @@ EOF_SC2
     exit 0
     ;;
 
+  -h|--help)
+    echo "Usage: review-receipts.sh hash <file>... | check <receipt-file> <file>... | sections-hash <file> | sections-check <receipt-file> <file>"
+    exit 0
+    ;;
+
   *)
     echo "Usage: review-receipts.sh hash <file>... | check <receipt-file> <file>... | sections-hash <file> | sections-check <receipt-file> <file>" >&2
     exit 2

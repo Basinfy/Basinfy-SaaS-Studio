@@ -1780,29 +1780,27 @@ Each command can be a simple string (used on all OSes) or an OS-aware map:
 **Simple form** (one command, used on every OS):
 ```yaml
 commands:
-  build: "nextjs --headless --export-debug '<PRESET>'"   # ask; see the note below
+  build: "npm run build"
   test:  "npm test -- --run"
-  run:   "nextjs --path . --windowed --resolution 1280x720"
-  smoke: "nextjs --headless --quit-after 5"
+  run:   "npm run dev"
+  smoke: "npm run build && npm test"
 ```
 
-Note that `build` is the one row the simple form suits least: an export preset
-names a *platform*, so a single build string is portable only for a project that
-builds one platform. The other three rows are genuinely OS-independent.
+Note that `build` executes the production build check for CI/CD or preview deployments.
 
 **OS-aware form** (different commands per OS):
 ```yaml
 commands:
   build:
-    default: "nextjs --headless --export-debug 'Linux/X11'"
-    windows: "nextjs.exe --headless --export-debug 'Windows Desktop'"
-    macos:   "nextjs --headless --export-debug 'macOS'"
+    default: "npm run build"
+    windows: "npm run build"
+    macos:   "npm run build"
   test:
     default: "npm test -- --run"
   run:
-    default: "nextjs --path . --windowed --resolution 1280x720"
+    default: "npm run dev"
   smoke:
-    default: "nextjs --headless --quit-after 5"
+    default: "npm run build && npm test"
 ```
 
 **Resolution rule:** if the value is a string, use it as-is on any OS. If the
@@ -1816,7 +1814,7 @@ keys are inside the locked file, not a local override).
 
 | Field | Purpose |
 |-------|---------|
-| `build` | Full project build for CI or release. `/saas-smoke-check` runs it only as the WAIVED-path build check when `commands.smoke` is unset; `project-coherence.sh` (which `/saas-smoke-check` runs first) checks the export preset it names, and `/saas-launch-checklist` only asks whether the build produces a valid artifact. |
+| `build` | Full project build for CI or release. `/saas-smoke-check` runs it only as the WAIVED-path build check when `commands.smoke` is unset; `project-coherence.sh` (which `/saas-smoke-check` runs first) checks the build command it names, and `/saas-launch-checklist` only asks whether the build produces a valid artifact. |
 | `test` | Run the full test suite. Run by `/saas-smoke-check` and, narrowed to the affected suite, by `/saas-hotfix`, `/saas-bug-report` (verify mode) and `/saas-post-launch-monitor`; `project-coherence.sh` checks the runner it names. `/saas-regression-suite` does **not** run it. |
 | `run` | Launch the **web application development server** locally. Used by `/saas-dev-story` Phase 6 step 4 to observe the feature and verify functionality; see `.claude/docs/run-and-observe.md` for details. |
 | `smoke` | Minimal "does it boot?" check. Run by `/saas-dev-story` as the FastAPI parse check (Phase 6 step 2), and by `/saas-smoke-check` as the build check when `qa.level: minimal` waives tests. |
@@ -2462,17 +2460,17 @@ cadence:
   milestone_length: "8w"     # 4w | 6w | 8w | 12w
 
 performance:
-  target_framerate: 60
-  frame_budget_ms: 16.67
-  draw_call_limit: null
-  memory_ceiling_mb: null
+  ttfb_ms: 200
+  lcp_ms: 2500
+  fid_ms: 100
+  cls: 0.1
   enforce: warn              # warn | block | off
 
 commands:                    # simple string OR OS-aware map per command
-  build: "nextjs --headless --export-debug '<PRESET>'"   # your export_presets.cfg name
+  build: "npm run build"
   test: "npm test -- --run"
-  run: "nextjs --path . --windowed --resolution 1280x720"
-  smoke: "nextjs --headless --quit-after 5"
+  run: "npm run dev"
+  smoke: "npm run build && npm test"
 
 features:
   session_state: on          # off | on

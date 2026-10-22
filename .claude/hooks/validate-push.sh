@@ -33,7 +33,7 @@ fi
 # Claude Code PreToolUse hook: Validates git push commands, and the git and
 # release actions that ask first
 # Warns on pushes to protected branches, and on git tag, git merge, gh release,
-# butler push and steamcmd +run_app_build (the deploy steps /saas-hotfix and
+# vercel and wrangler deploy (the deploy steps /saas-hotfix and
 # /saas-team-release describe; which segments count is
 # `.claude/scripts/write-guard.sh git`, the helper twin) -- as hook JSON on
 # stdout, the only channel the user or Claude sees on exit 0.
@@ -52,7 +52,7 @@ INPUT=$(cat)
 # "digital" never took this exit and paid the full parse on every call. `gh`
 # must start a word, or "through " and "high " paid it too.
 case "$INPUT" in
-  *'"tool_input"'*[Gg][Ii][Tt]*|*'"tool_input"'*butler*|*'"tool_input"'*steamcmd*|*'"tool_input"'*[!A-Za-z0-9_.-]gh[\ .]*) ;;
+  *'"tool_input"'*[Gg][Ii][Tt]*|*\'"tool_input"\'*vercel*|*\'"tool_input"\'*wrangler*|*'"tool_input"'*[!A-Za-z0-9_.-]gh[\ .]*) ;;
   *) exit 0 ;;
 esac
 
@@ -214,14 +214,14 @@ mask_quoted() {
 ACT_CMD=$(mask_quoted "$COMMAND" 2>/dev/null) || ACT_CMD="$COMMAND"
 [ -n "$ACT_CMD" ] || ACT_CMD="$COMMAND"
 ACT_SEGS=$( { git_segment '(tag|merge)' "$ACT_CMD"
-              command_segments "$ACT_CMD" | grep -E '(^|[[:space:]/\\])(gh|butler|steamcmd)(\.exe|\.sh)?[[:space:]]'; } 2>/dev/null )
+              command_segments "$ACT_CMD" | grep -E '(^|[[:space:]/\\])(gh|vercel|wrangler)(\.exe|\.sh)?[[:space:]]'; } 2>/dev/null )
 ACT_MSG=""
 if [ -n "$ACT_SEGS" ]; then
     if [ -f .claude/scripts/write-guard.sh ]; then
         ACTIONS=$(printf '%s\n' "$ACT_SEGS" | bash .claude/scripts/write-guard.sh --root . git 2>/dev/null \
           | awk -F '\t' '$1 == "GIT_ACTION" && !seen[$2]++ {
               w = ($2 == "tag") ? "git tag" : ($2 == "merge") ? "git merge" : ($2 == "release") ? "gh release" \
-                : ($2 == "deploy-itch") ? "butler push" : "steamcmd +run_app_build"
+                : ($2 == "deploy-prod") ? "production deploy (vercel/wrangler)" : "deployment"
               l = l (l == "" ? "" : ", ") w } END { print l }')
         [ -n "$ACTIONS" ] && ACT_MSG="This command runs $ACTIONS. Tagging, merging and deploying ask first (/saas-hotfix, /saas-team-release): go ahead only if the user approved this step."
     else

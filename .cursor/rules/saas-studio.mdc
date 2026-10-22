@@ -37,8 +37,7 @@ Always determine the code discovery mechanism before reading, searching, or modi
   - New Files: basinfy_prepare_create
   - Impact & Architecture: basinfy_impact or basinfy_orbit
   - Fallback Ladder: CLI basinfy search / basinfy read -> IDE Grep/Read only for binaries or paths outside the index.
-- **Fallback Mode (No .basinfy/ directory)**: If .basinfy/ is not present, seamlessly use standard IDE tools (Grep, 
-ipgrep, Glob, Read).
+- **Fallback Mode (No .basinfy/ directory)**: If .basinfy/ is not present, seamlessly use standard IDE tools (Grep, ripgrep, Glob, Read).
 
 ## 7. Dynamic Human Interface (Portuguese & English) / English Engine
 The studio provides full dynamic bilingual support for the human developer while keeping the technical engine in English:

@@ -3,6 +3,11 @@
 # Returns 0 on success, non-zero on syntax error.
 
 FILE="${1:-}"
+if [ "$FILE" = "-h" ] || [ "$FILE" = "--help" ]; then
+  echo "Usage: ts-parse-check.sh [file]"
+  echo "Fast syntax & type check for TypeScript/JavaScript/Python/JSON/YAML in SaaS Studio."
+  exit 0
+fi
 if [ -z "$FILE" ]; then
   # If no file specified, scan source files in standard SaaS roots
   CHECKED=0

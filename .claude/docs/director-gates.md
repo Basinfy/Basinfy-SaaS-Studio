@@ -26,34 +26,34 @@ Agent by prefix: `CD-` product-director · `TD-` technical-director ·
 
 | Gate ID | Purpose | Definition file |
 |---------|---------|-----------------|
-| CD-PILLARS | Pillar stress test after pillars are defined | cd-pillars.md |
-| CD-PRD-ALIGN | PRD pillar alignment after a system PRD is authored | cd-prd-align.md |
-| CD-SYSTEMS | Systems decomposition vision check after `/saas-map-features` | cd-systems.md |
+| CD-PILLARS | Pillar stress test after pillars are defined | pd-product-pillars.md |
+| CD-PRD-ALIGN | PRD pillar alignment after a system PRD is authored | pd-prd-alignment.md |
+| CD-SYSTEMS | Systems decomposition vision check after `/saas-map-features` | pd-feature-coherence.md |
 | PD-MESSAGING-TONE | Brand voice and messaging consistency | pd-messaging-tone.md |
 | PD-USABILITY-REVIEW | User experience validation of usability test reports | pd-usability-review.md |
-| CD-PHASE-GATE | Creative readiness at phase transition | cd-phase-gate.md |
-| TD-SYSTEM-BOUNDARY | System boundary review before PRD authoring | td-system-boundary.md |
+| CD-PHASE-GATE | Creative readiness at phase transition | pd-phase-gate.md |
+| TD-SYSTEM-BOUNDARY | System boundary review before PRD authoring | td-api-boundary.md |
 | TD-FEASIBILITY | Technical feasibility of early concept risks | td-feasibility.md |
-| TD-ARCHITECTURE | Master architecture document sign-off | td-architecture.md |
-| TD-ADR | Individual ADR review before Accepted | td-adr.md |
+| TD-ARCHITECTURE | Master architecture document sign-off | td-architecture-review.md |
+| TD-ADR | Individual ADR review before Accepted | td-adr-review.md |
 | TD-STACK-RISK | Engine version risk for post-cutoff APIs | td-stack-risk.md |
 | TD-PHASE-GATE | Technical readiness at phase transition | td-phase-gate.md |
-| TD-MANIFEST | Control manifest review before it is written | td-manifest.md |
+| TD-MANIFEST | Control manifest review before it is written | td-control-manifest.md |
 | TD-CHANGE-IMPACT | Design-change impact assessment review | td-change-impact.md |
-| PR-SCOPE | Scope and timeline validation | pr-scope.md |
-| PR-SPRINT | Sprint plan feasibility review | pr-sprint.md |
-| PR-MILESTONE | Milestone risk assessment | pr-milestone.md |
-| PR-EPIC | Epic structure feasibility before story breakdown | pr-epic.md |
-| PR-PHASE-GATE | Production readiness at phase transition | pr-phase-gate.md |
-| AD-CONCEPT-VISUAL | Visual identity anchor after pillars lock | ad-concept-visual.md |
-| AD-DESIGN-SYSTEM-TOKENS | Design tokens sign-off before asset production | ad-design-system-tokens.md |
-| AD-PHASE-GATE | Visual readiness at phase transition | ad-phase-gate.md |
-| LP-FEASIBILITY | Implementation feasibility of the architecture | lp-feasibility.md |
-| LP-CODE-REVIEW | Code review of an implemented story | lp-code-review.md |
+| PR-SCOPE | Scope and timeline validation | dp-scope-assessment.md |
+| PR-SPRINT | Sprint plan feasibility review | dp-sprint-readiness.md |
+| PR-MILESTONE | Milestone risk assessment | dp-milestone-review.md |
+| PR-EPIC | Epic structure feasibility before story breakdown | dp-epic-readiness.md |
+| PR-PHASE-GATE | Production readiness at phase transition | dp-phase-gate.md |
+| AD-CONCEPT-VISUAL | Visual identity anchor after pillars lock | ds-branding-ui.md |
+| AD-DESIGN-SYSTEM-TOKENS | Design tokens sign-off before asset production | ds-design-tokens.md |
+| AD-PHASE-GATE | Visual readiness at phase transition | ds-phase-gate.md |
+| LP-FEASIBILITY | Implementation feasibility of the architecture | le-feasibility.md |
+| LP-CODE-REVIEW | Code review of an implemented story | le-code-review.md |
 | QL-STORY-READY | Acceptance-criteria testability before sprint | ql-story-ready.md |
 | QL-TEST-COVERAGE | Test coverage review for one story before it closes (`/saas-story-done`) | ql-test-coverage.md |
-| CD-CONSISTENCY | Content and copy consistency of writer deliverables | cd-consistency.md |
-| AD-VISUAL | Visual consistency of art/tech-art decisions | ad-visual.md |
+| CD-CONSISTENCY | Content and copy consistency of writer deliverables | uxc-copy-consistency.md |
+| AD-VISUAL | Visual consistency of art/tech-art decisions | ds-component-audit.md |
 
 ---
 

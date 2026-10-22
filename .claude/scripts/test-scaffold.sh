@@ -40,7 +40,7 @@ done
 if [ -z "$ENGINE" ]; then
   if [ -f project.yaml ] && [ -f "$HERE/yaml-get.awk" ]; then
     ENGINE=$(YG_PATH=stack.frontend awk -f "$HERE/yaml-get.awk" project.yaml 2>/dev/null)
-    [ -z "$ENGINE" ] && ENGINE=$(YG_PATH=stack.frontend awk -f "$HERE/yaml-get.awk" project.yaml 2>/dev/null)
+    [ -z "$ENGINE" ] && ENGINE=$(YG_PATH=stack.backend awk -f "$HERE/yaml-get.awk" project.yaml 2>/dev/null)
   fi
   [ -z "$ENGINE" ] && ENGINE="saas"
 fi

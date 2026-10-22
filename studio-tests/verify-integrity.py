@@ -385,7 +385,13 @@ purge_targets = [
     r'\bpolycount\b',
     r'\bjump[-_ ]key\b',
     r'TV safe zone',
-    r'\bLotcheck\b'
+    r'\bLotcheck\b',
+    r'nextjs[\s\-]+--headless',
+    r'godot[\s\-]+--headless',
+    r'export-debug',
+    r'--quit-after',
+    r'\bexport_presets\b',
+    r'nextjs\.exe'
 ]
 purge_pattern = re.compile('|'.join(purge_targets), re.IGNORECASE)
 

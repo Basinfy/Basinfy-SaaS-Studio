@@ -203,6 +203,17 @@ Brief: check the changed files for engine-API use that is wrong or changed in
 file, line, problem, fix; edit nothing. A problem that breaks a criterion goes back
 to the programmer once; the rest go in the summary.
 
+### Recursive Propose–Probe–Compose Mode (`--recursive`)
+When invoked as `/saas-dev-story [slug] --recursive` (strongly recommended for Tier-1 mission-critical stories such as auth, billing, and database migrations):
+1. **Propose Dual Orthogonal Candidates**:
+   - **Candidate A (INV — Invariant Focus)**: Prioritizes defensive validation, strict Zod schemas, explicit HTTP error boundaries, database transaction locks, and sanitization.
+   - **Candidate B (DOM — Domain Focus)**: Prioritizes modern idiomatic framework patterns (Next.js 15 Server Actions, Supabase RLS helpers, Stripe v2024 webhooks).
+2. **Zero-Token Local Probing**:
+   - Run `bash .claude/scripts/ts-parse-check.sh <file>` on both candidates.
+   - Check AST parsing and type compliance locally with zero LLM token cost.
+3. **Behavioral Composition**:
+   - The `lead-engineer` contrasts both rollouts, merges Candidate A's defensive guards with Candidate B's idiomatic ergonomics, and commits the unified solution.
+
 ## Phase 6: Check the result
 
 **Did the agent finish?** It stopped early, hit a limit, or its report ends
@@ -226,20 +237,16 @@ nothing to check: tests are waived.
 **Does it parse?** Run the check whose exit code answers it, and report the
 command, the exit code and any error lines:
 
-- **Next.js:** `nextjs --headless --path . --import` once, then
-  `nextjs --headless --path . -s /.claude/scripts/ts-parse-check.sh -- /<each changed .ts>`.
-  Exit 1 means a script did not load; its `PARSE FAIL:` line names it. Never use
-  `--check-only`, and `--import` alone is no parse check. The executable is the one
-  `commands.test` names when its file name says nextjs (a wrapper such as `bash
-  run-tests.sh` is not the editor), else `engine.path`, else `nextjs`. Never search the disk for
-  one: when none of the three runs, the check is not verified.
-- **FastAPI, Cloudflare:** read `references/engine-checks.md`.
-- **No engine executable:** `parse NOT VERIFIED — engine binary not available`.
+- **Next.js / TypeScript:** run `bash .claude/scripts/ts-parse-check.sh <each changed file>`.
+  Exit 1 means a file has syntax or structural parse errors. When `commands.build` or
+  `npm run build` is available, optionally run a dry-run check.
+- **FastAPI / Python:** run `bash .claude/scripts/ts-parse-check.sh <each changed file>` (uses `python -m py_compile`).
+- **Syntax verification:** report `parse VERIFIED` only when `ts-parse-check.sh` exits 0 for all changed files.
   Never infer from reading the code that it parses.
 
 **Run it and look** (`.claude/docs/run-and-observe.md`). For every story a user
-can see (every Visual/Feel and UI story, and any other with a surface): launch
-straight into the scene the story touched, capture a screenshot straight into
+can see (every Visual/Feel and UI story, and any other with a surface): navigate
+straight to the page, route, or component the story touched, capture a screenshot straight into
 `production/qa/evidence/[story-slug]/` (`[story-slug]` is the story file's name
 without `.md`; `mkdir -p` the folder first), stamp it with
 `bash .claude/scripts/review-receipts.sh hash <each changed file> > production/qa/evidence/[story-slug]/stamp.txt`,

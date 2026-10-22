@@ -37,6 +37,7 @@ case "${1:-}" in
   --dry-run)  MODE="dry-run" ;;
   --finalize) MODE="finalize" ;;
   "")         MODE="migrate" ;;
+  -h|--help)  echo "usage: $0 [--dry-run|--finalize]"; exit 0 ;;
   *) echo "usage: $0 [--dry-run|--finalize]" >&2; exit 2 ;;
 esac
 

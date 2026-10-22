@@ -63,7 +63,7 @@ done
 if [ -z "$STACK_ARG" ]; then
   if [ -f project.yaml ] && [ -f "$HERE/yaml-get.awk" ]; then
     STACK_ARG=$(YG_PATH=stack.frontend awk -f "$HERE/yaml-get.awk" project.yaml 2>/dev/null)
-    [ -z "$STACK_ARG" ] && STACK_ARG=$(YG_PATH=stack.frontend awk -f "$HERE/yaml-get.awk" project.yaml 2>/dev/null)
+    [ -z "$STACK_ARG" ] && STACK_ARG=$(YG_PATH=stack.backend awk -f "$HERE/yaml-get.awk" project.yaml 2>/dev/null)
   fi
   [ -z "$STACK_ARG" ] && STACK_ARG="saas"
 fi

@@ -193,7 +193,7 @@ Fixture defaults.
 - `nextjs --version` reports `4.5.1.stable`
 - The user picks "pin the newer one and upgrade later"
 
-**Input:** `/saas-setup-stack nextjs 4.7`
+**Input:** `/saas-setup-stack nextjs 15`
 
 **Expected behavior:**
 1. Section 3 probes the installed editor and finds 4.5.1 — a mismatch

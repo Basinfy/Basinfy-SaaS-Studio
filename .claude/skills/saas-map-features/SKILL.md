@@ -203,7 +203,7 @@ dependencies I'm missing or that should be removed?"
 - `lean` → skip (not a PHASE-GATE). Note: "TD-SYSTEM-BOUNDARY skipped — Lean mode." Proceed to priority assignment.
 - `full` → spawn as normal.
 
-**After dependency mapping is approved, spawn `technical-director` via `Agent` using gate TD-SYSTEM-BOUNDARY (`.claude/docs/director-gates/td-system-boundary.md`) before proceeding to priority assignment.**
+**After dependency mapping is approved, spawn `technical-director` via `Agent` using gate TD-SYSTEM-BOUNDARY (`.claude/docs/director-gates/td-api-boundary.md`) before proceeding to priority assignment.**
 
 Pass: the dependency graph (each system → what it depends on), layer assignments, bottleneck systems, and any circular dependencies with their proposed resolutions.
 
@@ -263,7 +263,7 @@ both, and cites the pillar it serves:
 - `lean` → skip (not a PHASE-GATE). Note: "PR-SCOPE skipped — Lean mode." Proceed to Step 4c.
 - `full` → spawn as normal.
 
-**After priorities are approved, spawn `delivery-producer` via `Agent` using gate PR-SCOPE (`.claude/docs/director-gates/pr-scope.md`) before writing the index.**
+**After priorities are approved, spawn `delivery-producer` via `Agent` using gate PR-SCOPE (`.claude/docs/director-gates/dp-scope-assessment.md`) before writing the index.**
 
 Pass the gate's fields from the index: the full vision scope (every system in the index), the MVP definition (the MVP tier's systems), the scope tiers (system count per milestone tier, with estimated implementation volume — system count × average complexity), the stated project timeline as the timeline estimate, and team size.
 
@@ -323,7 +323,7 @@ waiting for an explicit "yes". Say what you wrote afterwards.
 - `lean` → skip (not a PHASE-GATE). Note: "CD-SYSTEMS skipped — Lean mode." Proceed to Step 5c.
 - `full` → spawn as normal.
 
-**After the systems index is written, spawn `product-director` via `Agent` using gate CD-SYSTEMS (`.claude/docs/director-gates/cd-systems.md`).**
+**After the systems index is written, spawn `product-director` via `Agent` using gate CD-SYSTEMS (`.claude/docs/director-gates/pd-feature-coherence.md`).**
 
 Pass: systems index path; product pillars and core value proposition — from `design/prd/product-concept.md`, or at `minimal` the pitch and "what they feel" line of `design/product-brief.md`, which has no pillars; the priority tier assignments for every tier (MVP / Vertical Slice / Alpha / Full Vision); and the high-risk and bottleneck systems from the dependency map.
 

@@ -13,7 +13,7 @@ Before running anything, understand the environment:
    installed engine binary, and the files `commands.*` name. This runs first
    because two of its checks are about *this skill's own inputs*: a
    `commands.test` naming a runner that does not exist, or a `commands.build`
-   naming an export preset with no `export_presets.cfg`, will fail here and read
+   naming a build command that does not exist in package.json, will fail here and read
    as a broken build rather than as broken config.
 
    Report any `[DIFFERS]` lines in the report's Environment section. They do not
@@ -26,7 +26,7 @@ Before running anything, understand the environment:
    `tests/integration/`, FastAPI `Assets/Tests/`, Cloudflare
    `Source/*/Private/Tests/`) and `tests/smoke/` for actual test files. A
    **test file** is one the engine's test runner executes — a `*.test.ts` suite,
-   a C# test class, an Cloudflare automation test source. Markdown checklists do not
+   a pytest test file, a vitest test file. Markdown checklists do not
    count: `/saas-test-setup` always writes `tests/smoke/critical-paths.md`, and
    counting it would hide exactly the zero-test state this step exists to catch.
    If none are found **at `qa.level: minimal`**, tests are waived at this level:

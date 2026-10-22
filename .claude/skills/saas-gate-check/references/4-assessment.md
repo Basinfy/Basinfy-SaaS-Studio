@@ -68,10 +68,10 @@ Before generating the final verdict, spawn the directors for the resolved tier a
 
 **Gate IDs:**
 
-1. **`product-director`** — gate **CD-PHASE-GATE** (`.claude/docs/director-gates/cd-phase-gate.md`)
+1. **`product-director`** — gate **CD-PHASE-GATE** (`.claude/docs/director-gates/pd-phase-gate.md`)
 2. **`technical-director`** — gate **TD-PHASE-GATE** (`.claude/docs/director-gates/td-phase-gate.md`)
-3. **`delivery-producer`** — gate **PR-PHASE-GATE** (`.claude/docs/director-gates/pr-phase-gate.md`)
-4. **`design-system-director`** — gate **AD-PHASE-GATE** (`.claude/docs/director-gates/ad-phase-gate.md`)
+3. **`delivery-producer`** — gate **PR-PHASE-GATE** (`.claude/docs/director-gates/dp-phase-gate.md`)
+4. **`design-system-director`** — gate **AD-PHASE-GATE** (`.claude/docs/director-gates/ds-phase-gate.md`)
 
 Pass to each the target phase name, the resolved `workflow` tier, the target
 gate's required and recommended artifacts at the resolved tier (the loaded gate

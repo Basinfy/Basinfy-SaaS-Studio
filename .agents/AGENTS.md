@@ -43,3 +43,37 @@ Before writing or editing code, always ask: `"May I write this to [filepath]?"`
 - Mandatory PostgreSQL Row Level Security (RLS) on all user data tables.
 - Stripe webhooks must verify signatures against raw request bodies (`rawBody`).
 - Strictly follow technology stack standards defined in `project.yaml`.
+
+## 6. Smart Code Discovery & Dynamic Basinfy Protocol
+Always determine the code discovery mechanism before reading, searching, or modifying codebase files:
+- **Dynamic Detection**: Check if the workspace contains a .basinfy/ directory OR if Basinfy MCP tools (basinfy_session_start, basinfy_search, basinfy_locate, basinfy_prepare_edit, basinfy_read, basinfy_impact, etc.) or the CLI basinfy are available.
+- **When Basinfy is Detected (.basinfy/ exists or MCP active)**:
+  Route code discovery through the **Basinfy Smart Indexing Protocol** first. Standard IDE Grep/Read/rg are strictly the last resort fallback:
+  - Symbols & Code: basinfy_prepare_edit or basinfy_locate
+  - Configs, YAML & Text: basinfy_search then basinfy_read
+  - New Files: basinfy_prepare_create
+  - Impact & Architecture: basinfy_impact or basinfy_orbit
+  - Fallback Ladder: CLI basinfy search / basinfy read -> IDE Grep/Read only for binaries or paths outside the index.
+- **Fallback Mode (No .basinfy/ directory)**: If .basinfy/ is not present, seamlessly use standard IDE tools (Grep, ripgrep, Glob, Read).
+
+## 7. Dynamic Human Interface (Portuguese & English) / English Engine
+The studio provides full dynamic bilingual support for the human developer while keeping the technical engine in English:
+- **Dynamic Language Matching & Translation for User Prompts**:
+  - If the user communicates in **Portuguese** (or `project.yaml` defines `locale: pt-BR`): All interactive questions (`AskUserQuestion`, `ask_question`), option choices, confirmation dialogs, and next-step proposals MUST be translated and rendered in **Brazilian Portuguese (PT-BR)**.
+  - **CRITICAL OVERRIDE**: This rule strictly OVERRIDES any English question strings or templates found in skills or documentation (e.g., if a skill says `Ask: "Does this rule summary look complete?" Options: Yes...`, you MUST translate to: `Pergunta: "O resumo das regras do control manifest parece completo e pronto para ser escrito?" Opções: (Recomendado) Sim — revisar e escrever docs/architecture/control-manifest.md`). NEVER display English questions or options to a Portuguese developer.
+  - If the user communicates in **English** (or `locale: en`): All questions, options, and dialogs are rendered in **English**.
+- **English Engineering Engine**: In both cases, the agent's internal reasoning, code generation, unit tests, PRD/ADR authoring, git commits, and subagent delegation execute in **English** (EN) to maximize reasoning depth and benchmark code quality.
+
+## 8. Unskippable Workflow Autotrigger Table
+Always-on prose is budget-capped. Prefer loading on-demand skills immediately when initiating any of the following lifecycle actions:
+- **Onboarding & Setup**: Read `.claude/skills/saas-start/SKILL.md` or `.claude/skills/saas-setup-stack/SKILL.md`
+- **Architecture & ADRs**: Read `.claude/skills/saas-create-architecture/SKILL.md` or `.claude/skills/saas-architecture-decision/SKILL.md`
+- **PRDs & Design System**: Read `.claude/skills/saas-design-system/SKILL.md` or `.claude/skills/saas-design-tokens/SKILL.md`
+- **Auth, RBAC & Multi-Tenancy**: Read `.claude/skills/saas-team-auth-access/SKILL.md`
+- **Stripe Billing & Webhooks**: Read `.claude/skills/saas-team-billing/SKILL.md`
+- **Sprint & Epics Planning**: Read `.claude/skills/saas-sprint-plan/SKILL.md` or `.claude/skills/saas-create-stories/SKILL.md`
+- **Story Implementation**: Read `.claude/skills/saas-dev-story/SKILL.md`
+- **Story Sign-off & QA**: Read `.claude/skills/saas-story-done/SKILL.md` or `.claude/skills/saas-qa-plan/SKILL.md`
+- **Security Audit & RLS Gate**: Read `.claude/skills/saas-security-audit/SKILL.md`
+- **Release & Deployment**: Read `.claude/skills/saas-release-checklist/SKILL.md`
+

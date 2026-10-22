@@ -163,7 +163,7 @@ engine_name() {
   [ -f project.yaml ] || return 0
   [ -f "$HERE/yaml-get.awk" ] || return 0
   _n=$(YG_PATH=stack.frontend awk -f "$HERE/yaml-get.awk" project.yaml 2>/dev/null)
-  [ -z "$_n" ] && _n=$(YG_PATH=stack.frontend awk -f "$HERE/yaml-get.awk" project.yaml 2>/dev/null)
+  [ -z "$_n" ] && _n=$(YG_PATH=stack.backend awk -f "$HERE/yaml-get.awk" project.yaml 2>/dev/null)
   [ -z "$_n" ] && _n=$(YG_PATH=framework.name awk -f "$HERE/yaml-get.awk" project.yaml 2>/dev/null)
   printf '%s' "$_n"
 }

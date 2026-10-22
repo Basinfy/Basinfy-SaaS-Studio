@@ -1,0 +1,25 @@
+id: task-stripe-webhook
+title: "Idempotent Stripe Webhook Endpoint with Raw Body Signature Verification"
+domain: billing
+description: >
+  Implement a Next.js App Router route handler (app/api/webhooks/stripe/route.ts)
+  that validates Stripe HMAC signatures using req.text() and processes
+  customer.subscription.updated idempotently.
+inputs:
+  endpoint_route: "app/api/webhooks/stripe/route.ts"
+  secret_env_var: "STRIPE_WEBHOOK_SECRET"
+expected_deliverables:
+  - path: "app/api/webhooks/stripe/route.ts"
+    description: "Route handler verifying stripe-signature using req.text()"
+  - path: "tests/integration/billing/webhook.test.ts"
+    description: "Integration test simulating valid and invalid signature payloads"
+rubrics:
+  - name: "Raw Body Verification"
+    weight: 0.4
+    criterion: "Route uses req.text() instead of req.json() before stripe.webhooks.constructEvent"
+  - name: "Signature Rejection"
+    weight: 0.3
+    criterion: "Invalid signatures return HTTP 400 Bad Request with descriptive error"
+  - name: "Idempotency Handling"
+    weight: 0.3
+    criterion: "Duplicate event IDs are acknowledged with HTTP 200 without duplicate mutation"

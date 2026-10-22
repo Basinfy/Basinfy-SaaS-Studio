@@ -66,10 +66,8 @@ Whenever agents, specialists, or workflows explore the codebase, discover endpoi
   - Document Headings: basinfy_search to find headings instead of regex grepping ^#
   - New Files: basinfy_prepare_create before generating new components or modules
   - Impact Analysis: basinfy_impact or basinfy_orbit for cross-file blast radius checks
-  - Fallback Ladder: Brute-force grep / 
-g / IDE Read are strictly last-resort fallbacks (e.g., for binary assets or files outside the index root).
-- **Fallback (No .basinfy/ directory)**: When .basinfy/ is not present, gracefully use standard IDE tools (Grep, 
-ipgrep, Glob, Read).
+  - Fallback Ladder: Brute-force grep / ripgrep / IDE Read are strictly last-resort fallbacks (e.g., for binary assets or files outside the index root).
+- **Fallback (No .basinfy/ directory)**: When .basinfy/ is not present, gracefully use standard IDE tools (Grep, ripgrep, Glob, Read).
 
 ## Context Management
 
