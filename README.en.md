@@ -251,6 +251,40 @@ updates:
 
 ---
 
+## 🗑️ Framework Uninstallation (Safe Uninstall)
+
+If you need to uninstall Basinfy SaaS Studio from your computer or from a specific project workspace, the `uninstall` command performs clean, surgical removal with full simulation (`--dry-run`) support:
+
+### 1. Global Uninstallation (From all AI tools or a specific one)
+```bash
+# Uninstall globally from ALL supported AI tools (~/.claude, ~/.gemini, ~/.cursor, etc.):
+npx github:Basinfy/Basinfy-SaaS-Studio uninstall --global
+
+# Safe dry-run preview without deleting any files:
+npx github:Basinfy/Basinfy-SaaS-Studio uninstall --global --dry-run
+
+# Uninstall globally from a single specific platform:
+npx github:Basinfy/Basinfy-SaaS-Studio uninstall antigravity --global
+npx github:Basinfy/Basinfy-SaaS-Studio uninstall claude --global
+npx github:Basinfy/Basinfy-SaaS-Studio uninstall cursor --global
+```
+
+### 2. Local Project Workspace Uninstallation
+```bash
+# Guided interactive wizard in the current project:
+npx github:Basinfy/Basinfy-SaaS-Studio uninstall
+
+# Direct uninstallation while preserving your project configuration (project.yaml):
+npx github:Basinfy/Basinfy-SaaS-Studio uninstall --keep-config -f
+
+# Complete cleanup including scaffolding directories (design/, docs/, production/):
+npx github:Basinfy/Basinfy-SaaS-Studio uninstall --clean-all -f
+```
+
+> **Safety Guarantee**: The global uninstaller removes **only** the 50 studio agents, the 95 `saas-*` workflow skills, and official studio rules. Any custom skills in `~/.gemini/config/skills/` or business application code in `src/` remain completely untouched.
+
+---
+
 ## 👥 The 49-Agent Hierarchy
 
 ### Tier 1 — Strategic Directors (Claude Opus / MaxTurns: 30)

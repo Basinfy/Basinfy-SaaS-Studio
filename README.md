@@ -271,6 +271,40 @@ updates:
 
 ---
 
+## 🗑️ Desinstalação do Estúdio (Uninstall Seguro)
+
+Caso queira remover o Basinfy SaaS Studio da sua máquina ou de um projeto específico, o comando `uninstall` realiza a limpeza completa com **segurança cirúrgica** e suporte a simulação (`--dry-run`):
+
+### 1. Desinstalação Global (Remove de todas as IAs ou de uma específica)
+```bash
+# Desinstalar globalmente de TODAS as ferramentas (~/.claude, ~/.gemini, ~/.cursor, etc.):
+npx github:Basinfy/Basinfy-SaaS-Studio uninstall --global
+
+# Simulação segura sem apagar nenhum arquivo (Dry-Run):
+npx github:Basinfy/Basinfy-SaaS-Studio uninstall --global --dry-run
+
+# Desinstalar globalmente apenas de uma ferramenta específica:
+npx github:Basinfy/Basinfy-SaaS-Studio uninstall antigravity --global
+npx github:Basinfy/Basinfy-SaaS-Studio uninstall claude --global
+npx github:Basinfy/Basinfy-SaaS-Studio uninstall cursor --global
+```
+
+### 2. Desinstalação Local do Projeto
+```bash
+# Assistente interativo no projeto atual (pergunta se deseja manter project.yaml e docs):
+npx github:Basinfy/Basinfy-SaaS-Studio uninstall
+
+# Desinstalação direta mantendo as configurações do projeto:
+npx github:Basinfy/Basinfy-SaaS-Studio uninstall --keep-config -f
+
+# Limpeza completa incluindo pastas de scaffold (design/, docs/, production/):
+npx github:Basinfy/Basinfy-SaaS-Studio uninstall --clean-all -f
+```
+
+> **Garantia de Integridade**: O desinstalador global apaga **estritamente** os 50 agentes, as 95 skills (`saas-*` e `basinfy-saas-studio`) e as regras pertencentes ao estúdio. Suas outras skills pessoais em `~/.gemini/config/skills/` e arquivos em `src/` no projeto nunca são tocados.
+
+---
+
 ## 👥 A Hierarquia dos 49 Agentes
 
 O estúdio é organizado em 3 camadas de especialização que espelham uma empresa moderna de SaaS:

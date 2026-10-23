@@ -54,14 +54,18 @@ ${c.bold}COMMANDS:${c.reset}
   ${c.cyan}continue${c.reset}      Install specifically for Continue.dev (.continue/)
   ${c.cyan}init${c.reset}          Interactive guided installation wizard (default)
   ${c.cyan}update${c.reset}        Check and update studio framework to latest version from GitHub
+  ${c.cyan}uninstall${c.reset}     Safely uninstall Basinfy SaaS Studio (global or local project)
 
 ${c.bold}OPTIONS:${c.reset}
-  ${c.green}-g, --global${c.reset}      Install globally into user home directory (~/.claude, ~/.gemini, etc.)
+  ${c.green}-g, --global${c.reset}      Target global user home directory (~/.claude, ~/.gemini, etc.)
   ${c.green}-t, --target <dir>${c.reset} Set custom target directory (default: current directory .)
   ${c.green}-m, --mode <mode>${c.reset}  Installation mode:
                       ${c.bold}scaffold${c.reset} (default) — Full new SaaS studio architecture
                       ${c.bold}inject${c.reset} — Add AI studio to an existing repo safely
-  ${c.green}-f, --force${c.reset}       Overwrite existing files without prompting
+  ${c.green}-f, --force${c.reset}       Skip confirmation prompts / overwrite existing files
+  ${c.green}--dry-run${c.reset}         Simulate uninstall without making actual changes
+  ${c.green}--clean-all${c.reset}       Remove all scaffolded project folders during uninstall
+  ${c.green}--keep-config${c.reset}     Preserve project.yaml during local uninstallation
   ${c.green}-v, --version${c.reset}     Show version
   ${c.green}-h, --help${c.reset}        Show this help message
 
@@ -82,6 +86,15 @@ ${c.bold}EXAMPLES:${c.reset}
   ${c.dim}# Update existing project or global installation to latest GitHub version:${c.reset}
   npx github:Basinfy/Basinfy-SaaS-Studio update
   npx github:Basinfy/Basinfy-SaaS-Studio update --global
+
+  ${c.dim}# Safely uninstall globally from all AI platforms:${c.reset}
+  npx github:Basinfy/Basinfy-SaaS-Studio uninstall --global
+
+  ${c.dim}# Simulate uninstall without deleting anything (dry-run):${c.reset}
+  npx github:Basinfy/Basinfy-SaaS-Studio uninstall --global --dry-run
+
+  ${c.dim}# Uninstall from current local workspace:${c.reset}
+  npx github:Basinfy/Basinfy-SaaS-Studio uninstall
 `);
 }
 
@@ -412,6 +425,9 @@ function parseArgs() {
     force: false,
     help: false,
     version: false,
+    dryRun: false,
+    cleanAll: false,
+    keepConfig: false,
     targets: {
       all: false,
       claude: false,
@@ -468,6 +484,14 @@ function parseArgs() {
       parsed.command = 'init';
     } else if (a === 'update' || a === '--update' || a === 'upgrade') {
       parsed.command = 'update';
+    } else if (a === 'uninstall' || a === '--uninstall' || a === 'remove' || a === '--remove' || a === 'unlink') {
+      parsed.command = 'uninstall';
+    } else if (a === '--dry-run' || a === '-d') {
+      parsed.dryRun = true;
+    } else if (a === '--clean-all' || a === '--all-scaffold') {
+      parsed.cleanAll = true;
+    } else if (a === '--keep-config' || a === '--keep-configs') {
+      parsed.keepConfig = true;
     } else if (!a.startsWith('-') && !parsed.command) {
       parsed.target = a;
     }
@@ -653,14 +677,395 @@ function executeUpdate(opts) {
       console.error(`  ${c.red}✖ Error connecting to GitHub: ${err.message}${c.reset}`);
     });
 }
+// Removal helpers for uninstall
+function removeFileOrDir(itemPath, dryRun = false) {
+  if (!fs.existsSync(itemPath)) return 0;
+  if (dryRun) {
+    console.log(`  ${c.yellow}[DRY-RUN]${c.reset} Would remove: ${c.dim}${itemPath}${c.reset}`);
+    return 1;
+  }
+  try {
+    const stat = fs.statSync(itemPath);
+    if (stat.isDirectory()) {
+      fs.rmSync(itemPath, { recursive: true, force: true });
+    } else {
+      fs.unlinkSync(itemPath);
+    }
+    console.log(`  ${c.red}✔ Removed:${c.reset} ${c.dim}${itemPath}${c.reset}`);
+    return 1;
+  } catch (err) {
+    console.warn(`  ${c.yellow}⚠ Failed to remove ${itemPath}:${c.reset} ${err.message}`);
+    return 0;
+  }
+}
+
+function cleanEmptyDir(dirPath) {
+  try {
+    if (fs.existsSync(dirPath) && fs.statSync(dirPath).isDirectory()) {
+      if (fs.readdirSync(dirPath).length === 0) {
+        fs.rmdirSync(dirPath);
+      }
+    }
+  } catch (_) {}
+}
+
+function uninstallGlobal(targets, dryRun = false) {
+  console.log(`\n${c.bold}${c.magenta}🌐 Executing Global Uninstallation...${c.reset}`);
+  if (dryRun) {
+    console.log(`   ${c.yellow}${c.bold}MODE: DRY-RUN (Simulation only — no files will be deleted)${c.reset}\n`);
+  } else {
+    console.log('');
+  }
+
+  const gPaths = getGlobalPaths();
+  let totalRemoved = 0;
+
+  // 1. Claude Code (~/.claude/)
+  if (targets.claude || targets.all) {
+    console.log(`  ${c.cyan}•${c.reset} Checking Claude Code global studio files (~/.claude/)...`);
+    let cCount = 0;
+
+    const srcAgents = path.join(PKG_ROOT, '.claude', 'agents');
+    if (fs.existsSync(srcAgents) && fs.existsSync(gPaths.claude.agents)) {
+      for (const f of fs.readdirSync(srcAgents)) {
+        cCount += removeFileOrDir(path.join(gPaths.claude.agents, f), dryRun);
+      }
+      if (!dryRun) cleanEmptyDir(gPaths.claude.agents);
+    }
+
+    const srcSkills = path.join(PKG_ROOT, '.claude', 'skills');
+    if (fs.existsSync(srcSkills) && fs.existsSync(gPaths.claude.skills)) {
+      for (const sk of fs.readdirSync(srcSkills)) {
+        cCount += removeFileOrDir(path.join(gPaths.claude.skills, sk), dryRun);
+      }
+      if (!dryRun) cleanEmptyDir(gPaths.claude.skills);
+    }
+
+    const srcGates = path.join(PKG_ROOT, '.claude', 'director-gates');
+    if (fs.existsSync(srcGates) && fs.existsSync(gPaths.claude.directorGates)) {
+      for (const f of fs.readdirSync(srcGates)) {
+        cCount += removeFileOrDir(path.join(gPaths.claude.directorGates, f), dryRun);
+      }
+      if (!dryRun) cleanEmptyDir(gPaths.claude.directorGates);
+    }
+
+    const srcRules = path.join(PKG_ROOT, '.claude', 'rules');
+    if (fs.existsSync(srcRules) && fs.existsSync(gPaths.claude.rules)) {
+      for (const f of fs.readdirSync(srcRules)) {
+        cCount += removeFileOrDir(path.join(gPaths.claude.rules, f), dryRun);
+      }
+      if (!dryRun) cleanEmptyDir(gPaths.claude.rules);
+    }
+
+    const srcScripts = path.join(PKG_ROOT, '.claude', 'scripts');
+    if (fs.existsSync(srcScripts) && fs.existsSync(gPaths.claude.scripts)) {
+      for (const f of fs.readdirSync(srcScripts)) {
+        cCount += removeFileOrDir(path.join(gPaths.claude.scripts, f), dryRun);
+      }
+      if (!dryRun) cleanEmptyDir(gPaths.claude.scripts);
+    }
+
+    const vFile = path.join(os.homedir(), '.claude', 'framework-version.json');
+    if (fs.existsSync(vFile)) {
+      try {
+        const vObj = JSON.parse(fs.readFileSync(vFile, 'utf8'));
+        if (vObj.name === 'Basinfy-SaaS-Studio') {
+          cCount += removeFileOrDir(vFile, dryRun);
+        }
+      } catch (_) {}
+    }
+
+    totalRemoved += cCount;
+    console.log(`    ${c.green}Claude Code: ${cCount} items ${dryRun ? 'would be removed' : 'removed'}.${c.reset}\n`);
+  }
+
+  // 2. Antigravity & Gemini CLI (~/.gemini/config/skills/)
+  if (targets.antigravity || targets.all) {
+    console.log(`  ${c.cyan}•${c.reset} Checking Antigravity / Gemini CLI global skills (~/.gemini/config/skills/)...`);
+    let aCount = 0;
+
+    if (fs.existsSync(gPaths.antigravity.studioSkill)) {
+      aCount += removeFileOrDir(gPaths.antigravity.studioSkill, dryRun);
+    }
+
+    const srcSkills = path.join(PKG_ROOT, '.claude', 'skills');
+    if (fs.existsSync(srcSkills) && fs.existsSync(gPaths.antigravity.skillsDir)) {
+      for (const sk of fs.readdirSync(srcSkills)) {
+        if (sk.startsWith('saas-')) {
+          const destSkill = path.join(gPaths.antigravity.skillsDir, sk);
+          aCount += removeFileOrDir(destSkill, dryRun);
+        }
+      }
+    }
+
+    totalRemoved += aCount;
+    console.log(`    ${c.green}Antigravity: ${aCount} items ${dryRun ? 'would be removed' : 'removed'}.${c.reset}\n`);
+  }
+
+  // 3. Cursor (~/.cursor/)
+  if (targets.cursor || targets.all) {
+    console.log(`  ${c.cyan}•${c.reset} Checking Cursor global studio rules and skills (~/.cursor/)...`);
+    let curCount = 0;
+
+    const srcRules = path.join(PKG_ROOT, '.cursor', 'rules');
+    if (fs.existsSync(srcRules) && fs.existsSync(gPaths.cursor.rules)) {
+      for (const f of fs.readdirSync(srcRules)) {
+        curCount += removeFileOrDir(path.join(gPaths.cursor.rules, f), dryRun);
+      }
+      if (!dryRun) cleanEmptyDir(gPaths.cursor.rules);
+    }
+
+    const srcSkills = path.join(PKG_ROOT, '.cursor', 'skills');
+    if (fs.existsSync(srcSkills) && fs.existsSync(gPaths.cursor.skills)) {
+      for (const f of fs.readdirSync(srcSkills)) {
+        curCount += removeFileOrDir(path.join(gPaths.cursor.skills, f), dryRun);
+      }
+      if (!dryRun) cleanEmptyDir(gPaths.cursor.skills);
+    }
+
+    totalRemoved += curCount;
+    console.log(`    ${c.green}Cursor: ${curCount} items ${dryRun ? 'would be removed' : 'removed'}.${c.reset}\n`);
+  }
+
+  // 4. Windsurf (~/.codeium/windsurf/rules/)
+  if (targets.windsurf || targets.all) {
+    console.log(`  ${c.cyan}•${c.reset} Checking Windsurf global rules (~/.codeium/windsurf/rules/)...`);
+    let wCount = 0;
+    const srcRules = path.join(PKG_ROOT, '.windsurf', 'rules');
+    if (fs.existsSync(srcRules) && fs.existsSync(gPaths.windsurf.rules)) {
+      for (const f of fs.readdirSync(srcRules)) {
+        wCount += removeFileOrDir(path.join(gPaths.windsurf.rules, f), dryRun);
+      }
+      if (!dryRun) cleanEmptyDir(gPaths.windsurf.rules);
+    }
+    totalRemoved += wCount;
+    console.log(`    ${c.green}Windsurf: ${wCount} items ${dryRun ? 'would be removed' : 'removed'}.${c.reset}\n`);
+  }
+
+  console.log(`${c.bold}${dryRun ? '🔍 Dry-run complete:' : '🎉 Uninstallation complete:'}${c.reset} ${c.bold}${totalRemoved}${c.reset} items ${dryRun ? 'would be removed' : 'removed'} globally.`);
+  if (!dryRun) {
+    console.log(`\n${c.dim}Basinfy SaaS Studio global integration has been cleanly removed from your machine.${c.reset}`);
+  }
+}
+
+function uninstallLocal(targetDir, targets, dryRun = false, cleanAll = false, keepConfig = false) {
+  const dest = path.resolve(process.cwd(), targetDir);
+  if (!dryRun && path.resolve(dest) === path.resolve(PKG_ROOT)) {
+    console.error(`\n  ${c.red}✖ Safety Guard Triggered:${c.reset} Cannot uninstall from the Basinfy SaaS Studio source repository itself.`);
+    console.error(`  ${c.dim}To remove global integrations from ~/.claude, ~/.gemini, etc., use: ${c.cyan}npx github:Basinfy/Basinfy-SaaS-Studio uninstall --global${c.reset}\n`);
+    return;
+  }
+
+  console.log(`\n${c.bold}${c.magenta}📦 Uninstalling Basinfy SaaS Studio from: ${c.cyan}${dest}${c.reset}`);
+  if (dryRun) {
+    console.log(`   ${c.yellow}${c.bold}MODE: DRY-RUN (Simulation only — no files will be deleted)${c.reset}\n`);
+  } else {
+    console.log(`   ${c.dim}Clean scaffold folders: ${cleanAll} | Keep project.yaml: ${keepConfig}${c.reset}\n`);
+  }
+
+  let totalRemoved = 0;
+
+  // 1. Claude Code
+  if (targets.claude || targets.all) {
+    let count = 0;
+    count += removeFileOrDir(path.join(dest, '.claude'), dryRun);
+    count += removeFileOrDir(path.join(dest, 'CLAUDE.md'), dryRun);
+    count += removeFileOrDir(path.join(dest, 'project.local.yaml.example'), dryRun);
+    if (!keepConfig) {
+      count += removeFileOrDir(path.join(dest, 'project.yaml'), dryRun);
+    }
+    totalRemoved += count;
+  }
+
+  // 2. Cursor
+  if (targets.cursor || targets.all) {
+    let count = 0;
+    count += removeFileOrDir(path.join(dest, '.cursor'), dryRun);
+    count += removeFileOrDir(path.join(dest, '.cursorrules'), dryRun);
+    totalRemoved += count;
+  }
+
+  // 3. Antigravity & Gemini CLI
+  if (targets.antigravity || targets.all) {
+    let count = 0;
+    count += removeFileOrDir(path.join(dest, '.agents'), dryRun);
+    count += removeFileOrDir(path.join(dest, 'GEMINI.md'), dryRun);
+    count += removeFileOrDir(path.join(dest, 'CONVENTIONS.md'), dryRun);
+    totalRemoved += count;
+  }
+
+  // 4. Windsurf
+  if (targets.windsurf || targets.all) {
+    let count = 0;
+    count += removeFileOrDir(path.join(dest, '.windsurf'), dryRun);
+    count += removeFileOrDir(path.join(dest, '.windsurfrules'), dryRun);
+    totalRemoved += count;
+  }
+
+  // 5. Cline
+  if (targets.cline || targets.all) {
+    totalRemoved += removeFileOrDir(path.join(dest, '.clinerules'), dryRun);
+  }
+
+  // 6. Continue
+  if (targets.continue || targets.all) {
+    totalRemoved += removeFileOrDir(path.join(dest, '.continue'), dryRun);
+  }
+
+  // 7. Copilot & Devin & Universal AGENTS.md
+  if (targets.copilot || targets.all) {
+    let count = 0;
+    count += removeFileOrDir(path.join(dest, '.devin'), dryRun);
+    count += removeFileOrDir(path.join(dest, 'AGENTS.md'), dryRun);
+    count += removeFileOrDir(path.join(dest, '.github', 'copilot-instructions.md'), dryRun);
+    totalRemoved += count;
+  }
+
+  // 8. Scaffold Mode folders (if requested)
+  if (cleanAll) {
+    console.log(`\n  ${c.dim}Cleaning scaffold directories...${c.reset}`);
+    let scCount = 0;
+    scCount += removeFileOrDir(path.join(dest, 'design'), dryRun);
+    scCount += removeFileOrDir(path.join(dest, 'docs'), dryRun);
+    scCount += removeFileOrDir(path.join(dest, 'production'), dryRun);
+    scCount += removeFileOrDir(path.join(dest, 'studio-tests'), dryRun);
+    totalRemoved += scCount;
+  }
+
+  console.log(`\n${c.bold}${dryRun ? '🔍 Dry-run complete:' : '🎉 Local uninstallation complete:'}${c.reset} ${c.bold}${totalRemoved}${c.reset} items ${dryRun ? 'would be removed' : 'removed'}.`);
+  if (!dryRun) {
+    console.log(`  ${c.dim}🔒 Any existing application code (src/, components/, api/) remained completely untouched.${c.reset}`);
+  }
+}
+
+function executeUninstall(opts) {
+  banner();
+  console.log(`${c.bold}${c.red}🗑️ Basinfy SaaS Studio — Uninstaller${c.reset}\n`);
+
+  // Refuse local uninstall if target is the studio's own source repository
+  if (!opts.global && !opts.dryRun) {
+    const dest = path.resolve(process.cwd(), opts.target);
+    if (path.resolve(dest) === path.resolve(PKG_ROOT)) {
+      console.error(`  ${c.red}✖ Safety Guard:${c.reset} Cannot uninstall local files inside the Basinfy SaaS Studio repository itself.`);
+      console.error(`    ${c.dim}To uninstall the global system installation, run:${c.reset} ${c.cyan}npx github:Basinfy/Basinfy-SaaS-Studio uninstall --global${c.reset}\n`);
+      return;
+    }
+  }
+
+  const hasSpecificTarget = Object.values(opts.targets).some(Boolean);
+  if (!hasSpecificTarget) {
+    opts.targets.all = true;
+  }
+
+  const isInteractive = process.stdin.isTTY && !opts.force && !opts.dryRun;
+
+  // Interactive wizard when executed interactively without specific flags
+  if (isInteractive && !opts.global && opts.target === '.' && !hasSpecificTarget) {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+    const prompt = (q) => new Promise((resolve) => rl.question(q, resolve));
+
+    (async () => {
+      console.log(`${c.bold}Uninstallation Wizard:${c.reset}\n`);
+      console.log(`${c.bold}1. Uninstallation Scope:${c.reset}`);
+      console.log(`   ${c.cyan}[1]${c.reset} Global (~/.claude, ~/.gemini, ~/.cursor — remove from system)`);
+      console.log(`   ${c.cyan}[2]${c.reset} Local Project (Current folder: ${process.cwd()})`);
+      const scopeAns = (await prompt(`   Select [1/2] (default: 1): `)).trim() || '1';
+
+      if (scopeAns === '1') {
+        console.log(`\n${c.bold}2. Target Platforms for Global Removal:${c.reset}`);
+        console.log(`   ${c.cyan}[1]${c.reset} All Platforms (Claude Code, Antigravity, Cursor, Windsurf)`);
+        console.log(`   ${c.cyan}[2]${c.reset} Antigravity / Gemini CLI only`);
+        console.log(`   ${c.cyan}[3]${c.reset} Claude Code only`);
+        console.log(`   ${c.cyan}[4]${c.reset} Cursor only`);
+        const platAns = (await prompt(`   Select [1/2/3/4] (default: 1): `)).trim() || '1';
+
+        const targets = {
+          all: platAns === '1',
+          antigravity: platAns === '2' || platAns === '1',
+          claude: platAns === '3' || platAns === '1',
+          cursor: platAns === '4' || platAns === '1',
+        };
+
+        const confirm = (await prompt(`\n${c.yellow}⚠️ Are you sure you want to remove Basinfy SaaS Studio globally? [y/N]: ${c.reset}`)).trim().toLowerCase();
+        rl.close();
+        if (confirm !== 'y' && confirm !== 'yes') {
+          console.log(`\n${c.dim}Uninstallation cancelled.${c.reset}`);
+          return;
+        }
+        uninstallGlobal(targets, false);
+        return;
+      }
+
+      // Local Project
+      console.log(`\n${c.bold}2. Keep project configuration (project.yaml)?${c.reset}`);
+      console.log(`   ${c.cyan}[1]${c.reset} Yes, keep configuration files (recommended)`);
+      console.log(`   ${c.cyan}[2]${c.reset} No, remove everything including configuration`);
+      const keepAns = (await prompt(`   Select [1/2] (default: 1): `)).trim() || '1';
+      const keepConfig = keepAns === '1';
+
+      console.log(`\n${c.bold}3. Remove scaffold folders (design/, docs/, production/, studio-tests/)?${c.reset}`);
+      console.log(`   ${c.cyan}[1]${c.reset} No, keep docs and specifications (safe)`);
+      console.log(`   ${c.cyan}[2]${c.reset} Yes, completely remove scaffold folders`);
+      const cleanAns = (await prompt(`   Select [1/2] (default: 1): `)).trim() || '1';
+      const cleanAll = cleanAns === '2';
+
+      const confirm = (await prompt(`\n${c.yellow}⚠️ Are you sure you want to remove Basinfy SaaS Studio from this project? [y/N]: ${c.reset}`)).trim().toLowerCase();
+      rl.close();
+      if (confirm !== 'y' && confirm !== 'yes') {
+        console.log(`\n${c.dim}Uninstallation cancelled.${c.reset}`);
+        return;
+      }
+      uninstallLocal('.', { all: true }, false, cleanAll, keepConfig);
+    })().catch((err) => {
+      console.error(`\n${c.red}Error:${c.reset}`, err.message);
+      rl.close();
+      process.exit(1);
+    });
+    return;
+  }
+
+  // If interactive prompt needed before action
+  if (!opts.force && !opts.dryRun) {
+    if (process.stdin.isTTY) {
+      const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      });
+      const scopeLabel = opts.global ? 'GLOBALLY (~/.claude, ~/.gemini, etc.)' : `LOCALLY (${opts.target})`;
+      rl.question(`\n${c.yellow}⚠️ About to uninstall Basinfy SaaS Studio ${scopeLabel}.\n   Are you sure you want to proceed? [y/N]: ${c.reset}`, (ans) => {
+        rl.close();
+        const norm = ans.trim().toLowerCase();
+        if (norm !== 'y' && norm !== 'yes') {
+          console.log(`\n${c.dim}Uninstallation cancelled.${c.reset}`);
+          return;
+        }
+        if (opts.global) {
+          uninstallGlobal(opts.targets, opts.dryRun);
+        } else {
+          uninstallLocal(opts.target, opts.targets, opts.dryRun, opts.cleanAll, opts.keepConfig);
+        }
+      });
+      return;
+    } else {
+      console.error(`  ${c.yellow}⚠ Confirmation required:${c.reset} In non-interactive environments, pass ${c.bold}-f${c.reset} or ${c.bold}--force${c.reset} to proceed (or test with ${c.bold}--dry-run${c.reset}).\n`);
+      process.exit(1);
+    }
+  }
+
+  // Direct execution
+  if (opts.global) {
+    uninstallGlobal(opts.targets, opts.dryRun);
+  } else {
+    uninstallLocal(opts.target, opts.targets, opts.dryRun, opts.cleanAll, opts.keepConfig);
+  }
+}
+
 // Main execution routine
 function main() {
   const opts = parseArgs();
-
-  if (opts.command === 'update') {
-    executeUpdate(opts);
-    return;
-  }
 
   if (opts.help) {
     printHelp();
@@ -669,6 +1074,16 @@ function main() {
 
   if (opts.version) {
     console.log(`v${pkgJson.version}`);
+    return;
+  }
+
+  if (opts.command === 'update') {
+    executeUpdate(opts);
+    return;
+  }
+
+  if (opts.command === 'uninstall') {
+    executeUninstall(opts);
     return;
   }
 

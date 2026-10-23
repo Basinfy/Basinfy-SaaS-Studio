@@ -234,6 +234,13 @@ check(rc == 0, "project-coherence.sh passes on SaaS project.yaml", f"rc={rc}, er
 rc, out, err = run_bash([".claude/scripts/project-state.sh"])
 check(rc == 0, "project-state.sh detects SaaS state accurately", f"rc={rc}, err={err}")
 
+# 9.8 bin/cli.js uninstall dry run check
+try:
+    res = subprocess.run(["node", "bin/cli.js", "uninstall", "--global", "--dry-run"], capture_output=True, text=True, encoding="utf-8", errors="replace")
+    check(res.returncode == 0 and "Dry-run complete" in res.stdout, "bin/cli.js uninstall --dry-run simulates removal safely", f"rc={res.returncode}")
+except Exception as e:
+    ERRORS.append(f"bin/cli.js uninstall check failed: {e}")
+
 # 10. Template Cleanliness (Zero Gaming Terminology)
 print("\n--- 10. Template Cleanliness Check ---")
 forbidden_pattern = re.compile(r'\b(Player Fantasy|Tuning Knobs|Game Feel|Hades|God of War|Celeste|Godot|Unity|Unreal|GDScript|gameplay)\b', re.IGNORECASE)

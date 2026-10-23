@@ -39,7 +39,8 @@
     "test:bench": "python studio-tests/bench/run-bench.py",
     "sync:skills": "python scripts/sync-agent-skills.py",
     "cli": "node bin/cli.js",
-    "cli:help": "node bin/cli.js --help"
+    "cli:help": "node bin/cli.js --help",
+    "cli:uninstall": "node bin/cli.js uninstall"
   },
   "keywords": [
     "saas",
