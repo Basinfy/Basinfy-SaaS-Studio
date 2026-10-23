@@ -478,6 +478,14 @@ phases:
           glob: "production/security/saas-security-audit-*.md"
         description: "Run OWASP top 10 audit, RLS tenant isolation check, dependency audit: no open CRITICAL or HIGH findings"
 
+      - id: lgpd-privacy-audit
+        name: "LGPD & Privacy Audit"
+        command: /saas-lgpd
+        required: true
+        artifact:
+          glob: ".lgpd/STATUS.md"
+        description: "Verify privacy-by-design, legal bases, ROPA, consent ledgers, DSAR endpoints, and incident runbook"
+
       - id: localize-qa
         name: "Localization QA"
         command: /saas-localize

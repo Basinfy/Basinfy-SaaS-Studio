@@ -50,7 +50,7 @@ try:
 except Exception as e:
     ERRORS.append(f"settings.json parse error: {e}")
 
-# 3. Agents Check (49 agents)
+# 3. Agents Check (50 agents)
 print("\n--- 3. Agents Check ---")
 agents_dir = ".claude/agents"
 check(os.path.exists(agents_dir), ".claude/agents exists", "Missing agents directory")
@@ -72,25 +72,27 @@ required_49_agents = [
     "docker-k8s-specialist", "realtime-websockets-specialist", "email-messaging-specialist",
     "user-flow-architect", "ux-designer", "ui-motion-designer", "pricing-economist",
     "technical-writer", "onboarding-specialist", "rapid-prototyper", "qa-manual-tester",
-    "accessibility-auditor", "sre-observability-engineer", "customer-success-ops"
+    "accessibility-auditor", "sre-observability-engineer", "customer-success-ops",
+    "dpo-privacy-specialist"
 ]
 
 missing_agents = [a for a in required_49_agents if f"{a}.md" not in agents_files]
-check(len(missing_agents) == 0 and len(agents_files) == 49, "Exactly 49 SaaS agents present", f"Missing: {missing_agents}, total files: {len(agents_files)}")
+check(len(missing_agents) == 0 and len(agents_files) == 50, "Exactly 50 SaaS agents present", f"Missing: {missing_agents}, total files: {len(agents_files)}")
 
-# 4. Skills Check (74 skills + 18 references)
+# 4. Skills Check (95 skills + 19 references)
 print("\n--- 4. Skills Check ---")
 skills_dir = ".claude/skills"
 check(os.path.exists(skills_dir), ".claude/skills exists", "Missing skills directory")
 skill_folders = [d for d in os.listdir(skills_dir) if os.path.isdir(os.path.join(skills_dir, d))]
 print(f"Found {len(skill_folders)} skill folders in {skills_dir}")
-check(len(skill_folders) == 74 and all(d.startswith("saas-") for d in skill_folders), "Exactly 74 SaaS skills present with saas- prefix", f"Found {len(skill_folders)}")
+check(len(skill_folders) == 95 and all(d.startswith("saas-") for d in skill_folders), "Exactly 95 SaaS skills present with saas- prefix", f"Found {len(skill_folders)}")
 
 skills_with_references = [
     "saas-adopt", "saas-architecture-decision", "saas-architecture-review", "saas-brainstorm",
     "saas-create-architecture", "saas-create-epics", "saas-create-stories", "saas-design-system",
     "saas-dev-story", "saas-gate-check", "saas-prototype", "saas-review-all-prds", "saas-setup-stack",
-    "saas-smoke-check", "saas-story-done", "saas-story-readiness", "saas-test-setup", "saas-ux-design"
+    "saas-smoke-check", "saas-story-done", "saas-story-readiness", "saas-test-setup", "saas-ux-design",
+    "saas-lgpd-audit"
 ]
 
 missing_refs = []
@@ -99,7 +101,7 @@ for sk in skills_with_references:
     if not (os.path.exists(ref_dir) and len(os.listdir(ref_dir)) > 0):
         missing_refs.append(sk)
 
-check(len(missing_refs) == 0, "All 18 complex skills have references/", f"Missing references in: {missing_refs}")
+check(len(missing_refs) == 0, "All 19 complex skills have references/", f"Missing references in: {missing_refs}")
 
 # 5. Director Gates Check (28 Canonical + Legacy Aliases + Verdicts)
 print("\n--- 5. Director Gates Check ---")
@@ -274,10 +276,10 @@ try:
     with open("studio-tests/catalog.yaml", "r", encoding="utf-8") as f:
         cat_data = yaml.safe_load(f)
     cat_skills = cat_data.get("skills", [])
-    check(len(cat_skills) == 74, "catalog.yaml has exactly 74 skills", f"Found {len(cat_skills)}")
-    check(all(s.get("name", "").startswith("saas-") for s in cat_skills), "All 74 skills in catalog.yaml have saas- prefix", "Some skills lack saas- prefix")
+    check(len(cat_skills) == 95, "catalog.yaml has exactly 95 skills", f"Found {len(cat_skills)}")
+    check(all(s.get("name", "").startswith("saas-") for s in cat_skills), "All 95 skills in catalog.yaml have saas- prefix", "Some skills lack saas- prefix")
     missing_specs = [s.get("name") for s in cat_skills if not (s.get("spec") and os.path.exists(s["spec"]))]
-    check(len(missing_specs) == 0, "All 74 skill spec files in catalog.yaml exist", f"Missing specs: {missing_specs}")
+    check(len(missing_specs) == 0, "All 95 skill spec files in catalog.yaml exist", f"Missing specs: {missing_specs}")
 except Exception as e:
     ERRORS.append(f"catalog.yaml parse error: {e}")
 

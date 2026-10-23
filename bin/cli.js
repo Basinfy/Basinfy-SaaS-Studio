@@ -174,7 +174,7 @@ function installGlobal(targets, force) {
       gPaths.antigravity.studioSkill,
       force
     );
-    // Also copy all 74 saas-* workflow skills so every /saas-* command registers natively in Antigravity
+    // Also copy all 95 saas-* workflow skills so every /saas-* command registers natively in Antigravity
     const skillsSource = path.join(PKG_ROOT, '.claude', 'skills');
     if (fs.existsSync(skillsSource)) {
       const skillDirs = fs.readdirSync(skillsSource);

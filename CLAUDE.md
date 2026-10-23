@@ -1,6 +1,6 @@
 # Basinfy SaaS Studio -- Autonomous SaaS & Software Studio Agent Architecture
 
-Full-lifecycle SaaS and modern software development managed through 49 coordinated Claude Code subagents across 7 lifecycle phases. Each agent owns a specific technical or strategic domain, enforcing strict separation of concerns, architectural discipline, and enterprise software quality.
+Full-lifecycle SaaS and modern software development managed through 50 coordinated Claude Code subagents across 7 lifecycle phases. Each agent owns a specific technical or strategic domain, enforcing strict separation of concerns, architectural discipline, and enterprise software quality.
 
 ## Technology Stack
 
@@ -78,10 +78,11 @@ Read `.claude/docs/context-management.md` on demand — it is a reference, not s
 
 ## Studio Workflows & Slash Commands (/saas-*)
 
-Basinfy SaaS Studio provides 74 specialized workflows covering the full lifecycle of software development:
+Basinfy SaaS Studio provides 95 specialized workflows covering the full lifecycle of software development:
 - **First-time Onboarding & Diagnosis**: /saas-start, /saas-help, /saas-setup-stack, /saas-project-stage-detect
 - **Product & Specifications**: /saas-brainstorm, /saas-map-features, /saas-design-system, /saas-create-architecture, /saas-architecture-decision
 - **Sprints & Implementation**: /saas-sprint-plan, /saas-create-epics, /saas-create-stories, /saas-dev-story, /saas-story-done
-- **Quality, Security & Launch**: /saas-code-review, /saas-security-audit, /saas-perf-profile, /saas-gate-check, /saas-release-checklist, /saas-launch-checklist
+- **Privacy & Security**: /saas-lgpd, /saas-team-lgpd, /saas-security-audit
+- **Quality & Launch**: /saas-code-review, /saas-perf-profile, /saas-gate-check, /saas-release-checklist, /saas-launch-checklist
 
 Run /saas-help at any time to inspect the full workflow catalog and receive recommendations based on the active stage.

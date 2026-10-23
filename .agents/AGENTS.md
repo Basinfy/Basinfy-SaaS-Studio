@@ -2,8 +2,8 @@
 
 This workspace operates under the **Basinfy SaaS Studio** autonomous engineering standard for full-lifecycle SaaS platforms, APIs, and modern cloud applications.
 
-## 1. Studio Architecture & 49 Specialized Agents
-The studio organizes 49 specialized agents into 3 distinct operational tiers:
+## 1. Studio Architecture & 50 Specialized Agents
+The studio organizes 50 specialized agents into 3 distinct operational tiers:
 - **Tier 1 — Strategic Directors (Claude Opus / MaxTurns: 30)**:
   - `product-director`: Guards product vision, ICP, UVP, positioning, pricing, and strategic scope.
   - `technical-director`: Enforces master software architecture, ADRs, scalability, and security posture.
@@ -20,9 +20,9 @@ The studio organizes 49 specialized agents into 3 distinct operational tiers:
   - `localization-lead`: Manages internationalization (i18n), translation tables, and RTL layouts.
 
 - **Tier 3 — Execution Specialists (Claude Sonnet / MaxTurns: 20)**:
-  - 38 dedicated engineering specialists across Frontend (Next.js, React, Tailwind, shadcn/ui), Backend (FastAPI, Python, Go, Node), Database (Supabase, PostgreSQL, Prisma, Drizzle), Payments (Stripe), Cloud & Infra (AWS, Cloudflare, Docker, K8s), Security, and QA.
+  - 39 dedicated engineering specialists across Frontend (Next.js, React, Tailwind, shadcn/ui), Backend (FastAPI, Python, Go, Node), Database (Supabase, PostgreSQL, Prisma, Drizzle), Payments (Stripe), Cloud & Infra (AWS, Cloudflare, Docker, K8s), Security, Privacy & DPO (dpo-privacy-specialist), and QA.
 
-## 2. 74 Slash Workflows (/saas-*)
+## 2. 95 Slash Workflows (/saas-*)
 Always interpret and execute commands prefixed with `/saas-*` according to the canonical skills in `.claude/skills/`:
 - **Onboarding & Discovery**: `/saas-start`, `/saas-help`, `/saas-setup-stack`, `/saas-project-stage-detect`, `/saas-brainstorm`
 - **Specifications & Architecture**: `/saas-design-system`, `/saas-create-architecture`, `/saas-architecture-decision`, `/saas-map-features`, `/saas-gate-check`
