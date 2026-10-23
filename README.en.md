@@ -10,13 +10,13 @@
 
 <p align="center">
   <strong>Autonomous SaaS & Online Software Engineering Studio for Claude Code</strong><br>
-  <em>Turn your Claude Code session into a coordinated 49-agent software development agency with 74 workflows and 28 governance gates.</em>
+  <em>Turn your Claude Code session into a coordinated 50-agent software development agency with 95 workflows and 28 governance gates.</em>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Architecture-Claude_Code_Multi--Agent-6366f1.svg" alt="Architecture" />
-  <img src="https://img.shields.io/badge/Specialized_Agents-49_Roster-10b981.svg" alt="Agents" />
-  <img src="https://img.shields.io/badge/Slash_Commands-74_Unique_(/saas--*)-3b82f6.svg" alt="Skills" />
+  <img src="https://img.shields.io/badge/Specialized_Agents-50_Roster-10b981.svg" alt="Agents" />
+  <img src="https://img.shields.io/badge/Slash_Commands-95_Unique_(/saas--*)-3b82f6.svg" alt="Skills" />
   <img src="https://img.shields.io/badge/Director_Gates-28_Formal_Gates-f59e0b.svg" alt="Gates" />
   <img src="https://img.shields.io/badge/Lifecycle_Phases-7_Stage_Pipeline-ec4899.svg" alt="Phases" />
   <img src="https://img.shields.io/badge/Languages-Python_•_TypeScript_•_Go_•_Node-3776ab.svg" alt="Languages" />
@@ -30,7 +30,7 @@
 Install and activate **Basinfy SaaS Studio** with a single command — with **zero dependencies** and instant startup. Works seamlessly across **Claude Code**, **Cursor**, **Antigravity / Gemini CLI**, **Windsurf**, **Cline**, and **GitHub Copilot**.
 
 ### 1. Global Installation (Recommended)
-Make all **49 agents** and **74 `/saas-*` commands** globally available in **any project or folder on your computer**:
+Make all **50 agents** and **95 `/saas-*` commands** globally available in **any project or folder on your computer**:
 
 ```bash
 # Install globally for ALL AI coding tools installed on your machine:
@@ -61,8 +61,8 @@ npx github:Basinfy/Basinfy-SaaS-Studio all --mode inject
 
 | Platform / Tool | Global Path | Workspace Configs | Slash Commands & Rules |
 | :--- | :--- | :--- | :--- |
-| **Claude Code** | `~/.claude/` | `.claude/`, `CLAUDE.md`, `project.yaml` | 74 skills (`/saas-*`), 49 agents, 28 gates |
-| **Antigravity / Gemini** | `~/.gemini/config/skills/` | `GEMINI.md`, `.agents/skills/`, MCP | All 74 skills + autonomous agent hierarchy |
+| **Claude Code** | `~/.claude/` | `.claude/`, `CLAUDE.md`, `project.yaml` | 95 skills (`/saas-*`), 50 agents, 28 gates |
+| **Antigravity / Gemini** | `~/.gemini/config/skills/` | `GEMINI.md`, `.agents/skills/`, MCP | All 95 skills + autonomous 50-agent hierarchy |
 | **Cursor** | `~/.cursor/rules/` | `.cursor/rules/saas-studio.mdc`, `.cursorrules` | Full SaaS Studio agent context & workflows |
 | **Windsurf** | `~/.codeium/windsurf/` | `.windsurf/rules/saas-studio.md`, `.windsurfrules`| Complete SaaS Studio SOP rules |
 | **Cline / Roo-Code** | - | `.clinerules` | Multi-agent autonomous instructions |
@@ -77,9 +77,9 @@ npx github:Basinfy/Basinfy-SaaS-Studio all --mode inject
 2. [Executive Overview](#-executive-overview)
 3. [Studio Architecture](#-studio-architecture)
 4. [Deterministic Autonomous Software Engineering SOPs](#-deterministic-autonomous-software-engineering-sops)
-5. [The 49-Agent Hierarchy](#-the-49-agent-hierarchy)
+5. [The 50-Agent Hierarchy](#-the-50-agent-hierarchy)
 6. [The 7-Phase Software Pipeline](#-the-7-phase-software-pipeline)
-7. [The 74 Slash Commands (`/saas-*`)](#-the-74-slash-commands-saas-)
+7. [The 95 Slash Commands (`/saas-*`)](#-the-95-slash-commands-saas-)
 8. [Director Gates & Quality Assurance](#-director-gates--quality-assurance)
 9. [Enterprise Security & Defensive Perimeter](#-enterprise-security--defensive-perimeter)
 10. [End-to-End Cloud Deployment & Publication](#-end-to-end-cloud-deployment--publication)
@@ -98,7 +98,7 @@ npx github:Basinfy/Basinfy-SaaS-Studio all --mode inject
 - **Hierarchical Governance (3 Tiers)**: Strategic vision owned by Claude Opus Directors; departmental execution managed by Claude Sonnet Leads; hands-on implementation performed by 38 specialized technical agents.
 - **Strict Collaboration Protocol**: Every critical mutation adheres to `Question -> Options -> Decision -> Draft -> Approval`. No silent file modifications.
 - **28 Formal Director Gates**: Phase transitions require objective sign-offs with standardized verdicts (`READY / CONCERNS / NOT READY`, `SOUND / LEAKY BOUNDARIES`, etc.).
-- **Collision-Proof Namespace (`/saas-*`)**: All 74 slash commands use the `/saas-` prefix, allowing coexistence with other Claude Code tools and extensions without namespace pollution.
+- **Collision-Proof Namespace (`/saas-*`)**: All 95 slash commands use the `/saas-` prefix, allowing coexistence with other Claude Code tools and extensions without namespace pollution.
 - **Production-Ready Security Controls**: Pre-commit hooks enforce zero API secret exposure, mandatory PostgreSQL Row Level Security (RLS), and cryptographic verification of Stripe webhooks using raw bodies.
 - **Durable Session Checkpointing**: `production/session-state/active.md` acts as an persistent state machine, surviving context compaction and session restarts.
 
@@ -146,7 +146,7 @@ flowchart TD
         YH --> WG["Write & Read Guards<br/>(Context Protection & Approval)"]
     end
 
-    subgraph AgentLayer["3. 49-Agent Tri-Tier Hierarchy"]
+    subgraph AgentLayer["3. 50-Agent Tri-Tier Hierarchy"]
         T1["Tier 1: 3 Strategic Directors<br/>(Claude Opus / MaxTurns: 30)"]
         T2["Tier 2: 8 Department Leads<br/>(Claude Sonnet / MaxTurns: 20-25)"]
         T3["Tier 3: 38 Technical Specialists<br/>(Frontend, Backend, DB, Stripe, Cloud, QA)"]
@@ -170,7 +170,7 @@ flowchart TD
     end
 
     subgraph ExecutionLayer["5. Deterministic Execution & Self-Test"]
-        SK["74 Unique Skills (/saas-*)<br/>(Dynamic Shell Injection)"]
+        SK["95 Unique Skills (/saas-*)<br/>(Dynamic Shell Injection)"]
         SC["35 Deterministic Scripts<br/>(ts-parse-check, prd-structure-check...)"]
         TESTS["studio-tests/<br/>(Continuous Self-Improvement & Audit)"]
     end
@@ -285,7 +285,7 @@ npx github:Basinfy/Basinfy-SaaS-Studio uninstall --clean-all -f
 
 ---
 
-## 👥 The 49-Agent Hierarchy
+## 👥 The 50-Agent Hierarchy
 
 ### Tier 1 — Strategic Directors (Claude Opus / MaxTurns: 30)
 | Agent | Role & Mandate | Tools & Constraints |
@@ -306,9 +306,10 @@ npx github:Basinfy/Basinfy-SaaS-Studio uninstall --clean-all -f
 | [`release-manager`](.claude/agents/release-manager.md) | Release Engineering | Semantic versioning (SemVer), release checklists, changelog generation, and deployments. |
 | [`localization-lead`](.claude/agents/localization-lead.md) | i18n & Localization | Translation tables, regional formatting, RTL layout compatibility, and string extraction. |
 
-### Tier 3 — Technical & Domain Specialists (Claude Sonnet / Inherit)
+### Tier 3 — Technical & Domain Specialists (39 Agents)
 * **Core Engineering & Cloud (12 Agents)**: `backend-engineer`, `cloud-infra-engineer`, `frontend-engineer`, `api-integrations-specialist`, `dev-tools-engineer`, `ai-engineer`, `web-perf-analyst`, `appsec-engineer`, `devops-engineer`, `billing-engineer` *(Stripe/Paddle)*, `database-architect`, `data-telemetry-engineer`.
 * **SaaS Stack Specialists (15 Agents)**: `nextjs-specialist`, `react-specialist`, `tailwind-shadcn-specialist`, `supabase-specialist`, `prisma-drizzle-specialist`, `fastapi-specialist`, `python-backend-specialist`, `go-specialist`, `queue-worker-specialist`, `auth-security-specialist`, `cloudflare-specialist`, `aws-specialist`, `docker-k8s-specialist`, `realtime-websockets-specialist`, `email-messaging-specialist`.
+* **Privacy, LGPD & Governance (1 Agent)**: `dpo-privacy-specialist` *(Data Protection Officer, LGPD/GDPR compliance, DPIA/RIPD & ROPA authoring)*.
 * **Product, UX, QA & Ops (11 Agents)**: `user-flow-architect`, `ux-designer`, `ui-motion-designer`, `pricing-economist`, `technical-writer`, `onboarding-specialist`, `rapid-prototyper`, `qa-manual-tester`, `accessibility-auditor` *(WCAG 2.2 AA)*, `sre-observability-engineer`, `customer-success-ops`.
 
 ---
@@ -331,7 +332,7 @@ Every SaaS project advances through a structured 7-stage lifecycle machine defin
 
 ---
 
-## 🛠 The 74 Slash Commands (`/saas-*`)
+## 🛠 The 95 Slash Commands (`/saas-*`)
 
 All slash commands reside in [`.claude/skills/`](.claude/skills/) and feature dynamic configuration injection:
 
@@ -423,6 +424,29 @@ Phase 7: Hardening, Release & Operations (20)
   /saas-tech-debt             Maintain, prioritize, and track the technical debt register.
   /saas-skill-test            Automated testing framework verifying all studio skills and agents.
   /saas-skill-improve         Self-improvement loop (test-fix-retest) refining studio prompts.
+
+Phase 8: Privacy, LGPD & Regulatory Compliance (21)
+  /saas-lgpd                  Central compliance control plane: LGPD & GDPR program management.
+  /saas-team-lgpd             Privacy squad orchestration (DPO, AppSec, Backend, DB, Legal).
+  /saas-lgpd-audit            Full data protection readiness audit, risk mapping, and gap analysis.
+  /saas-lgpd-legal-basis      Maps and formalizes lawful basis (Art. 7/11 LGPD) per data flow.
+  /saas-lgpd-data-mapping     Lifecycle data mapping: ingestion, processing, sharing, and disposal.
+  /saas-lgpd-ropa             Authors and maintains official ROPA (Record of Processing Activities).
+  /saas-lgpd-ripd             Authors Data Protection Impact Assessment (RIPD / DPIA) for high risks.
+  /saas-lgpd-consent-schema   Granular consent capture schema, audit trail, and 1-click revocation.
+  /saas-lgpd-dsar             Automated Data Subject Access Request engine (access, erase, export).
+  /saas-lgpd-privacy-policy   Drafts transparent, compliant Privacy Policies, Terms, and Cookie banners.
+  /saas-lgpd-incident-response Security incident runbook with mandatory 72-hour ANPD/DPA notifications.
+  /saas-lgpd-dpo-encarregado  Configures official DPO contact channels and governance protocols.
+  /saas-lgpd-dpa              Generates Data Processing Agreements (DPAs) for vendors and operators.
+  /saas-lgpd-international-transfer Cross-border transfer audits and standard contractual clauses (SCCs).
+  /saas-lgpd-vendor-audit     Third-party sub-processor privacy audit and security classification.
+  /saas-lgpd-audit-logging    Tamper-evident audit logs tracking all personal data access and mutation.
+  /saas-lgpd-encryption-keys  Cryptographic key management (KMS, envelope encryption, rotation).
+  /saas-lgpd-anonymization    Irreversible data anonymization and pseudonymization techniques.
+  /saas-lgpd-retention-erasure Automated data retention policies and scheduled database purge jobs.
+  /saas-lgpd-eca-digital-minors Enhanced safeguards and parental verification for minors (ECA Digital).
+  /saas-lgpd-legacy-retrofit  Remediation roadmap to retrofit legacy databases and schemas into compliance.
 ```
 
 ---
@@ -564,7 +588,7 @@ performance:
 
 ## 🚀 Quickstart Guide & Practical Tutorials
 
-**Basinfy SaaS Studio** operates seamlessly in two primary scenarios: building a brand-new SaaS product from scratch, or supercharging an existing repository with autonomous AI governance and 49 specialized agents.
+**Basinfy SaaS Studio** operates seamlessly in two primary scenarios: building a brand-new SaaS product from scratch, or supercharging an existing repository with autonomous AI governance and 50 specialized agents.
 
 ---
 
@@ -688,7 +712,7 @@ Integrate your existing codebase into the studio's governance:
 /saas-reverse-document
 ```
 
-#### 5. Build New Features with 49 Specialized Agents
+#### 5. Build New Features with 50 Specialized Agents
 Leverage the agency hierarchy to accelerate feature development:
 ```bash
 # Rapidly specify a new minor feature:
@@ -718,7 +742,7 @@ Elevate the quality and security of legacy code:
 | Scenario | Install Command | First AI Command | Primary Goal |
 | :--- | :--- | :--- | :--- |
 | **New Project (From Scratch)** | `npx github:Basinfy/Basinfy-SaaS-Studio all --target ./app` | `/saas-start` | Build an entire SaaS from idea to cloud deploy with disciplined architecture |
-| **Existing Project (Inject)** | `npx github:Basinfy/Basinfy-SaaS-Studio all --mode inject` | `/saas-project-stage-detect` | Add 49 agents & 74 workflows without touching existing application code |
+| **Existing Project (Inject)** | `npx github:Basinfy/Basinfy-SaaS-Studio all --mode inject` | `/saas-project-stage-detect` | Add 50 agents & 95 workflows without touching existing application code |
 | **Global Machine Install** | `npx github:Basinfy/Basinfy-SaaS-Studio all --global` | `/saas-help` | Enable all `/saas-*` workflows across every folder on your computer |
 
 ---
@@ -733,7 +757,7 @@ Before executing code searches, reading files, or inspecting symbols, the studio
 - Whether Basinfy MCP tools (`basinfy_session_start`, `basinfy_search`, `basinfy_locate`, `basinfy_prepare_edit`, `basinfy_read`, `basinfy_impact`, etc.) or the `basinfy` CLI are active.
 
 ### 2. When Basinfy is Detected (`.basinfy/` present)
-When Basinfy is detected, all 49 agents and 74 skills immediately route discovery through the **Basinfy Smart Indexing Protocol**:
+When Basinfy is detected, all 50 agents and 95 skills immediately route discovery through the **Basinfy Smart Indexing Protocol**:
 - **Symbols & Functions**: Uses `basinfy_prepare_edit` or `basinfy_locate` to obtain definitions, gate checks, and dependency graphs in a single call.
 - **Section Reading & Search**: Uses `basinfy_search` and `basinfy_read` for high-density retrieval without manual line offsets or regex scanning.
 - **New File Scaffolding**: Runs `basinfy_prepare_create` before creating modules to enforce clean architectural boundaries.
