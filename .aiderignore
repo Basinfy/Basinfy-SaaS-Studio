@@ -1,0 +1,8 @@
+.basinfy/
+production/session-logs/
+production/session-state/
+studio-tests/bench/
+*.log
+*.tmp
+.active-state.hash
+.session-end.hash

@@ -1,0 +1,30 @@
+{
+  "docs": [],
+  "customCommands": [
+    {
+      "name": "saas-start",
+      "description": "Start guided SaaS Studio onboarding workflow",
+      "prompt": "Read .claude/skills/saas-start/SKILL.md or .agents/skills/saas-start/SKILL.md and execute the onboarding workflow."
+    },
+    {
+      "name": "saas-help",
+      "description": "View full catalog of 95 SaaS engineering workflows",
+      "prompt": "Read .claude/skills/saas-help/SKILL.md and display the studio workflow directory."
+    },
+    {
+      "name": "saas-dev-story",
+      "description": "Implement a story using the 5-step collaborative loop",
+      "prompt": "Read .claude/skills/saas-dev-story/SKILL.md and execute the story development workflow."
+    },
+    {
+      "name": "saas-security-audit",
+      "description": "Run AppSec, tenant isolation, and RLS security audit",
+      "prompt": "Read .claude/skills/saas-security-audit/SKILL.md and execute the security audit."
+    },
+    {
+      "name": "saas-qa-plan",
+      "description": "Author QA test pyramid plan for the active sprint",
+      "prompt": "Read .claude/skills/saas-qa-plan/SKILL.md and generate the QA plan."
+    }
+  ]
+}

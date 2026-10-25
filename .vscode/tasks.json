@@ -1,0 +1,56 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Verify Studio Integrity",
+      "type": "shell",
+      "command": "python",
+      "args": ["studio-tests/verify-integrity.py"],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Sync Agent Skills",
+      "type": "shell",
+      "command": "python",
+      "args": ["scripts/sync-agent-skills.py"],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Studio Benchmark",
+      "type": "shell",
+      "command": "python",
+      "args": ["studio-tests/bench/run-bench.py"],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Launch Studio CLI",
+      "type": "shell",
+      "command": "node",
+      "args": ["bin/cli.js"],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

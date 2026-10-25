@@ -427,7 +427,43 @@ for scan_dir in [".claude", "docs", "design", "studio-tests"]:
 
 check(len(violations) == 0, "Zero occurrences of purged repos, ccgs, or 'SaaS software product'", f"Violations: {violations}")
 
-# 14. Final Result Summary
+# 14. Multi-LLM and Cross-Platform Integrity Check
+print("\n--- 14. Multi-LLM and Cross-Platform Integrity Check ---")
+multi_llm_files = [
+    "CLAUDE.md", "GEMINI.md", "AGENTS.md", "CODEX.md",
+    ".cursorrules", ".cursor/rules/saas-studio.mdc", ".cursor/mcp.json",
+    ".codex/instructions.md", ".codex/hooks.json",
+    ".vscode/settings.json", ".vscode/extensions.json", ".vscode/tasks.json",
+    ".github/copilot-instructions.md", ".github/prompts/saas-start.prompt.md", ".github/prompts/saas-dev-story.prompt.md",
+    ".windsurfrules", ".windsurf/rules/saas-studio.md",
+    ".clinerules", ".roomodes",
+    ".continue/rules.md", ".continue/config.json",
+    ".aider.conf.yml", ".aiderignore",
+    ".devin/AGENTS.md",
+    ".zed/settings.json"
+]
+
+missing_llm_files = [f for f in multi_llm_files if not os.path.exists(f)]
+check(len(missing_llm_files) == 0, "All multi-LLM configuration files exist", f"Missing: {missing_llm_files}")
+
+parity_rule_files = [
+    "AGENTS.md", "GEMINI.md", "CODEX.md",
+    ".cursorrules", ".windsurfrules", ".clinerules",
+    ".continue/rules.md", ".devin/AGENTS.md", ".github/copilot-instructions.md"
+]
+
+parity_failures = []
+for rf in parity_rule_files:
+    if os.path.exists(rf):
+        c = open(rf, "r", encoding="utf-8", errors="ignore").read()
+        if "50 Specialized Agents" not in c and "50 specialized agents" not in c and "50 agentes" not in c:
+            parity_failures.append(f"{rf}: missing 50 agents mention")
+        if "95" not in c:
+            parity_failures.append(f"{rf}: missing 95 workflows mention")
+
+check(len(parity_failures) == 0, "Exact rules parity (50 agents, 95 workflows) across all AI platforms", f"Failures: {parity_failures}")
+
+# 15. Final Result Summary
 print("\n=================================================================")
 if len(ERRORS) == 0:
     print(" >>> AUDIT RESULT: 100% SUCCESS — STUDIO FULLY COMPLIANT <<< ")

@@ -2,8 +2,8 @@
 
 This workspace operates under the **Basinfy SaaS Studio** autonomous engineering standard for full-lifecycle SaaS platforms, APIs, and modern cloud applications.
 
-## 1. Studio Architecture & 49 Specialized Agents
-The studio organizes 49 specialized agents into 3 distinct operational tiers:
+## 1. Studio Architecture & 50 Specialized Agents
+The studio organizes 50 specialized agents into 3 distinct operational tiers:
 - **Tier 1 — Strategic Directors (Claude Opus / MaxTurns: 30)**:
   - `product-director`: Guards product vision, ICP, UVP, positioning, pricing, and strategic scope.
   - `technical-director`: Enforces master software architecture, ADRs, scalability, and security posture.
@@ -20,10 +20,10 @@ The studio organizes 49 specialized agents into 3 distinct operational tiers:
   - `localization-lead`: Manages internationalization (i18n), translation tables, and RTL layouts.
 
 - **Tier 3 — Execution Specialists (Claude Sonnet / MaxTurns: 20)**:
-  - 38 dedicated engineering specialists across Frontend (Next.js, React, Tailwind, shadcn/ui), Backend (FastAPI, Python, Go, Node), Database (Supabase, PostgreSQL, Prisma, Drizzle), Payments (Stripe), Cloud & Infra (AWS, Cloudflare, Docker, K8s), Security, and QA.
+  - 39 dedicated engineering specialists across Frontend (Next.js, React, Tailwind, shadcn/ui), Backend (FastAPI, Python, Go, Node), Database (Supabase, PostgreSQL, Prisma, Drizzle), Payments (Stripe), Cloud & Infra (AWS, Cloudflare, Docker, K8s), Security, Privacy & DPO (dpo-privacy-specialist), and QA.
 
-## 2. 74 Slash Workflows (/saas-*)
-Always interpret and execute commands prefixed with `/saas-*` according to the canonical skills in `.claude/skills/`:
+## 2. 95 Slash Workflows (/saas-*)
+Always interpret and execute commands prefixed with `/saas-*` according to the canonical skills in `.claude/skills/` or `.agents/skills/`:
 - **Onboarding & Discovery**: `/saas-start`, `/saas-help`, `/saas-setup-stack`, `/saas-project-stage-detect`, `/saas-brainstorm`
 - **Specifications & Architecture**: `/saas-design-system`, `/saas-create-architecture`, `/saas-architecture-decision`, `/saas-map-features`, `/saas-gate-check`
 - **Sprints & Implementation**: `/saas-sprint-plan`, `/saas-create-epics`, `/saas-create-stories`, `/saas-dev-story`, `/saas-story-done`, `/saas-code-review`
@@ -59,7 +59,20 @@ Always determine the code discovery mechanism before reading, searching, or modi
 ## 7. Dynamic Human Interface (Portuguese & English) / English Engine
 The studio provides full dynamic bilingual support for the human developer while keeping the technical engine in English:
 - **Dynamic Language Matching & Translation for User Prompts**:
-  - If the user communicates in **Portuguese** (or `project.yaml` defines `locale: pt-BR`): All interactive questions (`AskUserQuestion`, `ask_question`), option choices, confirmation dialogs, and next-step proposals MUST be translated and rendered in **Brazilian Portuguese (PT-BR)**.
-  - **CRITICAL OVERRIDE**: This rule strictly OVERRIDES any English question strings or templates found in skills or documentation (e.g., if a skill says `Ask: "Does this rule summary look complete?" Options: Yes...`, you MUST translate to: `Pergunta: "O resumo das regras do control manifest parece completo e pronto para ser escrito?" Opções: (Recomendado) Sim — revisar e escrever docs/architecture/control-manifest.md`). NEVER display English questions or options to a Portuguese developer.
+  - If the user communicates in **Portuguese** (or `project.yaml` defines `locale: pt-BR`): All interactive questions (`ask_question`), option choices, confirmation dialogs, and next-step proposals MUST be translated and rendered in **Brazilian Portuguese (PT-BR)**.
+  - **CRITICAL OVERRIDE**: This rule strictly OVERRIDES any English question strings or templates found in skills or documentation. NEVER display English questions or options to a Portuguese developer.
   - If the user communicates in **English** (or `locale: en`): All questions, options, and dialogs are rendered in **English**.
 - **English Engineering Engine**: In both cases, the agent's internal reasoning, code generation, unit tests, PRD/ADR authoring, git commits, and subagent delegation execute in **English** (EN) to maximize reasoning depth and benchmark code quality.
+
+## 8. Unskippable Workflow Autotrigger Table
+Always-on prose is budget-capped. Prefer loading on-demand skills immediately when initiating any of the following lifecycle actions:
+- **Onboarding & Setup**: Read `.claude/skills/saas-start/SKILL.md` or `.claude/skills/saas-setup-stack/SKILL.md`
+- **Architecture & ADRs**: Read `.claude/skills/saas-create-architecture/SKILL.md` or `.claude/skills/saas-architecture-decision/SKILL.md`
+- **PRDs & Design System**: Read `.claude/skills/saas-design-system/SKILL.md` or `.claude/skills/saas-design-tokens/SKILL.md`
+- **Auth, RBAC & Multi-Tenancy**: Read `.claude/skills/saas-team-auth-access/SKILL.md`
+- **Stripe Billing & Webhooks**: Read `.claude/skills/saas-team-billing/SKILL.md`
+- **Sprint & Epics Planning**: Read `.claude/skills/saas-sprint-plan/SKILL.md` or `.claude/skills/saas-create-stories/SKILL.md`
+- **Story Implementation**: Read `.claude/skills/saas-dev-story/SKILL.md`
+- **Story Sign-off & QA**: Read `.claude/skills/saas-story-done/SKILL.md` or `.claude/skills/saas-qa-plan/SKILL.md`
+- **Security Audit & RLS Gate**: Read `.claude/skills/saas-security-audit/SKILL.md`
+- **Release & Deployment**: Read `.claude/skills/saas-release-checklist/SKILL.md`

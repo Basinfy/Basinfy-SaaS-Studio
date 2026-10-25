@@ -27,12 +27,12 @@
 
 ## 🚀 Quick Install via NPX (Universal Multi-LLM)
 
-Install and activate **Basinfy SaaS Studio** with a single command — with **zero dependencies** and instant startup. Works seamlessly across **Claude Code**, **Cursor**, **Antigravity / Gemini CLI**, **Windsurf**, **Cline**, and **GitHub Copilot**.
+Install and activate **Basinfy SaaS Studio** with a single command — with **zero dependencies** and instant startup (< 1s). Works natively across **Claude Code**, **Cursor**, **Antigravity / Gemini CLI**, **OpenAI Codex**, **VS Code & GitHub Copilot**, **Windsurf**, **Cline & Roo Code**, **Continue.dev**, **Aider**, **Devin**, and **Zed**.
 
 ### 1. Global Installation (Recommended)
-Make all **50 agents** and **95 `/saas-*` commands** globally available in **any project or folder on your computer**:
+Make all **50 agents** and **95 /saas-* commands** globally available in **any project or folder on your computer**:
 
-```bash
+`ash
 # Install globally for ALL AI coding tools installed on your machine:
 npx github:Basinfy/Basinfy-SaaS-Studio all --global
 
@@ -40,13 +40,14 @@ npx github:Basinfy/Basinfy-SaaS-Studio all --global
 npx github:Basinfy/Basinfy-SaaS-Studio claude --global
 npx github:Basinfy/Basinfy-SaaS-Studio antigravity --global
 npx github:Basinfy/Basinfy-SaaS-Studio cursor --global
+npx github:Basinfy/Basinfy-SaaS-Studio codex --global
 npx github:Basinfy/Basinfy-SaaS-Studio windsurf --global
-```
+`
 
 ### 2. Local Project Installation & Scaffolding
 Create a fresh SaaS studio or inject into an existing codebase:
 
-```bash
+`ash
 # Interactive guided setup (asks questions and configures your environment):
 npx github:Basinfy/Basinfy-SaaS-Studio
 
@@ -55,19 +56,27 @@ npx github:Basinfy/Basinfy-SaaS-Studio all --target ./my-saas-app
 
 # Inject AI Studio into an existing Next.js / FastAPI project without overwriting app files:
 npx github:Basinfy/Basinfy-SaaS-Studio all --mode inject
-```
+
+# Install configurations specifically for VS Code & Copilot, Cursor, or Codex:
+npx github:Basinfy/Basinfy-SaaS-Studio vscode
+npx github:Basinfy/Basinfy-SaaS-Studio cursor
+npx github:Basinfy/Basinfy-SaaS-Studio codex
+`
 
 ### Supported Platforms Matrix:
 
 | Platform / Tool | Global Path | Workspace Configs | Slash Commands & Rules |
 | :--- | :--- | :--- | :--- |
-| **Claude Code** | `~/.claude/` | `.claude/`, `CLAUDE.md`, `project.yaml` | 95 skills (`/saas-*`), 50 agents, 28 gates |
-| **Antigravity / Gemini** | `~/.gemini/config/skills/` | `GEMINI.md`, `.agents/skills/`, MCP | All 95 skills + autonomous 50-agent hierarchy |
-| **Cursor** | `~/.cursor/rules/` | `.cursor/rules/saas-studio.mdc`, `.cursorrules` | Full SaaS Studio agent context & workflows |
-| **Windsurf** | `~/.codeium/windsurf/` | `.windsurf/rules/saas-studio.md`, `.windsurfrules`| Complete SaaS Studio SOP rules |
-| **Cline / Roo-Code** | - | `.clinerules` | Multi-agent autonomous instructions |
-| **Continue.dev** | - | `.continue/rules.md` | Standard prompt rules & context |
-| **Copilot & Devin** | - | `.github/`, `.devin/`, `AGENTS.md` | Open Agentic Standard conventions |
+| **Claude Code** | ~/.claude/ | .claude/, CLAUDE.md, project.yaml | 95 skills (/saas-*), 50 agents, 28 gates |
+| **Antigravity / Gemini** | ~/.gemini/config/skills/ | GEMINI.md, .agents/skills/, MCP | All 95 skills + autonomous 50-agent hierarchy |
+| **Cursor** | ~/.cursor/rules/ | .cursor/rules/saas-studio.mdc, .cursorrules, .cursor/mcp.json | Full SaaS Studio agent context, rules & native MCP |
+| **OpenAI Codex & ChatGPT** | ~/.codex/ | CODEX.md, .codex/instructions.md, .codex/hooks.json | Official OpenAI standard with hooks & engineering directives |
+| **VS Code & GitHub Copilot** | - | .vscode/, .github/copilot-instructions.md, .github/prompts/ | Workspace settings, tasks, extensions & slash prompts |
+| **Windsurf** | ~/.codeium/windsurf/ | .windsurf/rules/saas-studio.md, .windsurfrules | Complete SaaS Studio SOP rules |
+| **Cline & Roo-Code** | ~/.clinerules | .clinerules, .roomodes | Autonomous instructions & custom modes (Directors, Leads, Devs) |
+| **Continue.dev** | ~/.continue/ | .continue/rules.md, .continue/config.json | Standard prompt rules & custom commands (/saas-*) |
+| **Aider** | ~/.aider.conf.yml | .aider.conf.yml, .aiderignore | Auto-context configuration & test command |
+| **Devin & Zed** | - | .devin/, .zed/, AGENTS.md | Universal open agentic standard conventions |
 
 ---
 

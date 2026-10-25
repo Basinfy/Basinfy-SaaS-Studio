@@ -2,7 +2,8 @@
 
 /**
  * Basinfy SaaS Studio — Autonomous Multi-LLM Installer & Scaffolder
- * Compatible with Claude Code, Cursor, Antigravity / Gemini CLI, Windsurf, Cline & Copilot
+ * Compatible with Claude Code, Cursor, Antigravity / Gemini CLI, OpenAI Codex,
+ * VS Code & GitHub Copilot, Windsurf, Cline & Roo Code, Continue.dev, Aider, Devin & Zed.
  * Zero external dependencies — pure Node.js standard library.
  */
 
@@ -35,7 +36,7 @@ ${c.cyan}${c.bold}   ██████╗   █████╗  █████
    ██████╔╝ ███████║ ███████╗██║██╔██╗ ██║█████╗   ╚████╔╝ 
    ██╔══██╗ ██╔══██║ ╚════██║██║██║╚██╗██║██╔══╝    ╚██╔╝  
    ██████╔╝ ██║  ██║ ███████║██║██║ ╚████║██║        ██║   ${c.reset}
-   ${c.magenta}${c.bold}SAAS STUDIO${c.reset} ${c.dim}v${pkgJson.version} — Autonomous Engineering Platform${c.reset}
+   ${c.magenta}${c.bold}SAAS STUDIO${c.reset} ${c.dim}v${pkgJson.version} — Autonomous Multi-LLM Engineering Platform${c.reset}
   `);
 }
 
@@ -47,11 +48,16 @@ function printHelp() {
 ${c.bold}COMMANDS:${c.reset}
   ${c.cyan}all${c.reset}           Install & configure for ALL supported LLMs & IDEs
   ${c.cyan}claude${c.reset}        Install specifically for Claude Code (.claude/, CLAUDE.md)
-  ${c.cyan}antigravity${c.reset}   Install specifically for Antigravity & Gemini CLI (GEMINI.md, skills)
   ${c.cyan}cursor${c.reset}        Install specifically for Cursor (.cursor/, .cursorrules, mcp.json)
+  ${c.cyan}antigravity${c.reset}   Install specifically for Antigravity & Gemini CLI (GEMINI.md, skills)
+  ${c.cyan}codex${c.reset}         Install specifically for OpenAI Codex & ChatGPT (CODEX.md, .codex/)
+  ${c.cyan}vscode${c.reset}        Install specifically for VS Code & Copilot (.vscode/, .github/)
   ${c.cyan}windsurf${c.reset}      Install specifically for Windsurf (.windsurf/, .windsurfrules)
-  ${c.cyan}cline${c.reset}         Install specifically for Cline / Roo-Code (.clinerules)
+  ${c.cyan}cline${c.reset}         Install specifically for Cline & Roo-Code (.clinerules, .roomodes)
   ${c.cyan}continue${c.reset}      Install specifically for Continue.dev (.continue/)
+  ${c.cyan}aider${c.reset}         Install specifically for Aider (.aider.conf.yml, .aiderignore)
+  ${c.cyan}devin${c.reset}         Install specifically for Devin (.devin/, AGENTS.md)
+  ${c.cyan}zed${c.reset}           Install specifically for Zed Editor (.zed/)
   ${c.cyan}init${c.reset}          Interactive guided installation wizard (default)
   ${c.cyan}update${c.reset}        Check and update studio framework to latest version from GitHub
   ${c.cyan}uninstall${c.reset}     Safely uninstall Basinfy SaaS Studio (global or local project)
@@ -63,7 +69,7 @@ ${c.bold}OPTIONS:${c.reset}
                       ${c.bold}scaffold${c.reset} (default) — Full new SaaS studio architecture
                       ${c.bold}inject${c.reset} — Add AI studio to an existing repo safely
   ${c.green}-f, --force${c.reset}       Skip confirmation prompts / overwrite existing files
-  ${c.green}--dry-run${c.reset}         Simulate uninstall without making actual changes
+  ${c.green}--dry-run${c.reset}         Simulate uninstall or installation without making actual changes
   ${c.green}--clean-all${c.reset}       Remove all scaffolded project folders during uninstall
   ${c.green}--keep-config${c.reset}     Preserve project.yaml during local uninstallation
   ${c.green}-v, --version${c.reset}     Show version
@@ -73,9 +79,13 @@ ${c.bold}EXAMPLES:${c.reset}
   ${c.dim}# Global install for all tools (available in ANY folder on your machine):${c.reset}
   npx github:Basinfy/Basinfy-SaaS-Studio all --global
 
-  ${c.dim}# Global install specifically for Antigravity or Claude Code:${c.reset}
-  npx github:Basinfy/Basinfy-SaaS-Studio antigravity --global
-  npx github:Basinfy/Basinfy-SaaS-Studio claude --global
+  ${c.dim}# Install specifically for Cursor or VS Code & Copilot:${c.reset}
+  npx github:Basinfy/Basinfy-SaaS-Studio cursor
+  npx github:Basinfy/Basinfy-SaaS-Studio vscode
+
+  ${c.dim}# Install specifically for OpenAI Codex or Antigravity / Gemini CLI:${c.reset}
+  npx github:Basinfy/Basinfy-SaaS-Studio codex
+  npx github:Basinfy/Basinfy-SaaS-Studio antigravity
 
   ${c.dim}# Create a brand new SaaS studio project in ./my-saas-app:${c.reset}
   npx github:Basinfy/Basinfy-SaaS-Studio all --target ./my-saas-app
@@ -92,9 +102,6 @@ ${c.bold}EXAMPLES:${c.reset}
 
   ${c.dim}# Simulate uninstall without deleting anything (dry-run):${c.reset}
   npx github:Basinfy/Basinfy-SaaS-Studio uninstall --global --dry-run
-
-  ${c.dim}# Uninstall from current local workspace:${c.reset}
-  npx github:Basinfy/Basinfy-SaaS-Studio uninstall
 `);
 }
 
@@ -152,8 +159,26 @@ function getGlobalPaths() {
       rules: path.join(home, '.cursor', 'rules'),
       skills: path.join(home, '.cursor', 'skills'),
     },
+    codex: {
+      dir: path.join(home, '.codex'),
+    },
     windsurf: {
       rules: path.join(home, '.codeium', 'windsurf', 'rules'),
+    },
+    cline: {
+      rules: path.join(home, '.clinerules'),
+    },
+    continue: {
+      rules: path.join(home, '.continue', 'rules.md'),
+      config: path.join(home, '.continue', 'config.json'),
+    },
+    aider: {
+      conf: path.join(home, '.aider.conf.yml'),
+    },
+    agents: {
+      dir: path.join(home, '.agents'),
+      skillsDir: path.join(home, '.agents', 'skills'),
+      agentsMd: path.join(home, '.agents', 'AGENTS.md'),
     },
   };
 }
@@ -179,15 +204,13 @@ function installGlobal(targets, force) {
 
   // 2. Antigravity / Gemini CLI
   if (targets.antigravity || targets.all) {
-    process.stdout.write(`  ${c.cyan}•${c.reset} Installing globally for Antigravity (~/.gemini/config/skills/)... `);
+    process.stdout.write(`  ${c.cyan}•${c.reset} Installing globally for Antigravity & Gemini CLI (~/.gemini/config/skills/)... `);
     let aCount = 0;
-    // Install primary studio skill
     aCount += copyRecursive(
       path.join(PKG_ROOT, '.agents', 'skills', 'basinfy-saas-studio'),
       gPaths.antigravity.studioSkill,
       force
     );
-    // Also copy all 95 saas-* workflow skills so every /saas-* command registers natively in Antigravity
     const skillsSource = path.join(PKG_ROOT, '.claude', 'skills');
     if (fs.existsSync(skillsSource)) {
       const skillDirs = fs.readdirSync(skillsSource);
@@ -215,7 +238,16 @@ function installGlobal(targets, force) {
     console.log(`${c.green}✔ Done (${curCount} files)${c.reset}`);
   }
 
-  // 4. Windsurf
+  // 4. OpenAI Codex
+  if (targets.codex || targets.all) {
+    process.stdout.write(`  ${c.cyan}•${c.reset} Installing globally for OpenAI Codex (~/.codex/)... `);
+    let codexCount = 0;
+    codexCount += copyRecursive(path.join(PKG_ROOT, '.codex'), gPaths.codex.dir, force);
+    totalFiles += codexCount;
+    console.log(`${c.green}✔ Done (${codexCount} files)${c.reset}`);
+  }
+
+  // 5. Windsurf
   if (targets.windsurf || targets.all) {
     process.stdout.write(`  ${c.cyan}•${c.reset} Installing globally for Windsurf (~/.codeium/windsurf/)... `);
     let wCount = 0;
@@ -224,11 +256,42 @@ function installGlobal(targets, force) {
     console.log(`${c.green}✔ Done (${wCount} files)${c.reset}`);
   }
 
+  // 6. Cline & Roo Code
+  if (targets.cline || targets.all) {
+    process.stdout.write(`  ${c.cyan}•${c.reset} Installing globally for Cline & Roo (~/.clinerules)... `);
+    let clCount = 0;
+    if (fs.existsSync(path.join(PKG_ROOT, '.clinerules'))) {
+      fs.copyFileSync(path.join(PKG_ROOT, '.clinerules'), gPaths.cline.rules);
+      clCount++;
+    }
+    totalFiles += clCount;
+    console.log(`${c.green}✔ Done (${clCount} files)${c.reset}`);
+  }
+
+  // 7. Continue.dev
+  if (targets.continue || targets.all) {
+    process.stdout.write(`  ${c.cyan}•${c.reset} Installing globally for Continue.dev (~/.continue/)... `);
+    let contCount = 0;
+    contCount += copyRecursive(path.join(PKG_ROOT, '.continue'), path.dirname(gPaths.continue.rules), force);
+    totalFiles += contCount;
+    console.log(`${c.green}✔ Done (${contCount} files)${c.reset}`);
+  }
+
+  // 8. Universal Open Agents (~/.agents/)
+  if (targets.agents || targets.all) {
+    process.stdout.write(`  ${c.cyan}•${c.reset} Installing globally for Universal Open Agents (~/.agents/)... `);
+    let agCount = 0;
+    agCount += copyRecursive(path.join(PKG_ROOT, '.agents'), gPaths.agents.dir, force);
+    totalFiles += agCount;
+    console.log(`${c.green}✔ Done (${agCount} files)${c.reset}`);
+  }
+
   console.log(`\n${c.green}${c.bold}🎉 Global installation successfully completed!${c.reset} (${totalFiles} files installed)`);
-  console.log(`\n${c.bold}Now you can use Basinfy SaaS Studio in ANY project on this machine:${c.reset}`);
+  console.log(`\n${c.bold}Basinfy SaaS Studio is now available globally across all AI coding assistants:${c.reset}`);
   console.log(`  ${c.cyan}• Claude Code:${c.reset} Type ${c.bold}/saas-help${c.reset} or ${c.bold}/saas-start${c.reset} in any terminal session.`);
-  console.log(`  ${c.cyan}• Antigravity:${c.reset} The ${c.bold}basinfy-saas-studio${c.reset} and all ${c.bold}/saas-*${c.reset} skills are now active.`);
-  console.log(`  ${c.cyan}• Cursor / Windsurf:${c.reset} Global studio rules are active in every chat.`);
+  console.log(`  ${c.cyan}• Antigravity & Gemini CLI:${c.reset} The ${c.bold}basinfy-saas-studio${c.reset} and all 95 ${c.bold}/saas-*${c.reset} skills are active.`);
+  console.log(`  ${c.cyan}• Cursor / Windsurf / Codex:${c.reset} Studio rules and gates are active across all projects.`);
+  console.log(`  ${c.cyan}• VS Code / Copilot / Continue / Cline:${c.reset} Native rules and modes enabled.`);
 }
 
 // Local workspace installation executor
@@ -267,7 +330,7 @@ function installLocal(targetDir, targets, mode, force) {
 
   // 3. Antigravity & Gemini CLI
   if (targets.antigravity || targets.all) {
-    process.stdout.write(`  ${c.cyan}•${c.reset} Configuring Antigravity & Gemini (GEMINI.md, .agents/)... `);
+    process.stdout.write(`  ${c.cyan}•${c.reset} Configuring Antigravity & Gemini CLI (GEMINI.md, .agents/)... `);
     let count = 0;
     count += copyRecursive(path.join(PKG_ROOT, '.agents'), path.join(dest, '.agents'), force);
     count += copyRecursive(path.join(PKG_ROOT, 'GEMINI.md'), path.join(dest, 'GEMINI.md'), force);
@@ -276,7 +339,27 @@ function installLocal(targetDir, targets, mode, force) {
     console.log(`${c.green}✔ Done (${count} files)${c.reset}`);
   }
 
-  // 4. Windsurf
+  // 4. OpenAI Codex & ChatGPT
+  if (targets.codex || targets.all) {
+    process.stdout.write(`  ${c.cyan}•${c.reset} Configuring OpenAI Codex (CODEX.md, .codex/)... `);
+    let count = 0;
+    count += copyRecursive(path.join(PKG_ROOT, 'CODEX.md'), path.join(dest, 'CODEX.md'), force);
+    count += copyRecursive(path.join(PKG_ROOT, '.codex'), path.join(dest, '.codex'), force);
+    totalFiles += count;
+    console.log(`${c.green}✔ Done (${count} files)${c.reset}`);
+  }
+
+  // 5. VS Code & GitHub Copilot
+  if (targets.vscode || targets.copilot || targets.all) {
+    process.stdout.write(`  ${c.cyan}•${c.reset} Configuring VS Code & GitHub Copilot (.vscode/, .github/)... `);
+    let count = 0;
+    count += copyRecursive(path.join(PKG_ROOT, '.vscode'), path.join(dest, '.vscode'), force);
+    count += copyRecursive(path.join(PKG_ROOT, '.github'), path.join(dest, '.github'), force);
+    totalFiles += count;
+    console.log(`${c.green}✔ Done (${count} files)${c.reset}`);
+  }
+
+  // 6. Windsurf
   if (targets.windsurf || targets.all) {
     process.stdout.write(`  ${c.cyan}•${c.reset} Configuring Windsurf (.windsurf/, .windsurfrules)... `);
     let count = 0;
@@ -286,16 +369,17 @@ function installLocal(targetDir, targets, mode, force) {
     console.log(`${c.green}✔ Done (${count} files)${c.reset}`);
   }
 
-  // 5. Cline / Roo-Code
+  // 7. Cline & Roo-Code
   if (targets.cline || targets.all) {
-    process.stdout.write(`  ${c.cyan}•${c.reset} Configuring Cline / Roo-Code (.clinerules)... `);
+    process.stdout.write(`  ${c.cyan}•${c.reset} Configuring Cline & Roo-Code (.clinerules, .roomodes)... `);
     let count = 0;
     count += copyRecursive(path.join(PKG_ROOT, '.clinerules'), path.join(dest, '.clinerules'), force);
+    count += copyRecursive(path.join(PKG_ROOT, '.roomodes'), path.join(dest, '.roomodes'), force);
     totalFiles += count;
     console.log(`${c.green}✔ Done (${count} files)${c.reset}`);
   }
 
-  // 6. Continue.dev
+  // 8. Continue.dev
   if (targets.continue || targets.all) {
     process.stdout.write(`  ${c.cyan}•${c.reset} Configuring Continue.dev (.continue/)... `);
     let count = 0;
@@ -304,18 +388,28 @@ function installLocal(targetDir, targets, mode, force) {
     console.log(`${c.green}✔ Done (${count} files)${c.reset}`);
   }
 
-  // 7. Copilot & Devin & Universal AGENTS.md
-  if (targets.copilot || targets.all) {
-    process.stdout.write(`  ${c.cyan}•${c.reset} Configuring Copilot & Devin (.github/, .devin/, AGENTS.md)... `);
+  // 9. Aider
+  if (targets.aider || targets.all) {
+    process.stdout.write(`  ${c.cyan}•${c.reset} Configuring Aider (.aider.conf.yml, .aiderignore)... `);
     let count = 0;
-    count += copyRecursive(path.join(PKG_ROOT, '.github'), path.join(dest, '.github'), force);
+    count += copyRecursive(path.join(PKG_ROOT, '.aider.conf.yml'), path.join(dest, '.aider.conf.yml'), force);
+    count += copyRecursive(path.join(PKG_ROOT, '.aiderignore'), path.join(dest, '.aiderignore'), force);
+    totalFiles += count;
+    console.log(`${c.green}✔ Done (${count} files)${c.reset}`);
+  }
+
+  // 10. Devin & Zed & Universal AGENTS.md
+  if (targets.devin || targets.zed || targets.agents || targets.all) {
+    process.stdout.write(`  ${c.cyan}•${c.reset} Configuring Devin, Zed & Universal AGENTS.md (.devin/, .zed/, AGENTS.md)... `);
+    let count = 0;
     count += copyRecursive(path.join(PKG_ROOT, '.devin'), path.join(dest, '.devin'), force);
+    count += copyRecursive(path.join(PKG_ROOT, '.zed'), path.join(dest, '.zed'), force);
     count += copyRecursive(path.join(PKG_ROOT, 'AGENTS.md'), path.join(dest, 'AGENTS.md'), force);
     totalFiles += count;
     console.log(`${c.green}✔ Done (${count} files)${c.reset}`);
   }
 
-  // 8. Scaffold Mode specifics (templates, docs, design, production dirs)
+  // 11. Scaffold Mode specifics (templates, docs, design, production dirs)
   if (mode === 'scaffold') {
     process.stdout.write(`  ${c.cyan}•${c.reset} Scaffolding SaaS product directories (design/, docs/, production/)... `);
     let count = 0;
@@ -358,11 +452,12 @@ function runInteractiveWizard() {
 
     if (scopeAnswer === '1') {
       console.log(`\n${c.bold}2. Target Platforms for Global Installation:${c.reset}`);
-      console.log(`   ${c.cyan}[1]${c.reset} All Platforms (Claude Code, Antigravity, Cursor, Windsurf)`);
+      console.log(`   ${c.cyan}[1]${c.reset} All Platforms (Claude Code, Antigravity, Cursor, Codex, Windsurf, Continue)`);
       console.log(`   ${c.cyan}[2]${c.reset} Claude Code only`);
       console.log(`   ${c.cyan}[3]${c.reset} Antigravity / Gemini CLI only`);
       console.log(`   ${c.cyan}[4]${c.reset} Cursor only`);
-      const platAns = (await prompt(`   Select [1/2/3/4] (default: 1): `)).trim() || '1';
+      console.log(`   ${c.cyan}[5]${c.reset} OpenAI Codex only`);
+      const platAns = (await prompt(`   Select [1/2/3/4/5] (default: 1): `)).trim() || '1';
       rl.close();
 
       const targets = {
@@ -370,6 +465,7 @@ function runInteractiveWizard() {
         claude: platAns === '2' || platAns === '1',
         antigravity: platAns === '3' || platAns === '1',
         cursor: platAns === '4' || platAns === '1',
+        codex: platAns === '5' || platAns === '1',
       };
       installGlobal(targets, true);
       return;
@@ -388,11 +484,13 @@ function runInteractiveWizard() {
 
     // Question 4: Platforms
     console.log(`\n${c.bold}4. Target AI Platforms:${c.reset}`);
-    console.log(`   ${c.cyan}[1]${c.reset} All / Universal (Claude, Cursor, Antigravity, Windsurf, Cline, Copilot)`);
+    console.log(`   ${c.cyan}[1]${c.reset} All / Universal (Claude, Cursor, Antigravity, Codex, VS Code/Copilot, Windsurf, Cline, Continue, Aider)`);
     console.log(`   ${c.cyan}[2]${c.reset} Claude Code only`);
     console.log(`   ${c.cyan}[3]${c.reset} Cursor only`);
-    console.log(`   ${c.cyan}[4]${c.reset} Antigravity / Gemini only`);
-    const platAns = (await prompt(`   Select [1/2/3/4] (default: 1): `)).trim() || '1';
+    console.log(`   ${c.cyan}[4]${c.reset} Antigravity / Gemini CLI only`);
+    console.log(`   ${c.cyan}[5]${c.reset} VS Code & GitHub Copilot only`);
+    console.log(`   ${c.cyan}[6]${c.reset} OpenAI Codex only`);
+    const platAns = (await prompt(`   Select [1/2/3/4/5/6] (default: 1): `)).trim() || '1';
     rl.close();
 
     const targets = {
@@ -400,10 +498,16 @@ function runInteractiveWizard() {
       claude: platAns === '2' || platAns === '1',
       cursor: platAns === '3' || platAns === '1',
       antigravity: platAns === '4' || platAns === '1',
+      vscode: platAns === '5' || platAns === '1',
+      copilot: platAns === '5' || platAns === '1',
+      codex: platAns === '6' || platAns === '1',
       windsurf: platAns === '1',
       cline: platAns === '1',
       continue: platAns === '1',
-      copilot: platAns === '1',
+      aider: platAns === '1',
+      devin: platAns === '1',
+      zed: platAns === '1',
+      agents: platAns === '1',
     };
 
     installLocal(targetDir, targets, mode, false);
@@ -433,10 +537,16 @@ function parseArgs() {
       claude: false,
       antigravity: false,
       cursor: false,
+      codex: false,
+      vscode: false,
+      copilot: false,
       windsurf: false,
       cline: false,
       continue: false,
-      copilot: false,
+      aider: false,
+      devin: false,
+      zed: false,
+      agents: false,
     },
   };
 
@@ -465,6 +575,16 @@ function parseArgs() {
     } else if (a === 'cursor' || a === '--cursor') {
       parsed.targets.cursor = true;
       parsed.command = 'cursor';
+    } else if (a === 'codex' || a === '--codex' || a === 'chatgpt' || a === '--chatgpt') {
+      parsed.targets.codex = true;
+      parsed.command = 'codex';
+    } else if (a === 'vscode' || a === '--vscode') {
+      parsed.targets.vscode = true;
+      parsed.targets.copilot = true;
+      parsed.command = 'vscode';
+    } else if (a === 'copilot' || a === '--copilot') {
+      parsed.targets.copilot = true;
+      parsed.command = 'copilot';
     } else if (a === 'windsurf' || a === '--windsurf') {
       parsed.targets.windsurf = true;
       parsed.command = 'windsurf';
@@ -474,9 +594,18 @@ function parseArgs() {
     } else if (a === 'continue' || a === '--continue') {
       parsed.targets.continue = true;
       parsed.command = 'continue';
-    } else if (a === 'copilot' || a === '--copilot' || a === 'devin' || a === '--devin') {
-      parsed.targets.copilot = true;
-      parsed.command = 'copilot';
+    } else if (a === 'aider' || a === '--aider') {
+      parsed.targets.aider = true;
+      parsed.command = 'aider';
+    } else if (a === 'devin' || a === '--devin') {
+      parsed.targets.devin = true;
+      parsed.command = 'devin';
+    } else if (a === 'zed' || a === '--zed') {
+      parsed.targets.zed = true;
+      parsed.command = 'zed';
+    } else if (a === 'agents' || a === '--agents' || a === 'opencode' || a === '--opencode') {
+      parsed.targets.agents = true;
+      parsed.command = 'agents';
     } else if (a === 'all' || a === '--all') {
       parsed.targets.all = true;
       parsed.command = 'all';
@@ -499,7 +628,6 @@ function parseArgs() {
 
   return parsed;
 }
-
 
 // Framework Auto-Updater implementation
 function executeUpdate(opts) {
@@ -614,10 +742,11 @@ function executeUpdate(opts) {
 
                   updatedCount += copyRecursive(path.join(sourceRoot, '.cursor', 'rules'), gPaths.cursor.rules, true);
                   updatedCount += copyRecursive(path.join(sourceRoot, '.cursor', 'skills'), gPaths.cursor.skills, true);
+                  updatedCount += copyRecursive(path.join(sourceRoot, '.codex'), gPaths.codex.dir, true);
 
                   console.log(`\n  ${c.green}✔ Global installation successfully updated! (${updatedCount} files synced)${c.reset}\n`);
                 } else {
-                  const frameworkDirs = ['.claude', '.agents', '.cursor', '.windsurf'];
+                  const frameworkDirs = ['.claude', '.agents', '.cursor', '.windsurf', '.codex', '.vscode', '.github', '.continue', '.devin', '.zed'];
                   for (const fd of frameworkDirs) {
                     const srcFd = path.join(sourceRoot, fd);
                     if (fs.existsSync(srcFd)) {
@@ -625,7 +754,7 @@ function executeUpdate(opts) {
                     }
                   }
 
-                  const ruleFiles = ['CLAUDE.md', 'AGENTS.md', 'GEMINI.md', '.cursorrules', '.windsurfrules', '.clinerules', 'CONVENTIONS.md'];
+                  const ruleFiles = ['CLAUDE.md', 'AGENTS.md', 'GEMINI.md', 'CODEX.md', '.cursorrules', '.windsurfrules', '.clinerules', 'CONVENTIONS.md', '.aider.conf.yml', '.aiderignore', '.roomodes'];
                   for (const rf of ruleFiles) {
                     const srcRf = path.join(sourceRoot, rf);
                     if (fs.existsSync(srcRf)) {
@@ -677,6 +806,7 @@ function executeUpdate(opts) {
       console.error(`  ${c.red}✖ Error connecting to GitHub: ${err.message}${c.reset}`);
     });
 }
+
 // Removal helpers for uninstall
 function removeFileOrDir(itemPath, dryRun = false) {
   if (!fs.existsSync(itemPath)) return 0;
@@ -827,7 +957,18 @@ function uninstallGlobal(targets, dryRun = false) {
     console.log(`    ${c.green}Cursor: ${curCount} items ${dryRun ? 'would be removed' : 'removed'}.${c.reset}\n`);
   }
 
-  // 4. Windsurf (~/.codeium/windsurf/rules/)
+  // 4. OpenAI Codex (~/.codex/)
+  if (targets.codex || targets.all) {
+    console.log(`  ${c.cyan}•${c.reset} Checking OpenAI Codex global files (~/.codex/)...`);
+    let codexCount = 0;
+    if (fs.existsSync(gPaths.codex.dir)) {
+      codexCount += removeFileOrDir(gPaths.codex.dir, dryRun);
+    }
+    totalRemoved += codexCount;
+    console.log(`    ${c.green}OpenAI Codex: ${codexCount} items ${dryRun ? 'would be removed' : 'removed'}.${c.reset}\n`);
+  }
+
+  // 5. Windsurf (~/.codeium/windsurf/rules/)
   if (targets.windsurf || targets.all) {
     console.log(`  ${c.cyan}•${c.reset} Checking Windsurf global rules (~/.codeium/windsurf/rules/)...`);
     let wCount = 0;
@@ -894,7 +1035,23 @@ function uninstallLocal(targetDir, targets, dryRun = false, cleanAll = false, ke
     totalRemoved += count;
   }
 
-  // 4. Windsurf
+  // 4. OpenAI Codex
+  if (targets.codex || targets.all) {
+    let count = 0;
+    count += removeFileOrDir(path.join(dest, 'CODEX.md'), dryRun);
+    count += removeFileOrDir(path.join(dest, '.codex'), dryRun);
+    totalRemoved += count;
+  }
+
+  // 5. VS Code & Copilot
+  if (targets.vscode || targets.copilot || targets.all) {
+    let count = 0;
+    count += removeFileOrDir(path.join(dest, '.vscode'), dryRun);
+    count += removeFileOrDir(path.join(dest, '.github'), dryRun);
+    totalRemoved += count;
+  }
+
+  // 6. Windsurf
   if (targets.windsurf || targets.all) {
     let count = 0;
     count += removeFileOrDir(path.join(dest, '.windsurf'), dryRun);
@@ -902,26 +1059,37 @@ function uninstallLocal(targetDir, targets, dryRun = false, cleanAll = false, ke
     totalRemoved += count;
   }
 
-  // 5. Cline
+  // 7. Cline & Roo Code
   if (targets.cline || targets.all) {
-    totalRemoved += removeFileOrDir(path.join(dest, '.clinerules'), dryRun);
+    let count = 0;
+    count += removeFileOrDir(path.join(dest, '.clinerules'), dryRun);
+    count += removeFileOrDir(path.join(dest, '.roomodes'), dryRun);
+    totalRemoved += count;
   }
 
-  // 6. Continue
+  // 8. Continue
   if (targets.continue || targets.all) {
     totalRemoved += removeFileOrDir(path.join(dest, '.continue'), dryRun);
   }
 
-  // 7. Copilot & Devin & Universal AGENTS.md
-  if (targets.copilot || targets.all) {
+  // 9. Aider
+  if (targets.aider || targets.all) {
     let count = 0;
-    count += removeFileOrDir(path.join(dest, '.devin'), dryRun);
-    count += removeFileOrDir(path.join(dest, 'AGENTS.md'), dryRun);
-    count += removeFileOrDir(path.join(dest, '.github', 'copilot-instructions.md'), dryRun);
+    count += removeFileOrDir(path.join(dest, '.aider.conf.yml'), dryRun);
+    count += removeFileOrDir(path.join(dest, '.aiderignore'), dryRun);
     totalRemoved += count;
   }
 
-  // 8. Scaffold Mode folders (if requested)
+  // 10. Devin & Zed & Universal AGENTS.md
+  if (targets.devin || targets.zed || targets.agents || targets.all) {
+    let count = 0;
+    count += removeFileOrDir(path.join(dest, '.devin'), dryRun);
+    count += removeFileOrDir(path.join(dest, '.zed'), dryRun);
+    count += removeFileOrDir(path.join(dest, 'AGENTS.md'), dryRun);
+    totalRemoved += count;
+  }
+
+  // 11. Scaffold Mode folders (if requested)
   if (cleanAll) {
     console.log(`\n  ${c.dim}Cleaning scaffold directories...${c.reset}`);
     let scCount = 0;
@@ -942,7 +1110,6 @@ function executeUninstall(opts) {
   banner();
   console.log(`${c.bold}${c.red}🗑️ Basinfy SaaS Studio — Uninstaller${c.reset}\n`);
 
-  // Refuse local uninstall if target is the studio's own source repository
   if (!opts.global && !opts.dryRun) {
     const dest = path.resolve(process.cwd(), opts.target);
     if (path.resolve(dest) === path.resolve(PKG_ROOT)) {
@@ -959,7 +1126,6 @@ function executeUninstall(opts) {
 
   const isInteractive = process.stdin.isTTY && !opts.force && !opts.dryRun;
 
-  // Interactive wizard when executed interactively without specific flags
   if (isInteractive && !opts.global && opts.target === '.' && !hasSpecificTarget) {
     const rl = readline.createInterface({
       input: process.stdin,
@@ -970,23 +1136,25 @@ function executeUninstall(opts) {
     (async () => {
       console.log(`${c.bold}Uninstallation Wizard:${c.reset}\n`);
       console.log(`${c.bold}1. Uninstallation Scope:${c.reset}`);
-      console.log(`   ${c.cyan}[1]${c.reset} Global (~/.claude, ~/.gemini, ~/.cursor — remove from system)`);
+      console.log(`   ${c.cyan}[1]${c.reset} Global (~/.claude, ~/.gemini, ~/.cursor, etc. — remove from system)`);
       console.log(`   ${c.cyan}[2]${c.reset} Local Project (Current folder: ${process.cwd()})`);
       const scopeAns = (await prompt(`   Select [1/2] (default: 1): `)).trim() || '1';
 
       if (scopeAns === '1') {
         console.log(`\n${c.bold}2. Target Platforms for Global Removal:${c.reset}`);
-        console.log(`   ${c.cyan}[1]${c.reset} All Platforms (Claude Code, Antigravity, Cursor, Windsurf)`);
+        console.log(`   ${c.cyan}[1]${c.reset} All Platforms (Claude, Antigravity, Cursor, Codex, Windsurf)`);
         console.log(`   ${c.cyan}[2]${c.reset} Antigravity / Gemini CLI only`);
         console.log(`   ${c.cyan}[3]${c.reset} Claude Code only`);
         console.log(`   ${c.cyan}[4]${c.reset} Cursor only`);
-        const platAns = (await prompt(`   Select [1/2/3/4] (default: 1): `)).trim() || '1';
+        console.log(`   ${c.cyan}[5]${c.reset} OpenAI Codex only`);
+        const platAns = (await prompt(`   Select [1/2/3/4/5] (default: 1): `)).trim() || '1';
 
         const targets = {
           all: platAns === '1',
           antigravity: platAns === '2' || platAns === '1',
           claude: platAns === '3' || platAns === '1',
           cursor: platAns === '4' || platAns === '1',
+          codex: platAns === '5' || platAns === '1',
         };
 
         const confirm = (await prompt(`\n${c.yellow}⚠️ Are you sure you want to remove Basinfy SaaS Studio globally? [y/N]: ${c.reset}`)).trim().toLowerCase();
@@ -999,7 +1167,6 @@ function executeUninstall(opts) {
         return;
       }
 
-      // Local Project
       console.log(`\n${c.bold}2. Keep project configuration (project.yaml)?${c.reset}`);
       console.log(`   ${c.cyan}[1]${c.reset} Yes, keep configuration files (recommended)`);
       console.log(`   ${c.cyan}[2]${c.reset} No, remove everything including configuration`);
@@ -1027,7 +1194,6 @@ function executeUninstall(opts) {
     return;
   }
 
-  // If interactive prompt needed before action
   if (!opts.force && !opts.dryRun) {
     if (process.stdin.isTTY) {
       const rl = readline.createInterface({
@@ -1055,7 +1221,6 @@ function executeUninstall(opts) {
     }
   }
 
-  // Direct execution
   if (opts.global) {
     uninstallGlobal(opts.targets, opts.dryRun);
   } else {
@@ -1087,7 +1252,6 @@ function main() {
     return;
   }
 
-  // If no specific command or target was given and stdin is a TTY, launch interactive wizard
   const hasSpecificTarget = Object.values(opts.targets).some(Boolean);
   if (!hasSpecificTarget && !opts.global && opts.command !== 'all' && process.stdin.isTTY && process.argv.length <= 2) {
     runInteractiveWizard();
@@ -1096,7 +1260,6 @@ function main() {
 
   banner();
 
-  // If no specific platform was flagged, default to all
   if (!hasSpecificTarget) {
     opts.targets.all = true;
   }

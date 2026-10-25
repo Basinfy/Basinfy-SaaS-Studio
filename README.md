@@ -58,12 +58,12 @@ Em vez de você ter que ficar digitando prompts soltos como *"crie uma tela de l
 
 ## 🚀 Instalação Rápida via NPX (Universal Multi-LLM)
 
-Instale e ative o **Basinfy SaaS Studio** com um único comando — com **zero dependências externas** e inicialização instantânea (< 1s). Compatível nativamente com **Claude Code**, **Cursor**, **Antigravity / Gemini CLI**, **Windsurf**, **Cline**, **Continue.dev** e **GitHub Copilot**.
+Instale e ative o **Basinfy SaaS Studio** com um único comando — com **zero dependências externas** e inicialização instantânea (< 1s). Compatível nativamente com **Claude Code**, **Cursor**, **Antigravity / Gemini CLI**, **OpenAI Codex**, **VS Code & GitHub Copilot**, **Windsurf**, **Cline & Roo Code**, **Continue.dev**, **Aider**, **Devin** e **Zed**.
 
 ### 1. Instalação Global (Recomendado)
-Torne todos os **50 agentes** e **95 comandos `/saas-*`** disponíveis globalmente em **qualquer projeto ou pasta do seu computador**:
+Torne todos os **50 agentes** e **95 comandos /saas-*** disponíveis globalmente em **qualquer projeto ou pasta do seu computador**:
 
-```bash
+`ash
 # Instalação global para TODAS as ferramentas de IA da sua máquina:
 npx github:Basinfy/Basinfy-SaaS-Studio all --global
 
@@ -71,15 +71,16 @@ npx github:Basinfy/Basinfy-SaaS-Studio all --global
 npx github:Basinfy/Basinfy-SaaS-Studio claude --global
 npx github:Basinfy/Basinfy-SaaS-Studio antigravity --global
 npx github:Basinfy/Basinfy-SaaS-Studio cursor --global
+npx github:Basinfy/Basinfy-SaaS-Studio codex --global
 npx github:Basinfy/Basinfy-SaaS-Studio windsurf --global
-```
+`
 
-> **Como funciona a instalação global:** A CLI detecta o diretório central do seu sistema operacional (`~/.claude/`, `~/.gemini/config/skills/`, `~/.cursor/`, etc.) e injeta os agentes e as skills diretamente. A partir desse momento, qualquer novo terminal ou projeto aberto reconhece os comandos imediatamente!
+> **Como funciona a instalação global:** A CLI detecta o diretório central do seu sistema operacional (~/.claude/, ~/.gemini/config/skills/, ~/.cursor/, ~/.codex/, etc.) e injeta os agentes e as skills diretamente. A partir desse momento, qualquer novo terminal ou projeto aberto reconhece os comandos imediatamente!
 
 ### 2. Instalação Local no Projeto & Scaffolding
 Crie um novo projeto SaaS do zero ou injete o estúdio em um repositório existente:
 
-```bash
+`ash
 # Assistente guiado interativo (faz perguntas e configura o ambiente):
 npx github:Basinfy/Basinfy-SaaS-Studio
 
@@ -88,19 +89,27 @@ npx github:Basinfy/Basinfy-SaaS-Studio all --target ./meu-saas-app
 
 # Injetar o Estúdio de IA em um projeto existente (Next.js, FastAPI, Node) sem sobrescrever código:
 npx github:Basinfy/Basinfy-SaaS-Studio all --mode inject
-```
+
+# Instalar configurações específicas para VS Code & Copilot, Cursor ou Codex:
+npx github:Basinfy/Basinfy-SaaS-Studio vscode
+npx github:Basinfy/Basinfy-SaaS-Studio cursor
+npx github:Basinfy/Basinfy-SaaS-Studio codex
+`
 
 ### Matriz de Plataformas Suportadas:
 
 | Plataforma / Ferramenta | Caminho Global | Configurações Locais | Comandos Slash & Regras |
 | :--- | :--- | :--- | :--- |
-| **Claude Code** | `~/.claude/` | `.claude/`, `CLAUDE.md`, `project.yaml` | 95 skills (`/saas-*`), 50 agentes, 28 gates |
-| **Antigravity / Gemini** | `~/.gemini/config/skills/` | `GEMINI.md`, `.agents/skills/`, MCP | Todas as 95 skills + hierarquia de 50 agentes |
-| **Cursor** | `~/.cursor/rules/` | `.cursor/rules/saas-studio.mdc`, `.cursorrules` | Contexto completo do estúdio e fluxos de trabalho |
-| **Windsurf** | `~/.codeium/windsurf/` | `.windsurf/rules/saas-studio.md`, `.windsurfrules` | Regras completas de engenharia e SOPs |
-| **Cline / Roo-Code** | - | `.clinerules` | Instruções operacionais para agentes autônomos |
-| **Continue.dev** | - | `.continue/rules.md` | Contexto e regras padronizadas de prompt |
-| **Copilot & Devin** | - | `.github/`, `.devin/`, `AGENTS.md` | Convenções abertas do Agentic Standard |
+| **Claude Code** | ~/.claude/ | .claude/, CLAUDE.md, project.yaml | 95 skills (/saas-*), 50 agentes, 28 gates |
+| **Antigravity / Gemini** | ~/.gemini/config/skills/ | GEMINI.md, .agents/skills/, MCP | Todas as 95 skills + hierarquia de 50 agentes |
+| **Cursor** | ~/.cursor/rules/ | .cursor/rules/saas-studio.mdc, .cursorrules, .cursor/mcp.json | Contexto completo do estúdio, regras e MCP nativo |
+| **OpenAI Codex & ChatGPT** | ~/.codex/ | CODEX.md, .codex/instructions.md, .codex/hooks.json | Padrão oficial OpenAI com hooks e diretrizes de engenharia |
+| **VS Code & GitHub Copilot** | - | .vscode/, .github/copilot-instructions.md, .github/prompts/ | Configurações de workspace, tarefas, extensões e slash prompts |
+| **Windsurf** | ~/.codeium/windsurf/ | .windsurf/rules/saas-studio.md, .windsurfrules | Regras completas de engenharia e SOPs |
+| **Cline & Roo-Code** | ~/.clinerules | .clinerules, .roomodes | Instruções operacionais e modos customizados (Diretores, Leads, Devs) |
+| **Continue.dev** | ~/.continue/ | .continue/rules.md, .continue/config.json | Contexto padronizado e custom commands (/saas-*) |
+| **Aider** | ~/.aider.conf.yml | .aider.conf.yml, .aiderignore | Configuração com auto-contexto e comando de teste |
+| **Devin & Zed** | - | .devin/, .zed/, AGENTS.md | Padrão aberto universal de agentes |
 
 ---
 

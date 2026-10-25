@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "github.copilot",
+    "github.copilot-chat",
+    "continue.continue",
+    "rooveterinaryinc.roo-cline",
+    "saoudrizwan.claude-dev",
+    "ms-python.python",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "redhat.vscode-yaml"
+  ]
+}

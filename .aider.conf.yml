@@ -1,0 +1,8 @@
+# Aider Configuration for Basinfy SaaS Studio
+read:
+  - CONVENTIONS.md
+  - AGENTS.md
+test-cmd: python studio-tests/verify-integrity.py
+auto-commits: false
+architect: true
+map-tokens: 2048

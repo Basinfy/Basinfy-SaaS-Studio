@@ -24,6 +24,8 @@ $RECYCLE.BIN/
 *.code-workspace
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
 !.vscode/launch.json.example
 *.swp
 *.swo
@@ -41,7 +43,8 @@ $RECYCLE.BIN/
 .cursor/rules/basinfy.mdc
 .windsurf/rules/basinfy.md
 .agents/mcp_config.json
-.cursor/mcp.json
+.cursor/mcp.local.json
+.cursor/mcp.json.local
 
 # === Claude Code / AI Agent Local State ===
 .claude/settings.local.json
