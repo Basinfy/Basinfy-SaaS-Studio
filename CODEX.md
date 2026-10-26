@@ -44,18 +44,24 @@ Before writing or editing code, always ask: `"May I write this to [filepath]?"`
 - Stripe webhooks must verify signatures against raw request bodies (`rawBody`).
 - Strictly follow technology stack standards defined in `project.yaml`.
 
-## 6. Smart Code Discovery & Dynamic Basinfy Protocol
+## 6. Smart Code Discovery & Dynamic Basinfy Protocol (Free vs Pro Code Mode)
 Always determine the code discovery mechanism before reading, searching, or modifying codebase files:
-- **Dynamic Detection**: Check if the workspace contains a `.basinfy/` directory OR if Basinfy MCP tools (`basinfy_session_start`, `basinfy_search`, `basinfy_locate`, `basinfy_prepare_edit`, `basinfy_read`, `basinfy_impact`, etc.) or the CLI `basinfy` are available.
+- **Dynamic Detection**: Check if the workspace contains a .basinfy/ directory OR if Basinfy MCP tools (asinfy_session_start, asinfy_search, asinfy_locate, asinfy_prepare_edit, asinfy_read, asinfy_impact, asinfy_discover, asinfy_query_script, etc.) or the CLI asinfy are available.
 - **When Basinfy is Detected (.basinfy/ exists or MCP active)**:
   Route code discovery through the **Basinfy Smart Indexing Protocol** first. Standard IDE Grep/Read/rg are strictly the last resort fallback:
-  - Symbols & Code: `basinfy_prepare_edit` or `basinfy_locate`
-  - Configs, YAML & Text: `basinfy_search` then `basinfy_read`
-  - New Files: `basinfy_prepare_create`
-  - Impact & Architecture: `basinfy_impact` or `basinfy_orbit`
-  - Fallback Ladder: CLI `basinfy search` / `basinfy read` -> IDE Grep/Read only for binaries or paths outside the index.
-- **Fallback Mode (No .basinfy/ directory)**: If `.basinfy/` is not present, seamlessly use standard IDE tools (Grep, ripgrep, Glob, Read).
-
+  - **Tier Detection (Pro Code Mode vs. Free Standard)**:
+    - **Basinfy Pro / Trial (Code Mode Active)**: Triggered when asinfy_discover or asinfy_query_script are present in MCP tools, or CLI asinfy discover / script are available:
+      - **Multi-File Exploration & Feature Discovery**: ALWAYS use asinfy_discover (with digest: true) or asinfy_query_script with asinfy.discover(query, { digest: true }) (CLI asinfy discover <query> --digest). Delivers AST locate, barrel resolution, confidence scores, and targeted 12-line code previews in ONE turn (90%+ token reduction). NEVER loop multiple asinfy_search + asinfy_read calls across files.
+      - **Compound / Multi-Module Programmatic Analysis**: Use asinfy_query_script (CLI asinfy script <code>) for in-memory JavaScript/TypeScript execution with direct access to the asinfy.* API object (asinfy.discover, asinfy.search, asinfy.read, asinfy.locate, asinfy.orbit, asinfy.impact, asinfy.gateEdit, asinfy.prepareEdit, asinfy.prepareCreate). Executes compound queries and graph traversals in a single turn with zero intermediate token bloat. Inspect types via asinfy_sdk_inspect.
+    - **Basinfy Free (Core Smart Indexing)**:
+      - **Symbols & Code**: asinfy_prepare_edit or asinfy_locate
+      - **Configs, YAML & Literal Search**: asinfy_search then targeted asinfy_read (never loop search+read indefinitely)
+  - **Universal Governance & Lifecycle (Free & Pro)**:
+    - **New Files**: asinfy_prepare_create before generating new components or modules
+    - **Impact & Architecture**: asinfy_impact or asinfy_orbit before modifying shared interfaces
+    - **Session Lifecycle**: One bootstrap at start (asinfy_session_start or asinfy_brief), one update at end (asinfy_session_end or asinfy_update).
+    - **Fallback Ladder**: CLI asinfy search / asinfy read / asinfy discover -> IDE Grep/Read only for binaries or paths outside the index.
+- **Fallback Mode (No .basinfy/ directory)**: If .basinfy/ is not present, seamlessly use standard IDE tools (Grep, ripgrep, Glob, Read).
 ## 7. Dynamic Human Interface (Portuguese & English) / English Engine
 The studio provides full dynamic bilingual support for the human developer while keeping the technical engine in English:
 - **Dynamic Language Matching & Translation for User Prompts**:

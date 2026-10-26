@@ -72,8 +72,14 @@ To configure and run the studio in your workspace:
 ```
 Use `/saas-help` at any time to inspect your project's current lifecycle stage and next recommended action.
 
-## Smart Code Discovery & Basinfy Protocol
-- **Auto-detection**: Checks whether .basinfy/ exists in the workspace.
-- **When .basinfy/ is present**: Prioritizes the Basinfy Smart Indexing Protocol (basinfy_prepare_edit, basinfy_locate, basinfy_search, basinfy_read, basinfy_impact) over brute-force search.
-- **Fallback**: Gracefully uses standard IDE/LLM tools (Grep, 
-ipgrep, Glob, Read) when .basinfy/ is not present.
+## Smart Code Discovery & Basinfy Protocol (Free vs Pro Code Mode)
+- **Auto-detection**: Checks whether `.basinfy/` exists in the workspace (or if Basinfy MCP / CLI are active).
+- **Basinfy Pro / Trial (Code Mode Active)**:
+  - Multi-file feature & architecture discovery: `basinfy_discover` (with `digest: true`) or `basinfy_query_script` (`basinfy.discover(query, { digest: true })`). Delivers AST locate, barrel resolution, and 12-line previews in 1 turn (90%+ token reduction). NEVER loop `search` + `read`.
+  - Compound programmatic queries & graph traversals: `basinfy_query_script` (CLI `basinfy script <code>`) executing in-memory `basinfy.*` API logic in a single turn. Inspect types via `basinfy_sdk_inspect`.
+- **Basinfy Free (Core Smart Indexing)**:
+  - Symbols & Code: `basinfy_prepare_edit` or `basinfy_locate`.
+  - Configs & YAML: `basinfy_search` then targeted `basinfy_read`.
+  - New Files: `basinfy_prepare_create`.
+  - Impact & Architecture: `basinfy_impact` or `basinfy_orbit`.
+- **Fallback**: Gracefully uses standard IDE/LLM tools (Grep, ripgrep, Glob, Read) when `.basinfy/` is not present.

@@ -56,18 +56,26 @@ See `docs/COLLABORATIVE-DESIGN-PRINCIPLE.md` for full protocol and examples.
 
 @.claude/docs/coding-standards.md
 
-## Smart Code Discovery & Dynamic Basinfy Protocol
+## Smart Code Discovery & Dynamic Basinfy Protocol (Free vs Pro Code Mode)
 
 Whenever agents, specialists, or workflows explore the codebase, discover endpoints, or locate symbols:
-- **Environment Detection**: Check if .basinfy/ exists in the workspace (or if Basinfy MCP tools / basinfy CLI are active).
+- **Environment Detection**: Check if .basinfy/ exists in the workspace (or if Basinfy MCP tools / asinfy CLI are active).
 - **If Basinfy is Present (.basinfy/ detected)**: Route code discovery through the **Basinfy Smart Indexing Protocol** first. Standard IDE Grep/Read/rg are strictly the last resort fallback:
-  - Symbols / Functions / Components: basinfy_prepare_edit or basinfy_locate (delivers definition, gate checks, and impact graph in one call)
-  - Configs / Routes / YAML / Text: basinfy_search then basinfy_read
-  - Document Headings: basinfy_search to find headings instead of regex grepping ^#
-  - New Files: basinfy_prepare_create before generating new components or modules
-  - Impact Analysis: basinfy_impact or basinfy_orbit for cross-file blast radius checks
-  - Fallback Ladder: Brute-force grep / ripgrep / IDE Read are strictly last-resort fallbacks (e.g., for binary assets or files outside the index root).
+  - **Tier Detection (Pro Code Mode vs. Free Standard)**:
+    - **Basinfy Pro / Trial (Code Mode Active)**: Triggered when asinfy_discover or asinfy_query_script are present in MCP tools, or CLI asinfy discover / script are available:
+      - **Multi-File Exploration & Feature Discovery**: ALWAYS use asinfy_discover (with digest: true) or asinfy_query_script with asinfy.discover(query, { digest: true }) (CLI asinfy discover <query> --digest). Delivers AST locate, barrel resolution, confidence scores, and targeted 12-line code previews in ONE turn (90%+ token reduction). NEVER loop multiple asinfy_search + asinfy_read calls across files.
+      - **Compound / Multi-Module Programmatic Analysis**: Use asinfy_query_script (CLI asinfy script <code>) for in-memory JavaScript/TypeScript execution with direct access to the asinfy.* API object (asinfy.discover, asinfy.search, asinfy.read, asinfy.locate, asinfy.orbit, asinfy.impact, asinfy.gateEdit, asinfy.prepareEdit, asinfy.prepareCreate). Executes compound queries and graph traversals in a single turn with zero intermediate token bloat. Inspect types via asinfy_sdk_inspect.
+    - **Basinfy Free (Core Smart Indexing)**:
+      - **Symbols & Code**: asinfy_prepare_edit or asinfy_locate
+      - **Configs, YAML & Literal Search**: asinfy_search then targeted asinfy_read (never loop search+read indefinitely)
+  - **Universal Governance & Lifecycle (Free & Pro)**:
+    - **New Files**: asinfy_prepare_create before generating new components or modules
+    - **Impact & Architecture**: asinfy_impact or asinfy_orbit before modifying shared interfaces
+    - **Document Headings**: asinfy_search to find headings instead of regex grepping ^#
+    - **Session Lifecycle**: One bootstrap at start (asinfy_session_start or asinfy_brief), one update at end (asinfy_session_end or asinfy_update).
+    - **Fallback Ladder**: CLI asinfy search / asinfy read / asinfy discover -> IDE Grep/Read only for binaries or paths outside the index.
 - **Fallback (No .basinfy/ directory)**: When .basinfy/ is not present, gracefully use standard IDE tools (Grep, ripgrep, Glob, Read).
+
 
 ## Context Management
 
