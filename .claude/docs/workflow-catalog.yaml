@@ -130,6 +130,14 @@ phases:
             - glob: "design/art/saas-design-tokens.md"
         description: "Author the visual design system specification, color palettes, typography, and UI tokens"
 
+      - id: frontend-taste
+        name: "Frontend Taste and Anti-Slop"
+        command: /saas-frontend-taste
+        required: false
+        artifact:
+          glob: "design/ui/taste-spec.md"
+        description: "Enforce anti-slop copy, 1440x900 viewport rhythm, real product UI fragments, and headless browser consistency"
+
       - id: map-features
         name: "Features & Modules Map"
         command: /saas-map-features

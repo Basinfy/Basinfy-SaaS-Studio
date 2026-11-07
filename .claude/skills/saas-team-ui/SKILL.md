@@ -34,13 +34,22 @@ When this skill is invoked with a valid argument, orchestrate the team:
    - `design-system-director`: Align component with `design/ui/design-tokens.md`
    - Specify typography classes, semantic color tokens, padding/gap tokens, and responsive breakpoints
 
-3. **Frontend Implementation**:
+3. **Frontend Implementation & Anti-Slop Layout**:
+   - `frontend-engineer`: Build accessible React/Vue components (using Tailwind CSS, Radix UI / shadcn/ui primitives):
+     - Enforce `/saas-frontend-taste` standards: 1440x900 viewport rhythm (1 section per screen, equal margins), real interactive UI fragments (code diffs, pipeline boards, metrics cards from `saas-frontend-taste/assets/ui/`)
+     - Ensure semantic HTML (`<nav>`, `<main>`, `<dialog>`, `<button>`)
+     - Implement keyboard accessibility (Tab order, Enter/Space, Escape to close)
+     - Bind component state to backend API queries/mutations
    - `frontend-engineer`: Build accessible React/Vue components (using Tailwind CSS, Radix UI / shadcn/ui primitives):
      - Ensure semantic HTML (`<nav>`, `<main>`, `<dialog>`, `<button>`)
      - Implement keyboard accessibility (Tab order, Enter/Space, Escape to close)
      - Bind component state to backend API queries/mutations
 
 4. **Visual & Accessibility Testing**:
+   - `qa-tester`: Verify WCAG contrast ratios (minimum 4.5:1), responsive layout from 320px to 2560px, and keyboard operability.
+   - Run automated verification:
+     - `node .claude/skills/saas-frontend-taste/scripts/copy-lint.mjs <file> --kind software` (anti-slop copy)
+     - `node .claude/skills/saas-frontend-taste/scripts/consistency.mjs <file> --page software` (headless Chrome consistency across 1440, 1024, 820, 768, 390)
    - `qa-tester`: Verify WCAG contrast ratios (minimum 4.5:1), responsive layout from 320px to 2560px, and keyboard operability.
 
 5. **Verdict**:

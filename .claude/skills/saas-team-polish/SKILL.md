@@ -31,6 +31,12 @@ When this skill is invoked with a valid argument, orchestrate the team:
    - Profile slow database queries or unmemoized React component re-renders
 
 2. **Micro-Interactions & Loading States**:
+   - `ui-motion-designer`: Design subtle, high-end motion following `/saas-frontend-taste` quiet standards:
+     - 2px hover lifts on cards (`translateY(-2px)`), 1.02x image zoom inside frames
+     - Card loop cycles in 2.5–4.0s with hover pause/restart; button active press states
+     - Dealt moments (cursor spotlight, animated counters, text reveals)
+     - Route transitions (instant fade, no jarring flashes)
+     - Skeleton loaders matching exact content layout
    - `ui-motion-designer`: Design subtle, high-end motion (framer-motion or CSS transitions):
      - Route transitions (instant fade, no jarring flashes)
      - Skeleton loaders matching exact content layout

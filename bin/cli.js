@@ -289,7 +289,7 @@ function installGlobal(targets, force) {
   console.log(`\n${c.green}${c.bold}🎉 Global installation successfully completed!${c.reset} (${totalFiles} files installed)`);
   console.log(`\n${c.bold}Basinfy SaaS Studio is now available globally across all AI coding assistants:${c.reset}`);
   console.log(`  ${c.cyan}• Claude Code:${c.reset} Type ${c.bold}/saas-help${c.reset} or ${c.bold}/saas-start${c.reset} in any terminal session.`);
-  console.log(`  ${c.cyan}• Antigravity & Gemini CLI:${c.reset} The ${c.bold}basinfy-saas-studio${c.reset} and all 95 ${c.bold}/saas-*${c.reset} skills are active.`);
+  console.log(`  ${c.cyan}• Antigravity & Gemini CLI:${c.reset} The ${c.bold}basinfy-saas-studio${c.reset} and all 96 ${c.bold}/saas-*${c.reset} skills are active.`);
   console.log(`  ${c.cyan}• Cursor / Windsurf / Codex:${c.reset} Studio rules and gates are active across all projects.`);
   console.log(`  ${c.cyan}• VS Code / Copilot / Continue / Cline:${c.reset} Native rules and modes enabled.`);
 }

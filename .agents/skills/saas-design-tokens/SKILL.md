@@ -59,6 +59,11 @@ Identify the product's primary design direction:
 
 ---
 
+
+> [!TIP]
+> **Anti-Slop Foundations (`/saas-frontend-taste`)**:
+> Leverage curated, production-tested palettes (`.claude/skills/saas-frontend-taste/library/palettes.json`) and typography pairings (`library/type.json`) calibrated for SaaS archetypes (Linear, Stripe, Vercel, x.ai).
+
 ## Phase 2: Core Token Foundation (Sections 1–4)
 
 ### Section 1: Design Philosophy & Personality

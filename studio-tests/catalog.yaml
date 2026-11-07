@@ -951,6 +951,16 @@ skills:
   last_category_result: ''
   priority: standard
   category: analysis
+- name: saas-frontend-taste
+  spec: studio-tests/skills/authoring/saas-frontend-taste.md
+  last_static: ''
+  last_static_result: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  priority: standard
+  category: authoring
 agents:
 - name: product-director
   spec: studio-tests/agents/directors/product-director.md

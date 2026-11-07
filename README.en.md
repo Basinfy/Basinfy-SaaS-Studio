@@ -10,7 +10,7 @@
 
 <p align="center">
   <strong>Autonomous SaaS & Online Software Engineering Studio for Claude Code</strong><br>
-  <em>Turn your Claude Code session into a coordinated 50-agent software development agency with 95 workflows and 28 governance gates.</em>
+  <em>Turn your Claude Code session into a coordinated 50-agent software development agency with 96 workflows and 28 governance gates.</em>
 </p>
 
 <p align="center">
@@ -67,8 +67,8 @@ npx github:Basinfy/Basinfy-SaaS-Studio codex
 
 | Platform / Tool | Global Path | Workspace Configs | Slash Commands & Rules |
 | :--- | :--- | :--- | :--- |
-| **Claude Code** | `~/.claude/` | `.claude/`, `CLAUDE.md`, `project.yaml` | 95 skills (`/saas-*`), 50 agents, 28 gates |
-| **Antigravity / Gemini** | `~/.gemini/config/skills/` | `GEMINI.md`, `.agents/skills/`, MCP | All 95 skills + autonomous 50-agent hierarchy |
+| **Claude Code** | `~/.claude/` | `.claude/`, `CLAUDE.md`, `project.yaml` | 96 skills (`/saas-*`), 50 agents, 28 gates |
+| **Antigravity / Gemini** | `~/.gemini/config/skills/` | `GEMINI.md`, `.agents/skills/`, MCP | All 96 skills + autonomous 50-agent hierarchy |
 | **Cursor** | `~/.cursor/rules/` | `.cursor/rules/saas-studio.mdc`, `.cursorrules`, `.cursor/mcp.json` | Full SaaS Studio agent context, rules & native MCP |
 | **OpenAI Codex & ChatGPT** | `~/.codex/` | `CODEX.md`, `.codex/instructions.md`, `.codex/hooks.json` | Official OpenAI standard with hooks & engineering directives |
 | **VS Code & GitHub Copilot** | - | `.vscode/`, `.github/copilot-instructions.md`, `.github/prompts/` | Workspace settings, tasks, extensions & slash prompts |
@@ -88,7 +88,7 @@ npx github:Basinfy/Basinfy-SaaS-Studio codex
 4. [Deterministic Autonomous Software Engineering SOPs](#-deterministic-autonomous-software-engineering-sops)
 5. [The 50-Agent Hierarchy](#-the-50-agent-hierarchy)
 6. [The 7-Phase Software Pipeline](#-the-7-phase-software-pipeline)
-7. [The 95 Slash Commands (`/saas-*`)](#-the-95-slash-commands-saas-)
+7. [The 96 Slash Commands (`/saas-*`)](#-the-95-slash-commands-saas-)
 8. [Director Gates & Quality Assurance](#-director-gates--quality-assurance)
 9. [Enterprise Security & Defensive Perimeter](#-enterprise-security--defensive-perimeter)
 10. [End-to-End Cloud Deployment & Publication](#-end-to-end-cloud-deployment--publication)
@@ -107,7 +107,7 @@ npx github:Basinfy/Basinfy-SaaS-Studio codex
 - **Hierarchical Governance (3 Tiers)**: Strategic vision owned by Claude Opus Directors; departmental execution managed by Claude Sonnet Leads; hands-on implementation performed by 38 specialized technical agents.
 - **Strict Collaboration Protocol**: Every critical mutation adheres to `Question -> Options -> Decision -> Draft -> Approval`. No silent file modifications.
 - **28 Formal Director Gates**: Phase transitions require objective sign-offs with standardized verdicts (`READY / CONCERNS / NOT READY`, `SOUND / LEAKY BOUNDARIES`, etc.).
-- **Collision-Proof Namespace (`/saas-*`)**: All 95 slash commands use the `/saas-` prefix, allowing coexistence with other Claude Code tools and extensions without namespace pollution.
+- **Collision-Proof Namespace (`/saas-*`)**: All 96 slash commands use the `/saas-` prefix, allowing coexistence with other Claude Code tools and extensions without namespace pollution.
 - **Production-Ready Security Controls**: Pre-commit hooks enforce zero API secret exposure, mandatory PostgreSQL Row Level Security (RLS), and cryptographic verification of Stripe webhooks using raw bodies.
 - **Durable Session Checkpointing**: `production/session-state/active.md` acts as an persistent state machine, surviving context compaction and session restarts.
 
@@ -179,7 +179,7 @@ flowchart TD
     end
 
     subgraph ExecutionLayer["5. Deterministic Execution & Self-Test"]
-        SK["95 Unique Skills (/saas-*)<br/>(Dynamic Shell Injection)"]
+        SK["96 Unique Skills (/saas-*)<br/>(Dynamic Shell Injection)"]
         SC["35 Deterministic Scripts<br/>(ts-parse-check, prd-structure-check...)"]
         TESTS["studio-tests/<br/>(Continuous Self-Improvement & Audit)"]
     end
@@ -341,7 +341,7 @@ Every SaaS project advances through a structured 7-stage lifecycle machine defin
 
 ---
 
-## 🛠 The 95 Slash Commands (`/saas-*`)
+## 🛠 The 96 Slash Commands (`/saas-*`)
 
 All slash commands reside in [`.claude/skills/`](.claude/skills/) and feature dynamic configuration injection:
 
@@ -751,7 +751,7 @@ Elevate the quality and security of legacy code:
 | Scenario | Install Command | First AI Command | Primary Goal |
 | :--- | :--- | :--- | :--- |
 | **New Project (From Scratch)** | `npx github:Basinfy/Basinfy-SaaS-Studio all --target ./app` | `/saas-start` | Build an entire SaaS from idea to cloud deploy with disciplined architecture |
-| **Existing Project (Inject)** | `npx github:Basinfy/Basinfy-SaaS-Studio all --mode inject` | `/saas-project-stage-detect` | Add 50 agents & 95 workflows without touching existing application code |
+| **Existing Project (Inject)** | `npx github:Basinfy/Basinfy-SaaS-Studio all --mode inject` | `/saas-project-stage-detect` | Add 50 agents & 96 workflows without touching existing application code |
 | **Global Machine Install** | `npx github:Basinfy/Basinfy-SaaS-Studio all --global` | `/saas-help` | Enable all `/saas-*` workflows across every folder on your computer |
 
 ---
@@ -766,7 +766,7 @@ Before executing code searches, reading files, or inspecting symbols, the studio
 - Whether Basinfy MCP tools (`basinfy_session_start`, `basinfy_search`, `basinfy_locate`, `basinfy_prepare_edit`, `basinfy_read`, `basinfy_impact`, etc.) or the `basinfy` CLI are active.
 
 ### 2. When Basinfy is Detected (`.basinfy/` present)
-When Basinfy is detected, all 50 agents and 95 skills immediately route discovery through the **Basinfy Smart Indexing Protocol**:
+When Basinfy is detected, all 50 agents and 96 skills immediately route discovery through the **Basinfy Smart Indexing Protocol**:
 - **Symbols & Functions**: Uses `basinfy_prepare_edit` or `basinfy_locate` to obtain definitions, gate checks, and dependency graphs in a single call.
 - **Section Reading & Search**: Uses `basinfy_search` and `basinfy_read` for high-density retrieval without manual line offsets or regex scanning.
 - **New File Scaffolding**: Runs `basinfy_prepare_create` before creating modules to enforce clean architectural boundaries.

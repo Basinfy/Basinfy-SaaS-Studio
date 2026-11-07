@@ -10,7 +10,7 @@
 
 <p align="center">
   <strong>Estúdio Autônomo de Engenharia de Software e SaaS para Claude Code, Cursor, Antigravity e Agentes de IA</strong><br>
-  <em>Transforme sua sessão de IA em uma agência completa de desenvolvimento com 50 agentes especializados, 95 fluxos de trabalho e 28 gates de governança.</em>
+  <em>Transforme sua sessão de IA em uma agência completa de desenvolvimento com 50 agentes especializados, 96 fluxos de trabalho e 28 gates de governança.</em>
 </p>
 
 <p align="center">
@@ -40,7 +40,7 @@ Em vez de você ter que ficar digitando prompts soltos como *"crie uma tela de l
    - **Especialistas dedicados** em Next.js, FastAPI, Supabase, Tailwind, Stripe, Docker, AWS e Segurança.
 
 2. **Ele segue um processo de engenharia ponta a ponta**:
-   O estúdio conduz seu projeto por 7 fases com 95 comandos práticos (`/saas-*`):
+   O estúdio conduz seu projeto por 7 fases com 96 comandos práticos (`/saas-*`):
    - **Quer tirar uma ideia do papel?** Digite `/saas-start` e o estúdio entrevista você, sugere stacks e cria a fundação do projeto.
    - **Quer especificar funcionalidades?** Digite `/saas-design-system` e ele gera especificações técnicas (PRDs) completas.
    - **Quer codificar uma funcionalidade?** Digite `/saas-dev-story [ID]` e o especialista constrói o código com testes automatizados e segurança.
@@ -61,7 +61,7 @@ Em vez de você ter que ficar digitando prompts soltos como *"crie uma tela de l
 Instale e ative o **Basinfy SaaS Studio** com um único comando — com **zero dependências externas** e inicialização instantânea (< 1s). Compatível nativamente com **Claude Code**, **Cursor**, **Antigravity / Gemini CLI**, **OpenAI Codex**, **VS Code & GitHub Copilot**, **Windsurf**, **Cline & Roo Code**, **Continue.dev**, **Aider**, **Devin** e **Zed**.
 
 ### 1. Instalação Global (Recomendado)
-Torne todos os **50 agentes** e **95 comandos `/saas-*`** disponíveis globalmente em **qualquer projeto ou pasta do seu computador**:
+Torne todos os **50 agentes** e **96 comandos `/saas-*`** disponíveis globalmente em **qualquer projeto ou pasta do seu computador**:
 
 ```bash
 # Instalação global para TODAS as ferramentas de IA da sua máquina:
@@ -100,8 +100,8 @@ npx github:Basinfy/Basinfy-SaaS-Studio codex
 
 | Plataforma / Ferramenta | Caminho Global | Configurações Locais | Comandos Slash & Regras |
 | :--- | :--- | :--- | :--- |
-| **Claude Code** | `~/.claude/` | `.claude/`, `CLAUDE.md`, `project.yaml` | 95 skills (`/saas-*`), 50 agentes, 28 gates |
-| **Antigravity / Gemini** | `~/.gemini/config/skills/` | `GEMINI.md`, `.agents/skills/`, MCP | Todas as 95 skills + hierarquia de 50 agentes |
+| **Claude Code** | `~/.claude/` | `.claude/`, `CLAUDE.md`, `project.yaml` | 96 skills (`/saas-*`), 50 agentes, 28 gates |
+| **Antigravity / Gemini** | `~/.gemini/config/skills/` | `GEMINI.md`, `.agents/skills/`, MCP | Todas as 96 skills + hierarquia de 50 agentes |
 | **Cursor** | `~/.cursor/rules/` | `.cursor/rules/saas-studio.mdc`, `.cursorrules`, `.cursor/mcp.json` | Contexto completo do estúdio, regras e MCP nativo |
 | **OpenAI Codex & ChatGPT** | `~/.codex/` | `CODEX.md`, `.codex/instructions.md`, `.codex/hooks.json` | Padrão oficial OpenAI com hooks e diretrizes de engenharia |
 | **VS Code & GitHub Copilot** | - | `.vscode/`, `.github/copilot-instructions.md`, `.github/prompts/` | Configurações de workspace, tarefas, extensões e slash prompts |
@@ -123,7 +123,7 @@ npx github:Basinfy/Basinfy-SaaS-Studio codex
 6. [SOPs Determinísticos de Engenharia de Software](#-sops-determinísticos-de-engenharia-de-software)
 7. [A Hierarquia dos 50 Agentes](#-a-hierarquia-dos-50-agentes)
 8. [O Pipeline de Software em 7 Fases](#-o-pipeline-de-software-em-7-fases)
-9. [Os 95 Comandos Slash (`/saas-*`)](#-os-95-comandos-slash-saas-)
+9. [Os 96 Comandos Slash (`/saas-*`)](#-os-95-comandos-slash-saas-)
 10. [Director Gates & Controle de Qualidade](#-director-gates--controle-de-qualidade)
 11. [Segurança Empresarial & Perímetro Defensivo](#-segurança-empresarial--perímetro-defensivo)
 12. [Deploy em Nuvem & Publicação de Ponta a Ponta](#-deploy-em-nuvem--publicação-de-ponta-a-ponta)
@@ -142,7 +142,7 @@ O **Basinfy SaaS Studio** é uma arquitetura corporativa de orquestração multi
 - **Governança Hierárquica em 3 Tiers**: Visão estratégica gerenciada por Diretores Claude Opus; liderança técnica e de produto conduzida por Líderes Claude Sonnet; e execução técnica por 38 agentes especialistas.
 - **Protocolo Estrito de Colaboração**: Toda mutação crítica obedece ao fluxo `Pergunta -> Opções -> Decisão -> Rascunho -> Aprovação`. Nenhuma alteração silenciosa ou destrutiva sem confirmação expressa do desenvolvedor.
 - **28 Director Gates Formais**: Transições de fase exigem aprovações formais com vereditos técnicos padronizados (`READY / CONCERNS / NOT READY`, `SOUND / LEAKY BOUNDARIES`, etc.).
-- **Namespace Sem Conflitos (`/saas-*`)**: Todos os 95 comandos utilizam o prefixo `/saas-`, permitindo coexistência perfeita com outras extensões e comandos do seu ambiente.
+- **Namespace Sem Conflitos (`/saas-*`)**: Todos os 96 comandos utilizam o prefixo `/saas-`, permitindo coexistência perfeita com outras extensões e comandos do seu ambiente.
 - **Controles de Segurança de Nível Corporativo**: Hooks de pre-commit bloqueiam vazamentos de credenciais e segredos de API, exigem PostgreSQL Row Level Security (RLS) e validam assinaturas criptográficas de webhooks do Stripe com payload bruto.
 - **Checkpointing Durável de Sessão**: O arquivo `production/session-state/active.md` opera como uma máquina de estado persistente, imune a compactações de contexto, quedas ou reinicializações.
 - **Indexação Semântica Inteligente com Basinfy**: Roteamento prioritário de busca de código pelo grafo de importações e bacias de dependência antes de recorrer a buscas cegas por grep/rg.
@@ -310,7 +310,7 @@ npx github:Basinfy/Basinfy-SaaS-Studio uninstall --keep-config -f
 npx github:Basinfy/Basinfy-SaaS-Studio uninstall --clean-all -f
 ```
 
-> **Garantia de Integridade**: O desinstalador global apaga **estritamente** os 50 agentes, as 95 skills (`saas-*` e `basinfy-saas-studio`) e as regras pertencentes ao estúdio. Suas outras skills pessoais em `~/.gemini/config/skills/` e arquivos em `src/` no projeto nunca são tocados.
+> **Garantia de Integridade**: O desinstalador global apaga **estritamente** os 50 agentes, as 96 skills (`saas-*` e `basinfy-saas-studio`) e as regras pertencentes ao estúdio. Suas outras skills pessoais em `~/.gemini/config/skills/` e arquivos em `src/` no projeto nunca são tocados.
 
 ---
 
@@ -364,7 +364,7 @@ O ciclo de vida de desenvolvimento é estruturado em uma esteira contínua com p
 
 ---
 
-## 🛠 Os 95 Comandos Slash (`/saas-*`)
+## 🛠 Os 96 Comandos Slash (`/saas-*`)
 
 Todas as habilidades contam com namespace único e não conflitante:
 
@@ -705,7 +705,7 @@ Eleve o padrão de qualidade do seu código legado:
 | Necessidade | Comando de Instalação | Primeiro Comando na IA | Objetivo Central |
 | :--- | :--- | :--- | :--- |
 | **Projeto Novo (Do Zero)** | `npx github:Basinfy/Basinfy-SaaS-Studio all --target ./app` | `/saas-start` | Criar um SaaS completo da ideação ao deploy com arquitetura perfeita |
-| **Projeto Existente (Adição)** | `npx github:Basinfy/Basinfy-SaaS-Studio all --mode inject` | `/saas-project-stage-detect` | Adicionar 50 agentes e 95 fluxos sem alterar o código atual da aplicação |
+| **Projeto Existente (Adição)** | `npx github:Basinfy/Basinfy-SaaS-Studio all --mode inject` | `/saas-project-stage-detect` | Adicionar 50 agentes e 96 fluxos sem alterar o código atual da aplicação |
 | **Instalação Global na Máquina** | `npx github:Basinfy/Basinfy-SaaS-Studio all --global` | `/saas-help` | Ter todos os comandos `/saas-*` disponíveis em qualquer pasta do PC |
 
 ---
@@ -715,7 +715,7 @@ Eleve o padrão de qualidade do seu código legado:
 O **Basinfy SaaS Studio** possui inteligência adaptativa integrada para reconhecimento de ambiente:
 
 ### 1. Detecção Automática e Transparente
-Antes de realizar qualquer busca, leitura de arquivos ou análise de símbolos, os 50 agentes e as 95 skills do estúdio verificam automaticamente:
+Antes de realizar qualquer busca, leitura de arquivos ou análise de símbolos, os 50 agentes e as 96 skills do estúdio verificam automaticamente:
 - Se a pasta `.basinfy/` existe na raiz do repositório, ou
 - Se as ferramentas MCP (`basinfy_session_start`, `basinfy_search`, `basinfy_locate`, `basinfy_prepare_edit`, `basinfy_read`, `basinfy_impact`, etc.) ou a CLI `basinfy` estão disponíveis no ambiente.
 
@@ -744,7 +744,7 @@ python studio-tests/verify-integrity.py
 ```
 
 A suíte verifica:
-- Presença e sintaxe de todos os 50 agentes e 95 skills `/saas-*`.
+- Presença e sintaxe de todos os 50 agentes e 96 skills `/saas-*`.
 - Ausência de termos legados ou referências a outros repositórios.
 - Funcionamento comportamental dos scripts bash de governança.
 - Conformidade dos 28 Director Gates e templates de PRD.
