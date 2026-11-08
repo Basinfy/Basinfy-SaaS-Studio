@@ -79,7 +79,7 @@ required_49_agents = [
 missing_agents = [a for a in required_49_agents if f"{a}.md" not in agents_files]
 check(len(missing_agents) == 0 and len(agents_files) == 50, "Exactly 50 SaaS agents present", f"Missing: {missing_agents}, total files: {len(agents_files)}")
 
-# 4. Skills Check (96 skills + 20 references)
+# 4. Skills Check (96 skills + 21 references)
 print("\n--- 4. Skills Check ---")
 skills_dir = ".claude/skills"
 check(os.path.exists(skills_dir), ".claude/skills exists", "Missing skills directory")
@@ -92,7 +92,7 @@ skills_with_references = [
     "saas-create-architecture", "saas-create-epics", "saas-create-stories", "saas-design-system",
     "saas-dev-story", "saas-gate-check", "saas-prototype", "saas-review-all-prds", "saas-setup-stack",
     "saas-smoke-check", "saas-story-done", "saas-story-readiness", "saas-test-setup", "saas-ux-design",
-    "saas-lgpd-audit", "saas-frontend-taste"
+    "saas-lgpd-audit", "saas-frontend-taste", "saas-security-audit"
 ]
 
 missing_refs = []
@@ -101,7 +101,7 @@ for sk in skills_with_references:
     if not (os.path.exists(ref_dir) and len(os.listdir(ref_dir)) > 0):
         missing_refs.append(sk)
 
-check(len(missing_refs) == 0, "All 20 complex skills have references/", f"Missing references in: {missing_refs}")
+check(len(missing_refs) == 0, "All 21 complex skills have references/", f"Missing references in: {missing_refs}")
 
 # 5. Director Gates Check (28 Canonical + Legacy Aliases + Verdicts)
 print("\n--- 5. Director Gates Check ---")
