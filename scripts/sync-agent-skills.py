@@ -39,7 +39,7 @@ def verify_parity():
         print(f"[FAIL] Missing {len(missing)} skills in .agents/skills/: {sorted(missing)}")
         return False
     
-    print(f"[PASS] Exact substrate parity: {len(claude_skills)}/96 skills mirrored in .agents/skills/")
+    print(f"[PASS] Exact substrate parity: {len(claude_skills)}/{len(claude_skills)} skills mirrored in .agents/skills/")
     return True
 
 def sync_skills():

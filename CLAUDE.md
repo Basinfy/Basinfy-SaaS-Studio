@@ -86,10 +86,11 @@ Read `.claude/docs/context-management.md` on demand — it is a reference, not s
 
 ## Studio Workflows & Slash Commands (/saas-*)
 
-Basinfy SaaS Studio provides 96 specialized workflows covering the full lifecycle of software development:
+Basinfy SaaS Studio provides 108 specialized workflows covering the full lifecycle of software development:
 - **First-time Onboarding & Diagnosis**: /saas-start, /saas-help, /saas-setup-stack, /saas-project-stage-detect
 - **Product & Specifications**: /saas-brainstorm, /saas-map-features, /saas-design-system, /saas-create-architecture, /saas-architecture-decision
 - **Sprints & Implementation**: /saas-sprint-plan, /saas-create-epics, /saas-create-stories, /saas-dev-story, /saas-story-done
+- **SEO, GEO & Agent Readiness**: /saas-seo, /saas-team-seo, /saas-seo-audit, /saas-seo-technical, /saas-seo-schema, /saas-seo-geo, /saas-seo-agentic, /saas-seo-drift
 - **Privacy & Security**: /saas-lgpd, /saas-team-lgpd, /saas-security-audit
 - **Quality & Launch**: /saas-code-review, /saas-perf-profile, /saas-gate-check, /saas-release-checklist, /saas-launch-checklist
 

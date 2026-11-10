@@ -22,11 +22,12 @@ The studio organizes 50 specialized agents into 3 distinct operational tiers:
 - **Tier 3 — Execution Specialists (Claude Sonnet / MaxTurns: 20)**:
   - 39 dedicated engineering specialists across Frontend (Next.js, React, Tailwind, shadcn/ui), Backend (FastAPI, Python, Go, Node), Database (Supabase, PostgreSQL, Prisma, Drizzle), Payments (Stripe), Cloud & Infra (AWS, Cloudflare, Docker, K8s), Security, Privacy & DPO (dpo-privacy-specialist), and QA.
 
-## 2. 96 Slash Workflows (/saas-*)
+## 2. 108 Slash Workflows (/saas-*)
 Always interpret and execute commands prefixed with `/saas-*` according to the canonical skills in `.claude/skills/` or `.agents/skills/`:
 - **Onboarding & Discovery**: `/saas-start`, `/saas-help`, `/saas-setup-stack`, `/saas-project-stage-detect`, `/saas-brainstorm`
 - **Specifications & Architecture**: `/saas-design-system`, `/saas-create-architecture`, `/saas-architecture-decision`, `/saas-map-features`, `/saas-gate-check`
 - **Sprints & Implementation**: `/saas-sprint-plan`, `/saas-create-epics`, `/saas-create-stories`, `/saas-dev-story`, `/saas-story-done`, `/saas-code-review`
+- **SEO, GEO & Agent Readiness**: `/saas-seo`, `/saas-team-seo`, `/saas-seo-audit`, `/saas-seo-technical`, `/saas-seo-schema`, `/saas-seo-geo`, `/saas-seo-agentic`, `/saas-seo-drift`
 - **Quality, Security & Launch**: `/saas-qa-plan`, `/saas-security-audit`, `/saas-perf-profile`, `/saas-load-test`, `/saas-release-checklist`, `/saas-launch-checklist`
 
 ## 3. The 5-Step Collaborative Loop

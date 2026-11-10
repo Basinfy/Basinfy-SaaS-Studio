@@ -79,20 +79,20 @@ required_49_agents = [
 missing_agents = [a for a in required_49_agents if f"{a}.md" not in agents_files]
 check(len(missing_agents) == 0 and len(agents_files) == 50, "Exactly 50 SaaS agents present", f"Missing: {missing_agents}, total files: {len(agents_files)}")
 
-# 4. Skills Check (96 skills + 21 references)
+# 4. Skills Check (108 skills + 23 references)
 print("\n--- 4. Skills Check ---")
 skills_dir = ".claude/skills"
 check(os.path.exists(skills_dir), ".claude/skills exists", "Missing skills directory")
 skill_folders = [d for d in os.listdir(skills_dir) if os.path.isdir(os.path.join(skills_dir, d))]
 print(f"Found {len(skill_folders)} skill folders in {skills_dir}")
-check(len(skill_folders) == 96 and all(d.startswith("saas-") for d in skill_folders), "Exactly 96 SaaS skills present with saas- prefix", f"Found {len(skill_folders)}")
+check(len(skill_folders) == 108 and all(d.startswith("saas-") for d in skill_folders), "Exactly 108 SaaS skills present with saas- prefix", f"Found {len(skill_folders)}")
 
 skills_with_references = [
     "saas-adopt", "saas-architecture-decision", "saas-architecture-review", "saas-brainstorm",
     "saas-create-architecture", "saas-create-epics", "saas-create-stories", "saas-design-system",
     "saas-dev-story", "saas-gate-check", "saas-prototype", "saas-review-all-prds", "saas-setup-stack",
     "saas-smoke-check", "saas-story-done", "saas-story-readiness", "saas-test-setup", "saas-ux-design",
-    "saas-lgpd-audit", "saas-frontend-taste", "saas-security-audit"
+    "saas-lgpd-audit", "saas-frontend-taste", "saas-security-audit", "saas-seo", "saas-seo-agentic"
 ]
 
 missing_refs = []
@@ -101,7 +101,7 @@ for sk in skills_with_references:
     if not (os.path.exists(ref_dir) and len(os.listdir(ref_dir)) > 0):
         missing_refs.append(sk)
 
-check(len(missing_refs) == 0, "All 21 complex skills have references/", f"Missing references in: {missing_refs}")
+check(len(missing_refs) == 0, "All 23 complex skills have references/", f"Missing references in: {missing_refs}")
 
 # 5. Director Gates Check (28 Canonical + Legacy Aliases + Verdicts)
 print("\n--- 5. Director Gates Check ---")
@@ -283,10 +283,10 @@ try:
     with open("studio-tests/catalog.yaml", "r", encoding="utf-8") as f:
         cat_data = yaml.safe_load(f)
     cat_skills = cat_data.get("skills", [])
-    check(len(cat_skills) == 96, "catalog.yaml has exactly 96 skills", f"Found {len(cat_skills)}")
-    check(all(s.get("name", "").startswith("saas-") for s in cat_skills), "All 96 skills in catalog.yaml have saas- prefix", "Some skills lack saas- prefix")
+    check(len(cat_skills) == 108, "catalog.yaml has exactly 108 skills", f"Found {len(cat_skills)}")
+    check(all(s.get("name", "").startswith("saas-") for s in cat_skills), "All 108 skills in catalog.yaml have saas- prefix", "Some skills lack saas- prefix")
     missing_specs = [s.get("name") for s in cat_skills if not (s.get("spec") and os.path.exists(s["spec"]))]
-    check(len(missing_specs) == 0, "All 96 skill spec files in catalog.yaml exist", f"Missing specs: {missing_specs}")
+    check(len(missing_specs) == 0, "All 108 skill spec files in catalog.yaml exist", f"Missing specs: {missing_specs}")
 except Exception as e:
     ERRORS.append(f"catalog.yaml parse error: {e}")
 
@@ -458,10 +458,10 @@ for rf in parity_rule_files:
         c = open(rf, "r", encoding="utf-8", errors="ignore").read()
         if "50 Specialized Agents" not in c and "50 specialized agents" not in c and "50 agentes" not in c:
             parity_failures.append(f"{rf}: missing 50 agents mention")
-        if "96" not in c and "95" not in c:
-            parity_failures.append(f"{rf}: missing 95 workflows mention")
+        if "108" not in c and "96" not in c and "95" not in c:
+            parity_failures.append(f"{rf}: missing 108 workflows mention")
 
-check(len(parity_failures) == 0, "Exact rules parity (50 agents, 96 workflows) across all AI platforms", f"Failures: {parity_failures}")
+check(len(parity_failures) == 0, "Exact rules parity (50 agents, 108 workflows) across all AI platforms", f"Failures: {parity_failures}")
 
 # 15. Final Result Summary
 print("\n=================================================================")
