@@ -26,7 +26,8 @@ Audits technical SEO fundamentals for modern cloud applications, single-page app
 
 1. **Crawlability & Bot Governance**:
    - `robots.txt`: Exists, valid syntax, reachable at root.
-   - Distinct AI crawler rules: Distinguish training crawlers (`GPTBot`, `ClaudeBot`, `Bytespider`, `Google-Extended`) from search citability crawlers (`OAI-SearchBot`, `Claude-SearchBot`, `PerplexityBot`).
+   - Distinct AI crawler rules: Distinguish training crawlers (`GPTBot`, `ClaudeBot`, `Bytespider`, `Google-Extended`, `Applebot-Extended`, `CCBot`, `Amazonbot`) from search citability crawlers (`OAI-SearchBot`, `Claude-SearchBot`, `PerplexityBot`), and declare `Content-Signal` preferences (`ai-train`, `search`, `ai-input`).
+   - RFC 8288 `Link` headers & DNS-AID: Return `Link` headers on homepage (`api-catalog`, `service-desc`, `service-doc`, `describedby`) and publish `_agents` `SVCB`/`HTTPS`/`TXT` DNS records where applicable.
    - 2MB HTML Cap: Ensure initial uncompressed HTML is strictly < 2MB (Googlebot limit; avoid bloated inline base64 or CSS).
 
 2. **Indexability & Meta Directives**:

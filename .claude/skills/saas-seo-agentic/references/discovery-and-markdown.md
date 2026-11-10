@@ -81,26 +81,30 @@ ARD 1.0 (agenticresourcediscovery.org/spec; ards-project/ard-spec) lists a
 site's agent-facing resources: MCP server cards, A2A agent cards, agent skills,
 nested catalogs. Lighthouse 13.5 validates it (`ard-schema`). Discovery order:
 robots.txt `Agentmap: <url>`, `<link rel="ai-catalog">`, HTTP
-`Link ...; rel="ai-catalog"`, then `/.well-known/ai-catalog.json`.
+`Link ...; rel="ai-catalog"`, DNS `_catalog._agents` TXT (`url=...`), then `/.well-known/ai-catalog.json`.
 
 ```json
 {
   "specVersion": "1.0",
+  "host": {
+    "displayName": "Example Systems",
+    "identifier": "did:web:example.com"
+  },
   "entries": [
     {
       "identifier": "urn:air:example.com:docs-mcp",
       "displayName": "Example Docs MCP server",
       "type": "application/mcp-server-card+json",
-      "url": "https://example.com/mcp/server-card",
+      "url": "https://example.com/.well-known/mcp/server-card.json",
       "representativeQueries": ["How do I rotate an API key?", "What are the rate limits?"]
     }
   ]
 }
 ```
 
-Rules: `identifier` matches `urn:air:<publisher>[:<namespace>]:<name>`;
+Rules: `host` object (`displayName`, `identifier`); `identifier` matches `urn:air:<publisher>[:<namespace>]:<name>`;
 exactly one of `url` or `data`; 2 to 5 `representativeQueries`; no top-level
-`collections`. Publish only when there is a real resource to list. An
+`collections`; serve with `Access-Control-Allow-Origin: *`. Publish only when there is a real resource to list. An
 invalid or unreachable signalled catalog adds a **counted failure** to the
 Lighthouse fraction. Draft with `agentic_fix.py ai-catalog`.
 
@@ -110,24 +114,26 @@ Lighthouse fraction. Draft with `agentic_fix.py ai-catalog`.
 |---|---|---|---|
 | `/.well-known/api-catalog` | RFC 9727 (published) | `application/linkset+json; profile="https://www.rfc-editor.org/info/rfc9727"` | You publish APIs |
 | `/.well-known/oauth-protected-resource` | RFC 9728 (published) | JSON | Your API or MCP server takes OAuth tokens; pair with `WWW-Authenticate: Bearer resource_metadata=...` |
-| `/.well-known/oauth-authorization-server` | RFC 8414 (published) | JSON | You run the authorization server |
-| `/.well-known/agent-card.json` | A2A protocol | JSON | You run an A2A agent |
-| `/.well-known/ucp` | UCP (Google + Shopify) | JSON | Agentic checkout; audit with `ucp_check.py` via `seo-ecommerce` |
+| `/.well-known/oauth-authorization-server` / `openid-configuration` | RFC 8414 / OIDC 1.0 | JSON | You run the authorization server |
+| `/.well-known/http-message-signatures-directory` | IETF WebBotAuth | JSON (JWKS) | Your agents sign outgoing requests |
+| `/.well-known/mcp/server-card.json` | MCP SEP-1649 (IsItAgentReady) | JSON | You host an MCP server (`serverInfo`, `endpoint`, `capabilities`) |
+| `/.well-known/agent-card.json` | A2A protocol | JSON | You run an A2A agent (`supportedInterfaces`, `capabilities`, `skills`) |
+| `/.well-known/agent-skills/index.json` | Agent Skills Discovery RFC v0.2.0 | JSON | You publish agent skills (`$schema`, `skills[]` with `sha256:` digests) |
+| `/.well-known/poppy.json` | Personal Agent Protocol draft 0.1 | JSON | Informational organization & OAuth issuer binding |
+| `/.well-known/acp.json` | ACP (OpenAI + Stripe) | JSON | Agentic commerce checkout API |
+| `/.well-known/ucp` | UCP (Google + Shopify) | JSON | Universal commerce checkout |
+| `/auth.md` | Auth.md spec | Markdown | Agent registration & credential provisioning guide |
 
-MCP Server Cards (SEP-2127) are still an unmerged proposal: a card at
-`<mcp-endpoint>/server-card`, discovered through `ai-catalog.json`. The older
-`/.well-known/mcp.json` proposal (SEP-1649) was closed. Do not recommend a
-`/.well-known/mcp/...` path as a standard.
-
-A `/.well-known` URL that returns HTML with 200 is a soft 404. It misleads
+A `/.well-known` URL or `/auth.md` that returns HTML with 200 is a soft 404. It misleads
 discovery clients; return a real 404.
 
 ## Agentic commerce (pointer)
 
-| Protocol | Backers | Site-owner action |
-|---|---|---|
-| UCP | Google + Shopify and retailers | Shopify: mostly platform-handled. Others: Merchant Center, `/.well-known/ucp` |
-| ACP | OpenAI + Stripe | Stripe Agentic Commerce Suite, or implement the checkout endpoints |
-| x402 | Coinbase-originated consortium | Only for pay-per-request APIs or content |
+See `agentic-commerce-protocols.md` for full schemas and validation rules:
 
-Commerce audits belong to `seo-ecommerce`; this skill only flags presence.
+| Protocol | Discovery / Middleware | Site-owner action |
+|---|---|---|
+| UCP | `/.well-known/ucp` | `protocol_version`, `services`, `capabilities`, `endpoints` |
+| ACP | `/.well-known/acp.json` | `protocol`, `api_base_url`, `transports`, `capabilities.services` |
+| MPP | `/openapi.json` (`x-payment-info`) | Declare `intent`, `method`, `amount` on payable operations |
+| x402 | HTTP 402 (`@x402/next`) | Facilitator URL + wallet address for pay-per-request APIs |

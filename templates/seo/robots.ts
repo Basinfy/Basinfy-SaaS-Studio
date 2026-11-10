@@ -18,7 +18,7 @@ export default function robots(): MetadataRoute.Robots {
       },
       // Block pure LLM bulk training crawlers if desired
       {
-        userAgent: ['GPTBot', 'ClaudeBot', 'Bytespider', 'Google-Extended'],
+        userAgent: ['GPTBot', 'ClaudeBot', 'Bytespider', 'Google-Extended', 'Applebot-Extended', 'CCBot', 'Amazonbot'],
         disallow: ['/internal/', '/private/'],
       },
     ],

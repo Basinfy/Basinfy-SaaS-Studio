@@ -62,9 +62,9 @@ For local development servers (`http://localhost:3000`), the engine safely allow
 Whenever implementing SEO features directly into a SaaS codebase, strictly generate code conforming to Next.js App Router conventions:
 
 1. **Static & Dynamic Metadata**: Use `export const metadata: Metadata` or `export async function generateMetadata(): Promise<Metadata>`.
-2. **Granular AI Crawler Management**: Generate `app/robots.ts` explicitly distinguishing AI training bots (`GPTBot`, `ClaudeBot`, `Google-Extended`) from AI search citability bots (`OAI-SearchBot`, `Claude-SearchBot`, `PerplexityBot`).
+2. **Granular AI Crawler Management**: Generate `app/robots.ts` (or `app/robots.txt/route.ts` when emitting `Content-Signal` headers) explicitly distinguishing AI training bots (`GPTBot`, `ClaudeBot`, `Google-Extended`, `Amazonbot`, `Applebot-Extended`, `CCBot`) from AI search citability bots (`OAI-SearchBot`, `Claude-SearchBot`, `PerplexityBot`).
 3. **Dynamic Sitemaps**: Generate `app/sitemap.ts` implementing `MetadataRoute.Sitemap`.
-4. **Agentic Discovery**: Implement `app/llms.txt/route.ts` delivering concise Markdown documentation to AI agents.
+4. **Agentic Discovery & Machine-Readable Endpoints**: Implement `app/llms.txt/route.ts`, `Accept: text/markdown` content negotiation + RFC 8288 `Link` headers, and `/.well-known/` manifests (`agent-skills/index.json`, `mcp/server-card.json`, `api-catalog`, `ai-catalog.json`, `oauth-protected-resource`, `http-message-signatures-directory`, `auth.md`) targeting IsItAgentReady Level 4–5.
 5. **JSON-LD Structured Data**: Deliver server-rendered `<script type="application/ld+json">` components to ensure instant indexing by crawlers without client-side hydration delays.
 
 ---

@@ -54,16 +54,32 @@ from __future__ import annotations
 
 import argparse
 import datetime as _dt
+import ipaddress
 import json
 import os
 import re
 import sys
 from typing import Optional
-from urllib.parse import urljoin, urlparse
+from urllib.parse import quote, urljoin, urlparse
 
 _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 if _SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, _SCRIPTS_DIR)
+from agent_standards import (  # noqa: E402
+    compute_readiness_level,
+    validate_a2a_card,
+    validate_acp_manifest,
+    validate_agent_skills_index,
+    validate_api_catalog,
+    validate_auth_md,
+    validate_mcp_server_card,
+    validate_mpp_openapi,
+    validate_oauth_discovery,
+    validate_oauth_prm,
+    validate_poppy_manifest,
+    validate_ucp_manifest,
+    validate_web_bot_auth_jwks,
+)
 from url_safety import (  # noqa: E402
     MAX_JSON_DEPTH,
     URLSafetyError,
@@ -72,7 +88,7 @@ from url_safety import (  # noqa: E402
     safe_requests_get,
 )
 
-CHECKED_ON = "2026-09-23"
+CHECKED_ON = "2026-11-10"
 MAX_BODY = 2_000_000
 MAX_SCRIPTS = 8
 BROWSER_UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -94,6 +110,8 @@ AI_AGENTS = [
     ("Google-Agent", "Google", "user", "generally ignores"),
     ("Applebot-Extended", "Apple", "control", "honours"),
     ("CCBot", "Common Crawl", "training", "honours"),
+    ("Amazonbot", "Amazon", "training", "honours"),
+    ("Bytespider", "ByteDance", "training", "honours"),
 ]
 ROLE_MEANING = {
     "training": "model training",
@@ -132,18 +150,26 @@ ARD_MEDIA_TYPES = {
 }
 ARD_URN = re.compile(r"^urn:air:([a-zA-Z0-9.-]+)(?::([a-zA-Z0-9._:-]+))?:([a-zA-Z0-9._-]+)$")
 WELL_KNOWN = [
-    # path, label, standards status, priority, expected content-type fragment
-    ("/.well-known/api-catalog", "API Catalog", "RFC 9727", "P2", "linkset+json"),
+    # path, label, standards status, priority, expected content-type fragment, validator
+    ("/.well-known/api-catalog", "API Catalog", "RFC 9727", "P2", "linkset+json", validate_api_catalog),
     ("/.well-known/oauth-protected-resource", "OAuth Protected Resource Metadata",
-     "RFC 9728", "P2", "json"),
+     "RFC 9728", "P2", "json", validate_oauth_prm),
     ("/.well-known/oauth-authorization-server", "OAuth Authorization Server Metadata",
-     "RFC 8414", "P2", "json"),
-    ("/.well-known/agent-card.json", "A2A agent card", "A2A protocol", "P3", "json"),
-    ("/.well-known/ucp", "UCP commerce profile", "UCP (Google + Shopify open spec); "
-     "depth in seo-ecommerce ucp_check.py", "P3", "json"),
+     "RFC 8414", "P2", "json", validate_oauth_discovery),
+    ("/.well-known/openid-configuration", "OpenID Connect Discovery",
+     "OIDC Discovery 1.0", "P2", "json", validate_oauth_discovery),
+    ("/.well-known/http-message-signatures-directory", "Web Bot Auth JWKS Directory",
+     "IETF WebBotAuth", "P2", "json", validate_web_bot_auth_jwks),
+    ("/.well-known/mcp/server-card.json", "MCP Server Card",
+     "MCP SEP-1649", "P2", "json", validate_mcp_server_card),
+    ("/.well-known/agent-card.json", "A2A Agent Card", "A2A protocol", "P3", "json", validate_a2a_card),
+    ("/.well-known/agent-skills/index.json", "Agent Skills Discovery Index",
+     "Agent Skills RFC v0.2.0", "P2", "json", validate_agent_skills_index),
+    ("/.well-known/acp.json", "Agentic Commerce Protocol (ACP)",
+     "ACP spec", "P3", "json", validate_acp_manifest),
+    ("/.well-known/ucp", "Universal Commerce Protocol (UCP)",
+     "UCP open spec", "P3", "json", validate_ucp_manifest),
 ]
-# MCP Server Cards (SEP-2127, unmerged) are discovered through ai-catalog.json, which
-# audit_ard() covers. The older /.well-known/mcp.json proposal (SEP-1649) is closed.
 
 
 # --------------------------------------------------------------------------- fetch
@@ -346,11 +372,12 @@ def audit_robots(root: str) -> tuple[list, dict]:
     data["agents"] = per_agent
 
     explicit = [a["token"] for a in per_agent if a["group"] == "named"]
+    has_star_rules = any("*" in g["agents"] and bool(g["rules"]) for g in parsed["groups"])
     blocked_search = [a["token"] for a in per_agent if a["role"] == "search" and not a["root_allowed"]]
     checks.append(_check(
         "robots-ai-groups", "Deliberate robots.txt groups for AI user agents", "P0",
         "warn" if blocked_search else ("pass" if explicit else "info"), "RFC 9309",
-        {"named_groups": explicit, "search_crawlers_blocked_at_root": blocked_search},
+        {"named_groups": explicit, "has_star_rules": has_star_rules, "search_crawlers_blocked_at_root": blocked_search},
         ("Blocking an AI search crawler removes the site from that engine's answers. "
          "Confirm this is intended." if blocked_search else
          None if explicit else
@@ -502,6 +529,9 @@ def audit_page(url: str) -> tuple[list, dict]:
     return checks, data
 
 
+LINK_DISCOVERY_RELS = {"api-catalog", "service-desc", "service-doc", "describedby", "ai-catalog"}
+
+
 def _link_signals(soup, link_header: str, base: str) -> dict:
     md_alt = [urljoin(base, tag.get("href", "")) for tag in soup.find_all("link")
               if "alternate" in [r.lower() for r in (tag.get("rel") or [])]
@@ -510,15 +540,30 @@ def _link_signals(soup, link_header: str, base: str) -> dict:
                   if "ai-catalog" in [r.lower() for r in (tag.get("rel") or [])]
                   and tag.get("href")]
     header_links = parse_link_header(link_header)
+    discovery_headers = []
     for entry in header_links:
         rels = entry["rel"]
         if "alternate" in rels and "text/markdown" in entry.get("type", ""):
             md_alt.append(urljoin(base, entry["uri"]))
         if "ai-catalog" in rels:
             ai_catalog.append(urljoin(base, entry["uri"]))
+        if any(r in LINK_DISCOVERY_RELS for r in rels):
+            discovery_headers.append({"uri": urljoin(base, entry["uri"]), "rel": rels})
     return {"markdown_alternates": sorted(set(md_alt)), "ai_catalog_links": ai_catalog,
             "ai_catalog_html": [u for u in ai_catalog if u not in
-                                [urljoin(base, e["uri"]) for e in header_links]]}
+                                [urljoin(base, e["uri"]) for e in header_links]],
+            "discovery_headers": discovery_headers}
+
+
+def audit_link_headers(page: dict) -> tuple[list, dict]:
+    links = (page.get("soup_links") or {}).get("discovery_headers", [])
+    data = {"count": len(links), "links": links}
+    status = "pass" if links else "info"
+    fix = (None if links else
+           "Optional. Add RFC 8288 Link response headers on the homepage (e.g., "
+           'Link: </.well-known/api-catalog>; rel="api-catalog").')
+    return [_check("link-headers", "RFC 8288 Link discovery response headers", "P2",
+                   status, "RFC 8288 + RFC 9727 section 3", data, fix)], data
 
 
 def parse_link_header(value: str) -> list:
@@ -715,6 +760,9 @@ def validate_ai_catalog(raw: str) -> dict:
                 errors.append(f"{label}: 'trustManifest' needs 'identity'")
     if "collections" in data:
         errors.append("top-level 'collections' was removed (ADR-0003); nest catalogs in entries")
+    host_obj = data.get("host")
+    if not isinstance(host_obj, dict) or not host_obj.get("displayName") or not host_obj.get("identifier"):
+        warnings.append("add 'host' object with 'displayName' and stable 'identifier' (e.g., did:web:example.com)")
     return {"errors": errors, "warnings": warnings, "entries": len(entries)}
 
 
@@ -727,7 +775,8 @@ def audit_ard(root: str, agentmap: list, page: dict) -> tuple[list, dict]:
     url = candidates[0]
     rec = fetch(url)
     data = {"catalog_url": url, "signalled": signalled, "status": rec["status"],
-            "content_type": _ctype(rec)}
+            "content_type": _ctype(rec),
+            "cors_wildcard": (rec.get("headers") or {}).get("access-control-allow-origin") == "*"}
     standard = (f"Agentic Resource Discovery (ARD) spec 1.0; checked by Lighthouse 13.5 "
                 f"ard-schema (checked {CHECKED_ON})")
     if not signalled and rec["status"] == 200 and _ctype(rec).startswith("text/html"):
@@ -748,6 +797,8 @@ def audit_ard(root: str, agentmap: list, page: dict) -> tuple[list, dict]:
                        "A catalog is signalled but does not load. Lighthouse counts this "
                        "as a failure. Fix the URL or remove the signal.")], data
     result = validate_ai_catalog(rec["text"])
+    if not data["cors_wildcard"]:
+        result["warnings"].append("add 'Access-Control-Allow-Origin: *' header for browser-based agents")
     data.update(result)
     status = "fail" if result["errors"] else "warn" if result["warnings"] else "pass"
     return [_check("ard-catalog", "ai-catalog.json (Agentic Resource Discovery)",
@@ -761,7 +812,8 @@ def audit_ard(root: str, agentmap: list, page: dict) -> tuple[list, dict]:
 
 def audit_well_known(root: str) -> tuple[list, dict]:
     checks, data = [], {}
-    for path, label, standard, priority, want in WELL_KNOWN:
+    host = urlparse(root).netloc
+    for path, label, standard, priority, want, validator in WELL_KNOWN:
         rec = fetch(root + path)
         ctype = _ctype(rec)
         row = {"status": rec["status"], "content_type": ctype}
@@ -773,20 +825,138 @@ def audit_well_known(root: str) -> tuple[list, dict]:
             row["valid_json"] = False
             status, fix = "fail", f"Document is nested deeper than {MAX_JSON_DEPTH} levels."
         elif rec["status"] == 200:
-            try:
-                json.loads(rec["text"])
-                row["valid_json"] = True
-                status = "pass" if want in ctype else "warn"
-                fix = None if status == "pass" else f"Serve with a content type containing '{want}'."
-            except (ValueError, RecursionError):
-                row["valid_json"] = False
-                status, fix = "fail", "Document is not valid JSON."
+            res = validator(rec["text"])
+            row["valid_json"] = not any("malformed JSON" in e or "root must be" in e for e in res["errors"])
+            row.update({k: v for k, v in res.items() if k not in ("errors", "warnings")})
+            if want not in ctype:
+                res["warnings"].append(f"Serve with a content type containing '{want}'.")
+            row["errors"], row["warnings"] = res["errors"], res["warnings"]
+            status = "fail" if res["errors"] else ("warn" if res["warnings"] else "pass")
+            issues = (res["errors"] + res["warnings"])[:5]
+            fix = None if status == "pass" else "Fix: " + "; ".join(issues)
         else:
             status, fix = "na", f"Only needed if you operate the matching service ({label})."
         data[path] = row
         checks.append(_check(f"well-known:{path.split('/.well-known/')[1]}", label, priority,
                              status, standard, row, fix))
+
+    # Informational: Personal Agent Protocol (Poppy)
+    poppy_rec = fetch(root + "/.well-known/poppy.json")
+    poppy_ctype = _ctype(poppy_rec)
+    poppy_row = {"status": poppy_rec["status"], "content_type": poppy_ctype}
+    if poppy_rec["status"] == 200 and not poppy_ctype.startswith("text/html"):
+        p_res = validate_poppy_manifest(poppy_rec["text"], host)
+        poppy_row.update(p_res)
+        p_status = "warn" if p_res["errors"] or p_res["warnings"] else "pass"
+        p_fix = None if p_status == "pass" else "Fix: " + "; ".join((p_res["errors"] + p_res["warnings"])[:5])
+    else:
+        p_status, p_fix = "na", "Optional informational discovery (Personal Agent Protocol draft 0.1)."
+    data["/.well-known/poppy.json"] = poppy_row
+    checks.append(_check("well-known:poppy.json", "Personal Agent Protocol (Poppy)", "P3",
+                         p_status, "Personal Agent Protocol draft 0.1 (informational)", poppy_row, p_fix))
     return checks, data
+
+
+# --------------------------------------------------------------------------- extra agent-readiness checks
+
+
+def audit_sitemap_light(root: str, declared: list) -> tuple[list, dict]:
+    target = urljoin(root + "/", declared[0]) if declared else (root + "/sitemap.xml")
+    rec = fetch(target)
+    text = rec.get("text") or ""
+    ok = rec["status"] == 200 and ("<urlset" in text.lower() or "<sitemapindex" in text.lower())
+    data = {"url": target, "status": rec["status"], "valid_xml_root": ok, "declared_in_robots": bool(declared)}
+    status = "pass" if ok else "warn"
+    fix = None if ok else "Publish a valid /sitemap.xml and reference it in robots.txt (Sitemap: ...)."
+    return [_check("sitemap-reachable", "XML Sitemap reachable", "P1", status, "Sitemaps protocol", data, fix)], data
+
+
+def audit_auth_md(root: str, wk_data: dict) -> tuple[list, dict]:
+    rec = fetch(root + "/auth.md")
+    res = validate_auth_md(rec["status"], _ctype(rec), rec.get("text", ""))
+    prm = wk_data.get("/.well-known/oauth-protected-resource") or {}
+    as_meta = wk_data.get("/.well-known/oauth-authorization-server") or {}
+    if prm.get("authorization_servers") and as_meta.get("issuer"):
+        if as_meta["issuer"] not in prm["authorization_servers"]:
+            res["warnings"].append("PRM authorization_servers does not include AS issuer")
+            if res["status"] == "pass":
+                res["status"] = "warn"
+    data = {"status": rec["status"], "content_type": _ctype(rec), **res}
+    issues = (res.get("errors", []) + res.get("warnings", []))[:5]
+    fix = None if res["status"] in ("pass", "na") else "Fix: " + "; ".join(issues)
+    if res["status"] == "na":
+        fix = "Optional. Publish /auth.md if agents register or provision credentials with your API."
+    return [_check("auth-md", "Auth.md agent registration discovery", "P3",
+                   res["status"], "Auth.md specification (passive GET only)", data, fix)], data
+
+
+def audit_mpp_openapi(root: str) -> tuple[list, dict]:
+    rec = fetch(root + "/openapi.json")
+    data = {"status": rec["status"], "content_type": _ctype(rec)}
+    if rec["status"] != 200 or _ctype(rec).startswith("text/html"):
+        return [_check("commerce:mpp", "MPP OpenAPI payment discovery (/openapi.json)", "P3",
+                       "na", "Machine Payment Protocol (draft-payment-discovery-00)", data,
+                       "Optional. Only needed for OpenAPI endpoints accepting agent HTTP payments.")], data
+    res = validate_mpp_openapi(rec["text"])
+    data.update(res)
+    if res["payable_ops"] == 0 and not res["errors"]:
+        status, fix = "na", "OpenAPI served without x-payment-info payable endpoints."
+    elif res["errors"]:
+        status, fix = "fail", "Fix: " + "; ".join(res["errors"][:5])
+    else:
+        status, fix = "pass", None
+    return [_check("commerce:mpp", "MPP OpenAPI payment discovery (/openapi.json)", "P3",
+                   status, "Machine Payment Protocol (draft-payment-discovery-00)", data, fix)], data
+
+
+def _is_public_domain(host: str) -> bool:
+    clean = (host or "").split(":", 1)[0].strip().lower()
+    if not clean or clean in ("localhost",) or clean.endswith(".local"):
+        return False
+    try:
+        ipaddress.ip_address(clean.strip("[]"))
+        return False
+    except ValueError:
+        return "." in clean
+
+
+def _doh_query(name: str, qtype: str) -> Optional[dict]:
+    for endpoint in ("https://cloudflare-dns.com/dns-query", "https://dns.google/resolve"):
+        url = f"{endpoint}?name={quote(name)}&type={quote(qtype)}"
+        rec = fetch(url, headers={"Accept": "application/dns-json"}, timeout=6)
+        if rec["status"] == 200 and rec.get("text"):
+            try:
+                return json.loads(rec["text"])
+            except ValueError:
+                continue
+    return None
+
+
+def audit_dns_aid(root: str, *, skip_dns: bool = False) -> tuple[list, dict]:
+    host = (urlparse(root).netloc or "").split(":", 1)[0]
+    if skip_dns or not _is_public_domain(host):
+        return [_check("dns-aid", "DNS-AID (_agents SVCB/HTTPS/TXT records)", "P3", "na",
+                       "DNS for AI Discovery (DoH)", {"skipped": skip_dns, "host": host},
+                       "DNS-AID check skipped (local/IP host or --skip-dns).")], {"skipped": True}
+    targets = [
+        (f"_index._agents.{host}", "SVCB"),
+        (f"_a2a._agents.{host}", "SVCB"),
+        (f"_catalog._agents.{host}", "TXT"),
+    ]
+    found, dnssec_ad = [], False
+    for qname, qtype in targets:
+        ans = _doh_query(qname, qtype)
+        if not ans:
+            continue
+        dnssec_ad = dnssec_ad or bool(ans.get("AD"))
+        for rr in ans.get("Answer") or []:
+            found.append({"name": qname, "type": qtype, "data": rr.get("data")})
+    data = {"host": host, "records": found, "dnssec_ad": dnssec_ad}
+    status = "pass" if found else "info"
+    fix = (None if found else
+           f"Optional. Publish SVCB/HTTPS or TXT records under _agents.{host} for DNS-based agent discovery.")
+    return [_check("dns-aid", "DNS-AID (_agents SVCB/HTTPS/TXT records)", "P3",
+                   status, "DNS for AI Discovery (DNS-AID + DNSSEC)", data, fix)], data
 
 
 # --------------------------------------------------------------------------- UA matrix
@@ -858,7 +1028,7 @@ def summarize(checks: list) -> dict:
     return dict(sorted(summary.items()))
 
 
-def audit(url: str, *, ua_matrix: bool = False) -> dict:
+def audit(url: str, *, ua_matrix: bool = False, skip_dns: bool = False) -> dict:
     if "://" not in url:
         url = "https://" + url
     root = _site_root(url)
@@ -866,17 +1036,28 @@ def audit(url: str, *, ua_matrix: bool = False) -> dict:
               "checked_at": _dt.datetime.now(_dt.timezone.utc).isoformat(timespec="seconds"),
               "facts_checked_on": CHECKED_ON, "checks": [], "data": {}}
     page_checks, page = audit_page(url)
+    link_checks, link_data = audit_link_headers(page)
     robots_checks, robots = audit_robots(root)
+    sitemap_checks, sitemap_data = audit_sitemap_light(
+        root, (robots.get("parsed") or {}).get("sitemap", []))
     llms_checks, llms = audit_llms(root)
     md_checks, md = audit_markdown(url, page)
     ard_checks, ard = audit_ard(root, robots.get("agentmap", []), page)
     wk_checks, wk = audit_well_known(root)
+    auth_checks, auth_data = audit_auth_md(root, wk)
+    mpp_checks, mpp_data = audit_mpp_openapi(root)
+    dns_checks, dns_data = audit_dns_aid(root, skip_dns=skip_dns)
     nf_checks, nf = audit_not_found(root)
-    report["checks"] = (page_checks + robots_checks + llms_checks + md_checks + ard_checks
-                        + wk_checks + nf_checks)
+    report["checks"] = (
+        page_checks + link_checks + robots_checks + sitemap_checks + llms_checks
+        + md_checks + ard_checks + wk_checks + auth_checks + mpp_checks + dns_checks + nf_checks
+    )
     page.pop("soup_links", None)
-    report["data"] = {"page": page, "robots": robots, "llms": llms, "markdown": md,
-                      "ard": ard, "well_known": wk, "not_found": nf}
+    report["data"] = {
+        "page": page, "link_headers": link_data, "robots": robots, "sitemap": sitemap_data,
+        "llms": llms, "markdown": md, "ard": ard, "well_known": wk,
+        "auth_md": auth_data, "mpp_openapi": mpp_data, "dns_aid": dns_data, "not_found": nf,
+    }
     if ua_matrix:
         ua_checks, rows = audit_ua_matrix(url)
         report["checks"] += ua_checks
@@ -885,11 +1066,17 @@ def audit(url: str, *, ua_matrix: bool = False) -> dict:
     rank = {"fail": 0, "warn": 1, "info": 2, "pass": 3, "na": 4}
     report["checks"].sort(key=lambda c: (order[c["priority"]], rank[c["status"]]))
     report["summary"] = summarize(report["checks"])
+    report["readiness_level"] = compute_readiness_level({c["id"]: c for c in report["checks"]})
     return report
 
 
 def _print_text(report: dict) -> None:
+    lvl = report.get("readiness_level") or {}
     print(f"Agent readiness: {report['url']}")
+    if lvl:
+        print(f"Readiness Level: {lvl.get('level')}/5 ({lvl.get('level_name')})")
+        for req in lvl.get("next_level_requirements") or []:
+            print(f"  Next level -> {req}")
     for c in report["checks"]:
         print(f"  {c['priority']} [{c['status']:>4}] {c['title']}")
         if c.get("fix") and c["status"] in ("fail", "warn"):
@@ -903,9 +1090,11 @@ def main() -> None:
     parser.add_argument("--ua-matrix", action="store_true",
                         help="Also request the page with AI agent user agents "
                              "(use only on sites you control or are authorized to test)")
+    parser.add_argument("--skip-dns", action="store_true",
+                        help="Skip DoH DNS-AID (_agents) lookup")
     parser.add_argument("--json", action="store_true", help="JSON output")
     args = parser.parse_args()
-    report = audit(args.url, ua_matrix=args.ua_matrix)
+    report = audit(args.url, ua_matrix=args.ua_matrix, skip_dns=args.skip_dns)
     if args.json:
         print(json.dumps(report, indent=2, default=str))
     else:
