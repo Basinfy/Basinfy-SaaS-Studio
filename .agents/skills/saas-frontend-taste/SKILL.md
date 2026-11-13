@@ -1,13 +1,17 @@
 ---
 name: saas-frontend-taste
-description: "Anti-slop frontend & UI design engineering — enforces Figma/x.ai quality bar, screen-by-screen layout (1440x900), anti-slop copy linting, curated palettes/typography, real product UI fragments, and headless browser verification."
-argument-hint: "[screen or feature path] [--page software|tech|product|service] [--check] [--deal]"
+description: "Design, refine, and verify SaaS interfaces by screen purpose, preserving existing design systems and applying the landing-page kit where it fits."
+argument-hint: "[screen or feature path] [--page software|tech|devtools|product|place|service] [--check] [--deal] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-frontend-taste/../../hooks/yaml-helper.sh" resolve_config *), Bash(node *)
-model: sonnet
 ---
 
-!`bash "${CLAUDE_SKILL_DIR}/../../hooks/yaml-helper.sh" resolve_config --keys locale,review_mode,automation`
+<!-- Generated from .claude/skills by scripts/sync-agent-skills.py. -->
+
+## Running this workflow on this client
+
+Run shell commands from the project root. On Windows, use Git Bash for the `bash` commands if `bash` resolves to an unavailable WSL distribution. Shared studio files are under `.claude/`; run the local Studio installer for this project if those files are missing. Read `.claude/docs/config-resolution.md` and apply its defaults when configuration cannot be resolved. Use this client's tools for reads, edits, and structured questions. If structured questions are unavailable, ask in chat and wait when a decision requires approval. Use the client's delegation feature with the role brief in `.claude/agents/` when available. Otherwise perform the specialist checks in sequence and disclose that they were done in one session. If a workflow requires independent sign-off, report it as pending until an independent reviewer can provide it. Treat `Task*` steps as local workflow tracking using the client's equivalent when available. Report missing tools and unexecuted checks explicitly.
+
+Run `bash .claude/hooks/yaml-helper.sh resolve_config --keys locale,review_mode,automation` and use its output below.
 
 Resolved above — use as-is; `--review` overrides `review_mode` for this run.
 
@@ -18,13 +22,28 @@ Resolved above — use as-is; `--review` overrides `review_mode` for this run.
 > Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
 > Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
 
-Build the website and application interfaces a high-caliber company would ship: plain copy in a voice of its own, one system, one section per screen (1440x900 desktop viewport), equal left and right edges, real photographs and real product UI fragments (code diffs, interactive cards, terminal runs, live data), a hero entrance and dealt moments, quiet micro-interactions (2px card hover, 1.02 zoom on images), canvas-effect effects strictly reserved for tech/devtools/fintech/devtools, and an automated headless browser checker (`consistency.mjs`) and copy linter (`copy-lint.mjs`) verifying quality before shipping.
+Apply the project's design system and choose checks that match what people need to do on the target screen.
+
+## Phase 0: Resolve Product Context and Screen Purpose
+
+Read the existing product brief (`design/product-brief.md` or `design/prd/product-concept.md`), the relevant `design/ux/` spec, and `design/ui/design-tokens.md` when available. Inspect the target route and its shared components. Use the user's brief and existing conventions for missing context. Record the audience, main task, and constraints in the handoff or existing UX spec. Surface material conflicts between documented tokens and implementation before changing shared styles.
+
+| Purpose | Examples | Design and verification priorities |
+|---|---|---|
+| Persuade | Landing page, campaign, pricing | Clear offer, decision path, credible proof, responsive calls to action. Use the landing kit for new pages or existing pages that follow its layout. |
+| Operate | Dashboard, billing settings, checkout, admin | Task completion, density, permissions, keyboard and focus, loading/empty/error states, recovery and long or localized data. |
+| Read | Docs, help center, policy pages | Heading structure, readable measure, navigation, link clarity, zoom and reflow, wrapping for tables and code. |
+| Experience | Gallery, portfolio, showcase | Media quality and fallback, responsive composition, navigation, reduced motion and performance. |
+
+Classify by the primary user task. For a mixed page, apply other priorities to individual sections where useful. `--page` selects the trade for the landing kit and its scripts. It does not select the screen purpose. `--deal` applies only to a new or explicitly redesigned landing-kit page that needs a palette or type pairing. For existing interfaces, start with established tokens and primitives.
+
+For a non-kit interface, proceed directly to Phase 3 after design or implementation. For `--check`, review the existing target without modifying its source and go directly to Phase 3.
 
 ---
 
-## The 9 Anti-Slop House Rules
+## The 9 Landing Kit Rules
 
-These 9 core principles override generic frontend patterns:
+Apply these conventions to landing-kit pages. Keep meaningful captions, instructions and status text where people need them, and honor approved content and accessibility requirements.
 
 1. **No Captions or Explanatory Subtitles Under Visuals**: Images, renders, and UI frames speak for themselves. License credits go in a single footer line.
 2. **Every Visual Must Render (Zero Empty Ground)**: Renders flawlessly across all 5 viewports: 1440px (desktop), 1024px (landscape tablet), 820px (portrait tablet), 768px (standard tablet), and 390px (mobile).
@@ -50,26 +69,27 @@ These 9 core principles override generic frontend patterns:
 
 ---
 
-## Phase 0: Context & Trade Classification
+## Phase 1: Classify the Landing Kit Trade
 
 Determine the business archetype to calibrate the design tokens, layout, and visual assets:
 
 | Trade Kind | Target | Visual Focus | Allowed Visuals |
 |---|---|---|---|
 | `software` | SaaS, AI, DevTools, Fintech | Live app frames, code diffs, terminal outputs, pipeline boards | Card loops, pulsing diagrams, 1 canvas-effect ground |
-| `tech` / `hardware` | Devices, Robotics, Physical Tech | Physical hardware photography, schematics, bench photos | Explosive views, CAD renders, 1 canvas-effect ground |
+| `tech` | Devices, Robotics, Physical Tech | Physical hardware photography, schematics, bench photos | Explosive views, CAD renders, 1 canvas-effect ground |
+| `devtools` | Developer tools | Real workflows, terminals and code | Interactive demos, 1 canvas-effect ground |
 | `product` | Consumer products, physical goods | High-end product photography, material swatches | Curated photos, swatch selectors, zero WebGL |
 | `service` | Agencies, Consultancies, Clinics | Real team portraits, client casework, clear service list | Photography, typography moments, zero WebGL |
+| `place` | Venues and destinations | Photography, directions and key visitor information | Photography, maps, zero WebGL |
 
 ---
 
-## Phase 1: Deal Tokens & Layout
+## Phase 2: Choose Landing Kit Tokens, Layout and Visuals
 
 Run the layout and token engine to generate the page foundation:
 
 1. **Color & Typography**:
-   - Read `library/palettes.json` and select or deal a trade-calibrated palette (`bg`, `surface`, `ink`, `muted`, `accent`, `accentInk`).
-   - Read `library/type.json` and deal a typography pairing with exact tracking, weights, and Google Fonts links.
+   - Reuse the approved design tokens. When the brief calls for a new direction, use `library/palettes.json` and `library/type.json`, or run `node <skill-dir>/scripts/start.mjs deal --page <kind> --trade <trade>` to generate options. `--deal` records local kit state.
 2. **Hero Layout Selection**:
    - Choose one of 11 tested hero layouts from `assets/layout/heroes.json`:
      - `split`: Headline + CTA on left, live product UI on right.
@@ -81,7 +101,7 @@ Run the layout and token engine to generate the page foundation:
 
 ---
 
-## Phase 2: Assemble Real UI Fragments & Diagrams
+### Assemble Real UI Fragments & Diagrams
 
 For SaaS and Software applications, populate cards with real HTML/CSS components from `assets/ui/` and `assets/diagrams/`:
 
@@ -93,32 +113,40 @@ For SaaS and Software applications, populate cards with real HTML/CSS components
 
 ---
 
-## Phase 3: Automated Quality Gate Verification
+## Phase 3: Critique and Verify the Rendered Screen
 
-Before delivering any frontend page or view, run the automated verification suite:
+**Design critique.** Walk through the main user task. Evaluate hierarchy, action clarity, feedback and consistency against that task and the project's design system. For each issue, describe what the user encounters, the impact and the smallest useful change. Prioritize a focused refinement such as layout, copy, typography or interaction states.
+
+**Technical audit.** Open the actual route or built artifact. Use the project's browser and accessibility tooling when available. Check relevant viewports, keyboard navigation, visible focus, accessible names, contrast, zoom and reflow. Exercise applicable loading, empty, error and success states and check long/localized content, themes and reduced motion when supported. Check performance with the project's existing tools when media, animation or large datasets are material. Use fixtures or a local test environment for actions that write data.
+
+For landing-kit pages, run these checks from the active skill directory (`.claude/skills/saas-frontend-taste` or its `.agents/skills/` mirror). Substitute the resolved trade for `<kind>`:
 
 1. **Copy Lint**:
    ```bash
-   node .claude/skills/saas-frontend-taste/scripts/copy-lint.mjs <target-page.html> --kind software
+   node <skill-dir>/scripts/copy-lint.mjs <rendered-page.html> --kind <kind>
    ```
-   Ensures zero FAIL status for AI buzzwords, residue markdown, or text budget violations.
+   Use visitor-facing HTML or copy, including rendered HTML for client-rendered pages. Report unsupported copy checks as not assessed. Treat copy heuristics as review signals when the locale or context is outside their intended coverage.
 
 2. **Multi-Viewport Consistency Checker**:
    ```bash
-   node .claude/skills/saas-frontend-taste/scripts/consistency.mjs <target-page.html> --page software
+   node <skill-dir>/scripts/consistency.mjs <local-url-or-built-html> --page <kind>
    ```
    Validates in headless Chromium across 1440px, 1024px, 820px, 768px, and 390px for:
    - Section height conformity (`100svh`, `--h: 1`, `--h: 2`)
    - Zero empty visual wrappers (`[data-visual]`)
-   - WCAG 2.2 AA contrast ratios
+   - Contrast findings to verify against WCAG 2.2 AA
    - Equal horizontal padding and margin balance
 
 ---
 
+The kit checks enforce landing-page conventions. Use the project's own technical checks for other interfaces, including dashboards and docs. Browser probes are evidence for the checks they executed. Report skipped probes and unavailable states explicitly.
+
 ## Phase 4: Sign-Off and Handoff
 
 Deliver the verified frontend view along with:
-1. Palette and font token summary.
-2. Copy linter audit report (0 slop words detected).
-3. Headless consistency check results (PASS across all 5 viewports).
+1. Screen purpose, primary task and relevant design tokens.
+2. Prioritized design findings and technical findings. Include route, viewport or state, evidence and suggested fix. Treat a blocked primary task or accessibility failure as a blocker.
+3. Actual commands and browser coverage, with a verdict of **PASS**, **FAIL** or **NOT ASSESSED**. Use **FAIL** for known blockers and **NOT ASSESSED** when required verification could not run. Recheck fixed findings on the same route, viewport and state.
 4. Suggested next steps: `/saas-team-polish` for micro-interaction fine-tuning or `/saas-dev-story` for story completion.
+
+The screen-purpose and critique/audit approach is adapted from [Impeccable](https://impeccable.style/docs/).

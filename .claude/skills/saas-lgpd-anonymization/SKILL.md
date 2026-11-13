@@ -1,14 +1,16 @@
 ---
 name: saas-lgpd-anonymization
 description: Apply anonymization (Art. 5, XI) and pseudonymization (Art. 13, §4) techniques to take data out of LGPD scope or reduce risk in analytics pipelines. Use when user asks 'anonimizar', 'pseudonimizar', 'k-anonymity', 'differential privacy', 'tokenização', 'analytics LGPD', or designing analytics/ML pipelines.
+argument-hint: "[scope or artifact path]"
 user-invocable: true
+allowed-tools: Read, Glob, Grep, AskUserQuestion
 model: sonnet
 ---
 
 # Anonimização e Pseudonimização
 
 > **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / sk_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
+> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
 > Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
 > Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
 

@@ -3,11 +3,15 @@ name: saas-sprint-plan
 description: "New or updated sprint plan from the current milestone, completed work, and available capacity."
 argument-hint: "[new|update|status] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-sprint-plan/../../hooks/yaml-helper.sh" resolve_config *), Bash(ls production/sprints/*)
-model: sonnet
 ---
 
-!`bash "${CLAUDE_SKILL_DIR}/../../hooks/yaml-helper.sh" resolve_config --keys locale,review_mode,automation,story_granularity,workflow`
+<!-- Generated from .claude/skills by scripts/sync-agent-skills.py. -->
+
+## Running this workflow on this client
+
+Run shell commands from the project root. On Windows, use Git Bash for the `bash` commands if `bash` resolves to an unavailable WSL distribution. Shared studio files are under `.claude/`; run the local Studio installer for this project if those files are missing. Read `.claude/docs/config-resolution.md` and apply its defaults when configuration cannot be resolved. Use this client's tools for reads, edits, and structured questions. If structured questions are unavailable, ask in chat and wait when a decision requires approval. Use the client's delegation feature with the role brief in `.claude/agents/` when available. Otherwise perform the specialist checks in sequence and disclose that they were done in one session. If a workflow requires independent sign-off, report it as pending until an independent reviewer can provide it. Treat `Task*` steps as local workflow tracking using the client's equivalent when available. Report missing tools and unexecuted checks explicitly.
+
+Run `bash .claude/hooks/yaml-helper.sh resolve_config --keys locale,review_mode,automation,story_granularity,workflow` and use its output below.
 
 Resolved above — use as-is; `--review` overrides `review_mode`. No block →
 defaults in `.claude/docs/config-resolution.md`.
@@ -22,7 +26,7 @@ defaults in `.claude/docs/config-resolution.md`.
 
 ## Existing Sprints
 
-!`ls production/sprints/ 2>/dev/null || echo "(no production/sprints/ directory yet)"`
+Run `ls production/sprints/ 2>/dev/null || echo "(no production/sprints/ directory yet)"` and use its output below.
 
 Resolved before this skill runs — use it to identify the previous sprint in
 Phase 1 rather than re-globbing.
@@ -97,7 +101,7 @@ smaller than the range is planned whole — never padded with invented stories.
    which do not exist cannot be implemented. Verdict: **BLOCKED** — no stories to plan.
 
 4. **Scan design documents** in `design/prd/` for additional context on the
-   features those stories implement. Read each by section: check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise find the headings you need with the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Grep tool (pattern `^#`, content mode) and Read those ranges with offset and limit. At `workflow: minimal` there are no
+   features those stories implement. Read each by section: Use the project discovery protocol to find the relevant headings and read those sections. When the index cannot provide them, find the headings with a local text search and read the matching ranges. At `workflow: minimal` there are no
    per-system PRDs — use `design/product-brief.md` instead, and do not treat the
    absent PRDs as missing work. (Note: `/saas-sprint-plan` is **optional** at
    `minimal` — the brief's Build order already is the plan.)

@@ -1,13 +1,17 @@
 ---
 name: saas-team-content
-description: "Orchestrate the content & communication team — ux-content-strategist, copywriter, api-documentation-engineer, frontend-engineer — UX writing, API docs, transactional emails, and onboarding."
+description: "Orchestrate the content & communication team — ux-content-strategist, technical-writer, frontend-engineer — UX writing, API docs, transactional emails, and onboarding."
 argument-hint: "[content initiative description] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-team-content/../../hooks/yaml-helper.sh" resolve_config *)
-model: sonnet
 ---
 
-!`bash "${CLAUDE_SKILL_DIR}/../../hooks/yaml-helper.sh" resolve_config --keys locale,review_mode,automation`
+<!-- Generated from .claude/skills by scripts/sync-agent-skills.py. -->
+
+## Running this workflow on this client
+
+Run shell commands from the project root. On Windows, use Git Bash for the `bash` commands if `bash` resolves to an unavailable WSL distribution. Shared studio files are under `.claude/`; run the local Studio installer for this project if those files are missing. Read `.claude/docs/config-resolution.md` and apply its defaults when configuration cannot be resolved. Use this client's tools for reads, edits, and structured questions. If structured questions are unavailable, ask in chat and wait when a decision requires approval. Use the client's delegation feature with the role brief in `.claude/agents/` when available. Otherwise perform the specialist checks in sequence and disclose that they were done in one session. If a workflow requires independent sign-off, report it as pending until an independent reviewer can provide it. Treat `Task*` steps as local workflow tracking using the client's equivalent when available. Report missing tools and unexecuted checks explicitly.
+
+Run `bash .claude/hooks/yaml-helper.sh resolve_config --keys locale,review_mode,automation` and use its output below.
 
 Resolved above — use as-is; `--review` overrides `review_mode` for this run.
 
@@ -31,11 +35,11 @@ When this skill is invoked with a valid argument, orchestrate the team:
    - Establish consistent tone of voice (helpful, concise, technically accurate)
 
 2. **Transactional Emails**:
-   - `copywriter`: Author responsive transactional emails (Welcome & verification, Workspace invite, Password reset, Invoice receipt, Usage threshold warning)
+   - `ux-content-strategist`: Author responsive transactional emails (Welcome & verification, Workspace invite, Password reset, Invoice receipt, Usage threshold warning)
    - `frontend-engineer`: Implement email templates using React Email / HTML with responsive mobile styling
 
 3. **API & Developer Documentation**:
-   - `api-documentation-engineer`: Generate OpenAPI 3.1 schema from route handlers, write curl and SDK code examples, document error status codes and authentication schemes
+   - `technical-writer`: Generate OpenAPI 3.1 schema from route handlers, write curl and SDK code examples, document error status codes and authentication schemes
    - Build developer docs navigation and search
 
 4. **Review & Proofing**:

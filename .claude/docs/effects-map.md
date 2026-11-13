@@ -1547,19 +1547,43 @@ must tell them apart)
 
 ---
 
-## performance.target_framerate and performance.frame_budget_ms
+## performance.target_lcp_ms
 
-**Controls:** The frame-rate target and its per-frame millisecond budget
-**Values:** integers (e.g. `60`, `16.67`)
-**Default:** none — unset means no budget was ever committed to
+**Controls:** Largest Contentful Paint budget in milliseconds
+**Values:** positive number
+**Default:** 2000 in the starter; existing projects use their committed value
 **Set by:** the user, by hand or via `/saas-settings`
 **Read by:** `/saas-perf-profile`, `/saas-gate-check`, `/saas-team-polish`
 
-## performance.draw_call_limit and performance.memory_ceiling_mb
+## performance.target_inp_ms
 
-**Controls:** Per-frame draw-call ceiling and total memory ceiling
-**Values:** integers
-**Default:** none — unset means no budget was ever committed to
+**Controls:** Interaction to Next Paint budget in milliseconds
+**Values:** positive number
+**Default:** 200 in the starter; existing projects need an explicit INP value
+**Set by:** the user, by hand or via `/saas-settings`
+**Read by:** `/saas-perf-profile`, `/saas-gate-check`, `/saas-team-polish`
+
+## performance.target_cls
+
+**Controls:** Cumulative Layout Shift budget
+**Values:** nonnegative number
+**Default:** 0.1 in the starter
+**Set by:** the user, by hand or via `/saas-settings`
+**Read by:** `/saas-perf-profile`, `/saas-gate-check`, `/saas-team-polish`
+
+## performance.max_initial_bundle_kb
+
+**Controls:** Initial compressed JavaScript bundle budget in kilobytes
+**Values:** positive number
+**Default:** 200 in the starter
+**Set by:** the user, by hand or via `/saas-settings`
+**Read by:** `/saas-perf-profile`, `/saas-gate-check`, `/saas-team-polish`
+
+## performance.api_p95_latency_ms
+
+**Controls:** API response latency budget at the 95th percentile in milliseconds
+**Values:** positive number
+**Default:** 250 in the starter
 **Set by:** the user, by hand or via `/saas-settings`
 **Read by:** `/saas-perf-profile`, `/saas-gate-check`, `/saas-team-polish`
 
@@ -1589,8 +1613,8 @@ must tell them apart)
 > **Read it from the resolved block, never from `project.yaml` directly.** The key is on the `/saas-settings --local` whitelist. `/saas-perf-profile` Phase 0 and `/saas-gate-check` Section 3 are the two readers the table above promises — a key that is enum-validated, accepted and displayed while nothing reads it is exactly the failure this warning guards against.
 
 > **Mirrors the `testing.strict` pattern.** Defines what happens when a budget
-> defined in `performance.target_framerate`, `frame_budget_ms`, `draw_call_limit`,
-> or `memory_ceiling_mb` is exceeded.
+> defined in `performance.target_lcp_ms`, `target_inp_ms`, `target_cls`,
+> `max_initial_bundle_kb`, or `api_p95_latency_ms` is exceeded.
 
 ---
 
@@ -2308,7 +2332,7 @@ A project is detected as needing migration when:
 | `.claude/docs/technical-preferences.md` → "Engine & Language" section | `stack.name`, `stack.version`, `stack.language` |
 | `technical-preferences.md` → "Input & Platform" section | `platform.targets`, `platform.primary_input`, `platform.touch_support` |
 | `technical-preferences.md` → "Naming Conventions" section | `naming.classes`, `naming.variables`, `naming.constants`, `naming.signals`, `naming.files`, `naming.scenes` |
-| `technical-preferences.md` → "Performance Budgets" section | `performance.target_framerate`, `performance.frame_budget_ms`, `performance.draw_call_limit`, `performance.memory_ceiling_mb` |
+| `technical-preferences.md` → "Performance Budgets" section | `performance.target_lcp_ms`, `performance.target_inp_ms`, `performance.target_cls`, `performance.max_initial_bundle_kb`, `performance.api_p95_latency_ms` |
 | `technical-preferences.md` → "Testing" section | `testing.framework`, `qa.coverage_minimum` (bare number only — prose is reported for manual entry) |
 | `technical-preferences.md` → "Engine Specialists" section | `specialists.code`, `specialists.database`, `specialists.ui`, `specialists.additional` |
 

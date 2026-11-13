@@ -58,7 +58,9 @@ Em vez de você ter que ficar digitando prompts soltos como *"crie uma tela de l
 
 ## 🚀 Instalação Rápida via NPX (Universal Multi-LLM)
 
-Instale e ative o **Basinfy SaaS Studio** com um único comando — com **zero dependências externas** e inicialização instantânea (< 1s). Compatível nativamente com **Claude Code**, **Cursor**, **Antigravity / Gemini CLI**, **OpenAI Codex**, **VS Code & GitHub Copilot**, **Windsurf**, **Cline & Roo Code**, **Continue.dev**, **Aider**, **Devin** e **Zed**.
+Instale o **Basinfy SaaS Studio** com Node.js. Claude Code usa `.claude/skills/`. Codex, Antigravity, Gemini CLI, Cursor e GitHub Copilot podem descobrir as skills em `.agents/skills/`. Nos demais clientes, use o carregamento de skills do cliente, quando disponível, ou peça para abrir o `SKILL.md` do fluxo. As capacidades de delegação e hooks dependem do cliente. Os helpers usam Bash, e a suíte de integridade usa Python com PyYAML.
+
+Use `npm run test:package` para testar o pacote de distribuição e `npm run test:client -- codex` para testar a descoberta nativa. Com o cliente autenticado, adicione `--model` para executar um caso de leitura em um projeto descartável. O teste com modelo aceita `codex`, `claude` e `antigravity`, usa as permissões do cliente e pode consumir a cota da conta.
 
 ### 1. Instalação Global (Recomendado)
 Torne todos os **50 agentes** e **96 comandos `/saas-*`** disponíveis globalmente em **qualquer projeto ou pasta do seu computador**:
@@ -75,7 +77,7 @@ npx github:Basinfy/Basinfy-SaaS-Studio codex --global
 npx github:Basinfy/Basinfy-SaaS-Studio windsurf --global
 ```
 
-> **Como funciona a instalação global:** A CLI detecta o diretório central do seu sistema operacional (`~/.claude/`, `~/.gemini/config/skills/`, `~/.cursor/`, `~/.codex/`, etc.) e injeta os agentes e as skills diretamente. A partir desse momento, qualquer novo terminal ou projeto aberto reconhece os comandos imediatamente!
+> A instalação global disponibiliza skills nos clientes que aceitam diretórios de usuário. Rode a instalação local em cada projeto para adicionar a configuração, os scripts e o catálogo que os fluxos usam.
 
 ### 2. Instalação Local no Projeto & Scaffolding
 Crie um novo projeto SaaS do zero ou injete o estúdio em um repositório existente:
@@ -100,8 +102,8 @@ npx github:Basinfy/Basinfy-SaaS-Studio codex
 
 | Plataforma / Ferramenta | Caminho Global | Configurações Locais | Comandos Slash & Regras |
 | :--- | :--- | :--- | :--- |
-| **Claude Code** | `~/.claude/` | `.claude/`, `CLAUDE.md`, `project.yaml` | 96 skills (`/saas-*`), 50 agentes, 28 gates |
-| **Antigravity / Gemini** | `~/.gemini/config/skills/` | `GEMINI.md`, `.agents/skills/`, MCP | Todas as 96 skills + hierarquia de 50 agentes |
+| **Claude Code** | `~/.claude/` | `.claude/`, `CLAUDE.md`, `project.yaml` | 108 skills (`/saas-*`), 50 agentes, 28 gates |
+| **Antigravity / Gemini** | `~/.gemini/config/skills/` | `GEMINI.md`, `.agents/skills/`, MCP | Todas as 108 skills + hierarquia de 50 agentes |
 | **Cursor** | `~/.cursor/rules/` | `.cursor/rules/saas-studio.mdc`, `.cursorrules`, `.cursor/mcp.json` | Contexto completo do estúdio, regras e MCP nativo |
 | **OpenAI Codex & ChatGPT** | `~/.codex/` | `CODEX.md`, `.codex/instructions.md`, `.codex/hooks.json` | Padrão oficial OpenAI com hooks e diretrizes de engenharia |
 | **VS Code & GitHub Copilot** | - | `.vscode/`, `.github/copilot-instructions.md`, `.github/prompts/` | Configurações de workspace, tarefas, extensões e slash prompts |
@@ -310,7 +312,7 @@ npx github:Basinfy/Basinfy-SaaS-Studio uninstall --keep-config -f
 npx github:Basinfy/Basinfy-SaaS-Studio uninstall --clean-all -f
 ```
 
-> **Garantia de Integridade**: O desinstalador global apaga **estritamente** os 50 agentes, as 96 skills (`saas-*` e `basinfy-saas-studio`) e as regras pertencentes ao estúdio. Suas outras skills pessoais em `~/.gemini/config/skills/` e arquivos em `src/` no projeto nunca são tocados.
+> **Garantia de Integridade**: O desinstalador global apaga **estritamente** os 50 agentes, as 108 skills (`saas-*` e `basinfy-saas-studio`) e as regras pertencentes ao estúdio. Suas outras skills pessoais em `~/.gemini/config/skills/` e arquivos em `src/` no projeto nunca são tocados.
 
 ---
 
@@ -715,7 +717,7 @@ Eleve o padrão de qualidade do seu código legado:
 O **Basinfy SaaS Studio** possui inteligência adaptativa integrada para reconhecimento de ambiente:
 
 ### 1. Detecção Automática e Transparente
-Antes de realizar qualquer busca, leitura de arquivos ou análise de símbolos, os 50 agentes e as 96 skills do estúdio verificam automaticamente:
+Antes de realizar qualquer busca, leitura de arquivos ou análise de símbolos, os 50 agentes e as 108 skills do estúdio verificam automaticamente:
 - Se a pasta `.basinfy/` existe na raiz do repositório, ou
 - Se as ferramentas MCP (`basinfy_session_start`, `basinfy_search`, `basinfy_locate`, `basinfy_prepare_edit`, `basinfy_read`, `basinfy_impact`, etc.) ou a CLI `basinfy` estão disponíveis no ambiente.
 
@@ -744,7 +746,7 @@ python studio-tests/verify-integrity.py
 ```
 
 A suíte verifica:
-- Presença e sintaxe de todos os 50 agentes e 96 skills `/saas-*`.
+- Presença e sintaxe de todos os 50 agentes e 108 skills `/saas-*`.
 - Ausência de termos legados ou referências a outros repositórios.
 - Funcionamento comportamental dos scripts bash de governança.
 - Conformidade dos 28 Director Gates e templates de PRD.

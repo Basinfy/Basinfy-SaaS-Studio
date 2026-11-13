@@ -10,7 +10,7 @@
 
 <p align="center">
   <strong>Autonomous SaaS & Online Software Engineering Studio for Claude Code</strong><br>
-  <em>Turn your Claude Code session into a coordinated 50-agent software development agency with 96 workflows and 28 governance gates.</em>
+  <em>Turn your Claude Code session into a coordinated 50-agent software development agency with 108 workflows and 28 governance gates.</em>
 </p>
 
 <p align="center">
@@ -27,7 +27,17 @@
 
 ## 🚀 Quick Install via NPX (Universal Multi-LLM)
 
-Install and activate **Basinfy SaaS Studio** with a single command — with **zero dependencies** and instant startup (< 1s). Works natively across **Claude Code**, **Cursor**, **Antigravity / Gemini CLI**, **OpenAI Codex**, **VS Code & GitHub Copilot**, **Windsurf**, **Cline & Roo Code**, **Continue.dev**, **Aider**, **Devin**, and **Zed**.
+Install **Basinfy SaaS Studio** with Node.js. Claude Code uses `.claude/skills/`. Codex, Antigravity, Gemini CLI, Cursor, and GitHub Copilot can discover workflows in `.agents/skills/`. On other clients, use the client's skill loader when available, or ask it to open the workflow's `SKILL.md`. Delegation and hooks depend on the client. Helpers use Bash, and the integrity suite uses Python with PyYAML.
+
+Run a local installation in each project to add the configuration, scripts, and catalog used by workflows. A global installation makes the skill entry points available in clients that support user-level discovery.
+
+To verify a distribution, run `npm run test:package`. For native Codex discovery, run `npm run test:client -- codex`. To run a read-only model case in a disposable project, sign in to the client and run `npm run test:client -- codex --model`, `npm run test:client -- claude --model`, or `npm run test:client -- antigravity --model`. The client must be on `PATH`, or pass `--executable` with its CLI path. The model check uses the client's current permissions and may consume account quota.
+
+Use `--client-model <model-id>` with `--model` to select a model available in the client account. For Antigravity, `agy models` lists those identifiers. Increase `--timeout <seconds>` when the provider takes longer to complete the read-only case.
+
+The Antigravity smoke test supplies temporary session permissions for reading its disposable project and running the artifact and configuration query helpers. Existing deny and ask rules still apply. Codex model tests launch the standalone CLI without the desktop application's runtime IPC variables.
+
+For existing projects with `performance.target_fid_ms`, set an explicit `performance.target_inp_ms` budget in `project.yaml` or `project.local.yaml`. The current starter uses 200 ms. FID and INP are different measurements, so the profiler does not reuse an old FID budget for INP.
 
 ### 1. Global Installation (Recommended)
 Make all **50 agents** and **95 `/saas-*` commands** globally available in **any project or folder on your computer**:
@@ -67,8 +77,8 @@ npx github:Basinfy/Basinfy-SaaS-Studio codex
 
 | Platform / Tool | Global Path | Workspace Configs | Slash Commands & Rules |
 | :--- | :--- | :--- | :--- |
-| **Claude Code** | `~/.claude/` | `.claude/`, `CLAUDE.md`, `project.yaml` | 96 skills (`/saas-*`), 50 agents, 28 gates |
-| **Antigravity / Gemini** | `~/.gemini/config/skills/` | `GEMINI.md`, `.agents/skills/`, MCP | All 96 skills + autonomous 50-agent hierarchy |
+| **Claude Code** | `~/.claude/` | `.claude/`, `CLAUDE.md`, `project.yaml` | 108 skills (`/saas-*`), 50 agents, 28 gates |
+| **Antigravity / Gemini** | `~/.gemini/config/skills/` | `GEMINI.md`, `.agents/skills/`, MCP | All 108 skills + autonomous 50-agent hierarchy |
 | **Cursor** | `~/.cursor/rules/` | `.cursor/rules/saas-studio.mdc`, `.cursorrules`, `.cursor/mcp.json` | Full SaaS Studio agent context, rules & native MCP |
 | **OpenAI Codex & ChatGPT** | `~/.codex/` | `CODEX.md`, `.codex/instructions.md`, `.codex/hooks.json` | Official OpenAI standard with hooks & engineering directives |
 | **VS Code & GitHub Copilot** | - | `.vscode/`, `.github/copilot-instructions.md`, `.github/prompts/` | Workspace settings, tasks, extensions & slash prompts |
@@ -229,7 +239,7 @@ Basinfy SaaS Studio incorporates and expands upon the core Standard Operating Pr
 
 ## 🔄 Built-in Auto-Updater (GitHub Sync)
 
-Basinfy SaaS Studio includes a **continuous Auto-Update engine** that ensures your project and global environments always stay up-to-date with the latest skills, agents, and improvements published on GitHub, **while strictly preserving your application code and local settings**.
+The Studio updater downloads the selected GitHub commit and refreshes shared resources and integrations already present in the installation. It uses recorded file checksums to preserve local edits. On older installations without checksums, existing files that differ from the bundled copy are preserved and listed in the update output.
 
 ### 1. Update via CLI (NPX or Node)
 Update your local project or global installations anytime:
@@ -290,7 +300,7 @@ npx github:Basinfy/Basinfy-SaaS-Studio uninstall --keep-config -f
 npx github:Basinfy/Basinfy-SaaS-Studio uninstall --clean-all -f
 ```
 
-> **Safety Guarantee**: The global uninstaller removes **only** the 50 studio agents, the 95 `saas-*` workflow skills, and official studio rules. Any custom skills in `~/.gemini/config/skills/` or business application code in `src/` remain completely untouched.
+The uninstaller removes files that match the installed Studio package. It preserves modified files and user additions inside skill directories. Uninstall a single client to remove its integration files, or use `uninstall all` to remove shared workspace files too.
 
 ---
 
@@ -413,7 +423,7 @@ Phase 6: Multi-Disciplinary Team Orchestration (9)
   /saas-team-ui               UI team: Design token alignment, accessible forms, and dark mode.
 
 Phase 7: Hardening, Release & Operations (20)
-  /saas-perf-profile          Profile Core Web Vitals (LCP, FID, CLS) and API p95 latencies.
+  /saas-perf-profile          Profile Core Web Vitals (LCP, INP, CLS) and API p95 latencies.
   /saas-pricing-audit         Audit pricing tiers, unit economics, infrastructure margins, quotas.
   /saas-usability-test        Structured usability test logging with user feedback synthesis.
   /saas-security-audit        OWASP Top 10 security audit, dependency CVE scan, RLS verification.
@@ -445,7 +455,7 @@ Phase 8: Privacy, LGPD & Regulatory Compliance (21)
   /saas-lgpd-consent-schema   Granular consent capture schema, audit trail, and 1-click revocation.
   /saas-lgpd-dsar             Automated Data Subject Access Request engine (access, erase, export).
   /saas-lgpd-privacy-policy   Drafts transparent, compliant Privacy Policies, Terms, and Cookie banners.
-  /saas-lgpd-incident-response Security incident runbook with mandatory 72-hour ANPD/DPA notifications.
+  /saas-lgpd-incident-response Security incident runbook with a three-business-day notification deadline under the ANPD's general rule.
   /saas-lgpd-dpo-encarregado  Configures official DPO contact channels and governance protocols.
   /saas-lgpd-dpa              Generates Data Processing Agreements (DPAs) for vendors and operators.
   /saas-lgpd-international-transfer Cross-border transfer audits and standard contractual clauses (SCCs).
@@ -587,7 +597,7 @@ modes:
 
 performance:
   target_lcp_ms: 2000
-  target_fid_ms: 100
+  target_inp_ms: 200
   target_cls: 0.1
   max_initial_bundle_kb: 200
   api_p95_latency_ms: 250
@@ -751,7 +761,7 @@ Elevate the quality and security of legacy code:
 | Scenario | Install Command | First AI Command | Primary Goal |
 | :--- | :--- | :--- | :--- |
 | **New Project (From Scratch)** | `npx github:Basinfy/Basinfy-SaaS-Studio all --target ./app` | `/saas-start` | Build an entire SaaS from idea to cloud deploy with disciplined architecture |
-| **Existing Project (Inject)** | `npx github:Basinfy/Basinfy-SaaS-Studio all --mode inject` | `/saas-project-stage-detect` | Add 50 agents & 96 workflows without touching existing application code |
+| **Existing Project (Inject)** | `npx github:Basinfy/Basinfy-SaaS-Studio all --mode inject` | `/saas-project-stage-detect` | Add 50 agents & 108 workflows without touching existing application code |
 | **Global Machine Install** | `npx github:Basinfy/Basinfy-SaaS-Studio all --global` | `/saas-help` | Enable all `/saas-*` workflows across every folder on your computer |
 
 ---
@@ -766,7 +776,7 @@ Before executing code searches, reading files, or inspecting symbols, the studio
 - Whether Basinfy MCP tools (`basinfy_session_start`, `basinfy_search`, `basinfy_locate`, `basinfy_prepare_edit`, `basinfy_read`, `basinfy_impact`, etc.) or the `basinfy` CLI are active.
 
 ### 2. When Basinfy is Detected (`.basinfy/` present)
-When Basinfy is detected, all 50 agents and 96 skills immediately route discovery through the **Basinfy Smart Indexing Protocol**:
+When Basinfy is detected, all 50 agents and 108 skills immediately route discovery through the **Basinfy Smart Indexing Protocol**:
 - **Symbols & Functions**: Uses `basinfy_prepare_edit` or `basinfy_locate` to obtain definitions, gate checks, and dependency graphs in a single call.
 - **Section Reading & Search**: Uses `basinfy_search` and `basinfy_read` for high-density retrieval without manual line offsets or regex scanning.
 - **New File Scaffolding**: Runs `basinfy_prepare_create` before creating modules to enforce clean architectural boundaries.

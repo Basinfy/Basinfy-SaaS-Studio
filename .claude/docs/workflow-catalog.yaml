@@ -37,7 +37,7 @@ paths:
         artifact:
           any_of:
             - glob: "project.yaml"
-              pattern: '(name:[[:space:]]*"?(SaaS-Studio|Next.js|FastAPI|Cloudflare)|frontend:[[:space:]]*"?|stack:)'
+              pattern: '^[[:space:]]+frontend:[[:space:]]*["'']?[[:alnum:]][[:alnum:]_.-]*["'']?[[:space:]]*(#.*)?$'
             - glob: ".claude/docs/technical-preferences.md"
               pattern: '\*\*(Stack|Engine)\*\*: [^[]'
         description: "Configure the tech stack (Next.js, FastAPI, Go) and pin versions"
@@ -49,7 +49,6 @@ paths:
         artifact:
           any_of:
             - glob: "docs/specs/product-brief.md"
-            - glob: "design/product-brief.md"
             - glob: "design/product-brief.md"
         description: "One page: pitch, ICP, MVP features, build order. Replaces the concept doc, design system, features map and full PRDs at this tier"
 
@@ -97,7 +96,7 @@ phases:
         artifact:
           any_of:
             - glob: "project.yaml"
-              pattern: '(name:[[:space:]]*"?(SaaS-Studio|Next.js|FastAPI|Cloudflare)|frontend:[[:space:]]*"?|stack:)'
+              pattern: '^[[:space:]]+frontend:[[:space:]]*["'']?[[:alnum:]][[:alnum:]_.-]*["'']?[[:space:]]*(#.*)?$'
             - glob: ".claude/docs/technical-preferences.md"
               pattern: '\*\*(Stack|Engine)\*\*: [^[]'
         description: "Configure SaaS stack, pin versions, set naming conventions and performance budgets"
@@ -135,8 +134,8 @@ phases:
         command: /saas-frontend-taste
         required: false
         artifact:
-          glob: "design/ui/taste-spec.md"
-        description: "Enforce anti-slop copy, 1440x900 viewport rhythm, real product UI fragments, and headless browser consistency"
+          note: "Review evidence is included in the screen handoff."
+        description: "Apply design critique and browser verification by screen purpose, including landing-kit copy and layout checks where applicable"
 
       - id: map-features
         name: "Features & Modules Map"
@@ -447,7 +446,7 @@ phases:
         name: "Performance & Latency Profile"
         command: /saas-perf-profile
         required: false
-        description: "Profile and optimize Core Web Vitals (LCP, FID, CLS), database queries, and API p95 latencies"
+        description: "Profile and optimize Core Web Vitals (LCP, INP, CLS), database queries, and API p95 latencies"
 
       - id: pricing-audit
         name: "Pricing & Quota Model Audit"

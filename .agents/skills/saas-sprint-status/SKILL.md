@@ -3,11 +3,15 @@ name: saas-sprint-status
 description: "Fast, concise sprint snapshot — burndown and emerging risks for situational awareness. 'How is the sprint going?'"
 argument-hint: "[sprint-number or blank for current]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Bash(bash "*/.claude/skills/saas-sprint-status/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash "*/.claude/skills/saas-sprint-status/../../scripts/story-status.sh"), Bash(bash .claude/scripts/story-status.sh*)
-model: haiku
 ---
 
-!`bash "${CLAUDE_SKILL_DIR}/../../hooks/yaml-helper.sh" resolve_config --keys locale,story_granularity,workflow`
+<!-- Generated from .claude/skills by scripts/sync-agent-skills.py. -->
+
+## Running this workflow on this client
+
+Run shell commands from the project root. On Windows, use Git Bash for the `bash` commands if `bash` resolves to an unavailable WSL distribution. Shared studio files are under `.claude/`; run the local Studio installer for this project if those files are missing. Read `.claude/docs/config-resolution.md` and apply its defaults when configuration cannot be resolved. Use this client's tools for reads, edits, and structured questions. If structured questions are unavailable, ask in chat and wait when a decision requires approval. Use the client's delegation feature with the role brief in `.claude/agents/` when available. Otherwise perform the specialist checks in sequence and disclose that they were done in one session. If a workflow requires independent sign-off, report it as pending until an independent reviewer can provide it. Treat `Task*` steps as local workflow tracking using the client's equivalent when available. Report missing tools and unexecuted checks explicitly.
+
+Run `bash .claude/hooks/yaml-helper.sh resolve_config --keys locale,story_granularity,workflow` and use its output below.
 
 
 
@@ -51,7 +55,7 @@ at `balanced` (`rigor: standard`), **AC-sized** at `fine`.
        or `Not Started` story — in build order), then `BLOCKED`, `OTHER`,
        `NO_STATUS` and the `COMPLETE` count:
 
-!`bash "${CLAUDE_SKILL_DIR}/../../scripts/story-status.sh"`
+Run `bash .claude/scripts/story-status.sh` and use its output below.
 
     2. Print, in under 15 lines: `Build order: [N] of [M] stories complete`
        from the `COMPLETE` line (count only `Complete` and `Done` stories —

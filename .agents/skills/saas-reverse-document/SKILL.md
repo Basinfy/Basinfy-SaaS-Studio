@@ -3,10 +3,15 @@ name: saas-reverse-document
 description: "Generate missing design or architecture docs from existing implementation — works backwards from code and prototypes."
 argument-hint: "<type> <path> (e.g., 'design src/modules/billing' or 'architecture src/services/auth')"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Bash(bash "*/.claude/skills/saas-reverse-document/../../hooks/yaml-helper.sh" resolve_config *)
-model: sonnet
 # Read-only diagnostic skill — no specialist agent delegation needed
 ---
+
+<!-- Generated from .claude/skills by scripts/sync-agent-skills.py. -->
+
+## Running this workflow on this client
+
+Run shell commands from the project root. On Windows, use Git Bash for the `bash` commands if `bash` resolves to an unavailable WSL distribution. Shared studio files are under `.claude/`; run the local Studio installer for this project if those files are missing. Read `.claude/docs/config-resolution.md` and apply its defaults when configuration cannot be resolved. Use this client's tools for reads, edits, and structured questions. If structured questions are unavailable, ask in chat and wait when a decision requires approval. Use the client's delegation feature with the role brief in `.claude/agents/` when available. Otherwise perform the specialist checks in sequence and disclose that they were done in one session. If a workflow requires independent sign-off, report it as pending until an independent reviewer can provide it. Treat `Task*` steps as local workflow tracking using the client's equivalent when available. Report missing tools and unexecuted checks explicitly.
+
 # Reverse Documentation
 
 > **Interaction Localization Rule**:
@@ -41,7 +46,7 @@ appropriate design or architecture documentation. Use this when:
 - `workers/telemetry/index.ts` → A worker module (Cloudflare)
 - `prototypes/billing-checkout/` → Prototype directory
 
-!`bash "${CLAUDE_SKILL_DIR}/../../hooks/yaml-helper.sh" resolve_config --keys locale,workflow,system_overrides,automation`
+Run `bash .claude/hooks/yaml-helper.sh resolve_config --keys locale,workflow,system_overrides,automation` and use its output below.
 
 **Automation mode**: Resolve `modes.automation` (`project.local.yaml` →
 `project.yaml` → default `collaborative`). Every `AskUserQuestion` call and

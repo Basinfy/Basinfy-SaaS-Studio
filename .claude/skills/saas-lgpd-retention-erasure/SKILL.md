@@ -1,14 +1,16 @@
 ---
 name: saas-lgpd-retention-erasure
 description: Define retention rules and erasure mechanisms (LGPD Arts. 15-16) reconciling subject's right to erasure (Art. 18, VI) with legal retention obligations (fiscal, labor, banking). Use when user asks 'retenção LGPD', 'quanto tempo guardar', 'eliminação de dados', 'soft delete vs hard delete', 'crypto-shredding', 'right to be forgotten'.
+argument-hint: "[scope or artifact path]"
 user-invocable: true
+allowed-tools: Read, Glob, Grep, AskUserQuestion
 model: sonnet
 ---
 
 # Retention & Erasure
 
 > **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / sk_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
+> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
 > Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
 > Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
 

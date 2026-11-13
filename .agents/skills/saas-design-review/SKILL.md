@@ -3,11 +3,15 @@ name: saas-design-review
 description: "Reviews one design document for completeness, internal consistency, implementability, and design standards. Before handing to programmers."
 argument-hint: "[path-to-design-doc] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-design-review/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/review-receipts.sh check *), Bash(bash .claude/scripts/review-receipts.sh hash *), Bash(bash .claude/scripts/prd-structure-check.sh *), Bash(grep -E '^  - name:' design/registry/entities.yaml), Bash(grep -n -i -E *)
-model: sonnet
 ---
 
-!`bash "${CLAUDE_SKILL_DIR}/../../hooks/yaml-helper.sh" resolve_config --keys locale,review_mode,automation,workflow,system_overrides`
+<!-- Generated from .claude/skills by scripts/sync-agent-skills.py. -->
+
+## Running this workflow on this client
+
+Run shell commands from the project root. On Windows, use Git Bash for the `bash` commands if `bash` resolves to an unavailable WSL distribution. Shared studio files are under `.claude/`; run the local Studio installer for this project if those files are missing. Read `.claude/docs/config-resolution.md` and apply its defaults when configuration cannot be resolved. Use this client's tools for reads, edits, and structured questions. If structured questions are unavailable, ask in chat and wait when a decision requires approval. Use the client's delegation feature with the role brief in `.claude/agents/` when available. Otherwise perform the specialist checks in sequence and disclose that they were done in one session. If a workflow requires independent sign-off, report it as pending until an independent reviewer can provide it. Treat `Task*` steps as local workflow tracking using the client's equivalent when available. Report missing tools and unexecuted checks explicitly.
+
+Run `bash .claude/hooks/yaml-helper.sh resolve_config --keys locale,review_mode,automation,workflow,system_overrides` and use its output below.
 
 Resolved above — use as-is; `--review` overrides `review_mode`. `--depth` is
 the pre-1.1 name for the same flag: treat `--depth <mode>` exactly as
@@ -456,7 +460,7 @@ verbatim).
 Once the systems-index and review-log widgets are answered, check project state and show one final `AskUserQuestion`:
 
 Before building options, read:
-- `design/prd/features-modules-index.md` — find any system with Status: In Review or Needs Revision (other than the one just reviewed). Read it by section: check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise find the headings: if `.basinfy/` exists, use `basinfy_search` and `basinfy_read`; otherwise use the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Grep tool (pattern `^#`, content mode) and Read those ranges with offset and limit.
+- `design/prd/features-modules-index.md` — find any system with Status: In Review or Needs Revision (other than the one just reviewed). Read it by section: Use the project discovery protocol to find the relevant headings and read those sections. When the index cannot provide them, find the headings with a local text search and read the matching ranges.
 - Count `.md` files in `design/prd/` (excluding product-concept.md, features-modules-index.md) to determine if `/saas-review-all-prds` is worth offering (≥2 PRDs)
 - Find the next system with Status: Not Started in design order
 

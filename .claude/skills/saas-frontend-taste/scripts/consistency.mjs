@@ -538,7 +538,7 @@ function extractShaders(text, fileKind, scanned) {
   return found;
 }
 // each file's canvas-effects found once (the effect signs and any later reader share them)
-const shadersOf = (f) => f.canvas-effects || (f.canvas-effects = f.kind === 'css' ? [] : extractShaders(f.text, f.kind, f.scan));
+const shadersOf = (f) => f.canvasEffects || (f.canvasEffects = f.kind === 'css' ? [] : extractShaders(f.text, f.kind, f.scan));
 
 // ---------------------------------------------------------------- what the page loads, read over http (no browser)
 // the page as served, every script, module, style and canvas-effect file of its import graph, the same-origin pages it embeds
@@ -1276,8 +1276,8 @@ function selfTest(log = () => {}) {
   ];
   let ok = true;
   for (const c of cases) {
-    const canvas-effects = extractShaders(c.src, c.file), hits = canvas-effects.flatMap((s) => lintGlsl(s.text)).map((h) => h.word);
-    const pass = canvas-effects.length > 0 && c.expect.every((w) => hits.includes(w)) && hits.every((w) => c.expect.includes(w));
+    const canvasEffects = extractShaders(c.src, c.file), hits = canvasEffects.flatMap((s) => lintGlsl(s.text)).map((h) => h.word);
+    const pass = canvasEffects.length > 0 && c.expect.every((w) => hits.includes(w)) && hits.every((w) => c.expect.includes(w));
     if (!pass) ok = false;
     log(`${pass ? 'ok  ' : 'FAIL'} ${c.name}: found ${hits.length ? [...new Set(hits)].join(', ') : 'nothing'}, expected ${c.expect.length ? c.expect.join(', ') : 'nothing'}`);
   }
@@ -4763,12 +4763,12 @@ const GL_GUARD = `(() => {
   // every canvas-effect source the page compiles (for the reserved-word lint) and every compile or link that fails; with
   // window.__ccglFail set (the gl-fallback pass) every canvas-effect is replaced by one that cannot compile, as a GPU that
   // rejects it would leave it, to see what the page shows then
-  S.canvas-effects = []; S.fails = []; S.refusedEls = new WeakSet();
+  S.canvasEffects = []; S.fails = []; S.refusedEls = new WeakSet();
   const hook = (P) => {
     if (!P || P.__cchook) return; P.__cchook = true;
     const ss = P.shaderSource, cs = P.compileShader, lp = P.linkProgram;
     P.shaderSource = function (sh, src) {
-      try { const s = String(src); if (S.canvas-effects.length < 80 && !S.canvas-effects.some((x) => x.src === s)) S.canvas-effects.push({ src: s.slice(0, 60000), host: name(this.canvas || {}) }); } catch (e) {}
+      try { const s = String(src); if (S.canvasEffects.length < 80 && !S.canvasEffects.some((x) => x.src === s)) S.canvasEffects.push({ src: s.slice(0, 60000), host: name(this.canvas || {}) }); } catch (e) {}
       if (window.__ccglFail) return ss.call(this, sh, 'checker: a canvas-effect this GPU rejects;');
       return ss.apply(this, arguments);
     };
@@ -8587,10 +8587,10 @@ function lib() {
   }
   // every canvas-effect the page compiled, the ones that failed, and its script sources (read by the caller for the lint)
   function glInfo() {
-    const G = window.__ccgl || { canvas-effects: [], fails: [] };
+    const G = window.__ccgl || { canvasEffects: [], fails: [] };
     const files = [...new Set([...document.scripts].map((s) => s.src).filter(Boolean).concat(performance.getEntriesByType('resource').map((e) => e.name).filter((u) => /\.(m?js|glsl|frag|vert|vs|fs)(\?|#|$)/i.test(u))))].slice(0, 80);
     const inline = [...document.scripts].filter((s) => !s.src && s.textContent.length < 400000).map((s) => s.textContent);
-    return { canvas-effects: G.canvas-effects || [], fails: G.fails || [], files, inline };
+    return { canvasEffects: G.canvasEffects || [], fails: G.fails || [], files, inline };
   }
   // the gl-fallback pass: each WebGL host on this screen (an effect ground, a canvas), with what is drawn over it
   function glHosts() {
@@ -9731,7 +9731,7 @@ function lintGLSL(src) {
   return hits;
 }
 async function shaderLint(GI, base) {
-  const srcs = GI.canvas-effects.map((s) => ({ src: s.src, from: `compiled by ${s.host}` }));
+  const srcs = GI.canvasEffects.map((s) => ({ src: s.src, from: `compiled by ${s.host}` }));
   const origin = (() => { try { return new URL(base).origin; } catch { return ''; } })();
   for (const u of GI.files) {
     try {
@@ -10563,7 +10563,7 @@ async function runWidth(cdp, helper, { w: width, h }, first) {
         for (const x of GI.fails.slice(0, 3)) F.push({ check: 'canvas-effect-lint', sev: 'FAIL', id: 0, sel: x.host, text: '', stop: null, rects: [], msg: `a canvas-effect failed to ${x.kind} even on the checker's CPU WebGL: ${x.log.split('\n')[0] || '(no log)'}` });
         const L = await safe('canvas-effect-lint', () => shaderLint(GI, url));
         if (L) for (const h of L.hits.slice(0, 8)) F.push({ check: 'canvas-effect-lint', sev: 'FAIL', id: 0, sel: h.from, text: h.word, stop: null, rects: [], msg: `a canvas-effect uses "${h.word}" as a name (line ${h.line}: ${h.text}): GLSL ES reserves it, so a strict GPU rejects the whole canvas-effect and the picture stays empty` });
-        if (L) report.canvas-effects = (report.canvas-effects || 0) + L.n;
+        if (L) report.canvasEffects = (report.canvasEffects || 0) + L.n;
       }
     }
     // text-contrast: text on a plain ground, one finding per colour, ground and kind (body 7:1, the rest 4.5:1)

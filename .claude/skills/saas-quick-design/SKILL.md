@@ -79,7 +79,7 @@ Otherwise: proceed with the selected type.
 ## 2. Context Scan
 
 Before drafting anything, read the relevant context. Read the PRD and the systems
-index by section: check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise find the headings you need with the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Grep tool (pattern `^#`, content mode) and Read those ranges with offset and limit.
+index by section: Use the project discovery protocol to find the relevant headings and read those sections. When the index cannot provide them, find the headings with a local text search and read the matching ranges.
 
 - Search `design/prd/` for the PRD most relevant to this change. Read the
   sections that this change would affect. If no PRD covers this system — usually

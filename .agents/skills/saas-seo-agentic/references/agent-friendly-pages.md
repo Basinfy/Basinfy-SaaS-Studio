@@ -96,13 +96,13 @@ success. Present these as reasoned practice, not measured uplift.
 
 ```bash
 # Local 0-100 Agent-UX heuristic (HTML semantics + Chromium accessibility tree)
-"${CLAUDE_PLUGIN_ROOT}/scripts/claude-seo" run agent_ux_check.py <URL> --json
+python scripts/seo/agent_ux_check.py <URL> --json
 
 # Raw accessibility tree without scoring
-"${CLAUDE_PLUGIN_ROOT}/scripts/claude-seo" run render_page.py <URL> --mode auto --a11y-tree --json
+python scripts/seo/render_page.py <URL> --mode auto --a11y-tree --json
 
 # Google's own pass/fail view (the X/N fraction)
-"${CLAUDE_PLUGIN_ROOT}/scripts/claude-seo" run lighthouse_agentic.py <URL> --json
+python scripts/seo/lighthouse_agentic.py <URL> --json
 ```
 
 The Agent-UX score is a local heuristic. Never present it as the Lighthouse

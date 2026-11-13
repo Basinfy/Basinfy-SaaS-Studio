@@ -53,7 +53,7 @@ Stop strategizing. Produce the artifact:
   measurable outcomes.
 - Generated schema JSON-LD ready to paste into the site.
 - A content brief with target keywords, outline, and internal links.
-- A PDF via `"${CLAUDE_PLUGIN_ROOT}/scripts/claude-seo" run google_report.py` when the user asks for one.
+- A PDF through the current client's export tools, when available and requested. Otherwise provide the Markdown report and mark PDF export as unavailable.
 - The smallest implementation of the highest-leverage recommendation,
   not the full plan.
 

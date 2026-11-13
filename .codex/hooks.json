@@ -1,28 +1,20 @@
 {
-  "version": "1.0",
+  "description": "Basinfy SaaS Studio Codex hooks",
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Write|Edit",
-        "command": "bash .claude/hooks/validate-write.sh",
-        "timeout": 10
+        "matcher": "apply_patch",
+        "hooks": [{"type": "command", "command": "node .codex/studio-hook.cjs pre", "timeout": 10}]
       }
     ],
     "PostToolUse": [
       {
-        "matcher": "Write|Edit",
-        "command": "bash .claude/hooks/validate-assets.sh",
-        "timeout": 10
+        "matcher": "apply_patch",
+        "hooks": [{"type": "command", "command": "node .codex/studio-hook.cjs post", "timeout": 10}]
       },
       {
-        "matcher": "Write|Edit",
-        "command": "bash .claude/hooks/validate-skill-change.sh",
-        "timeout": 5
-      },
-      {
-        "matcher": "Bash|PowerShell",
-        "command": "bash .claude/hooks/classify-error.sh",
-        "timeout": 5
+        "matcher": "Bash",
+        "hooks": [{"type": "command", "command": "node .codex/studio-hook.cjs shell", "timeout": 5}]
       }
     ]
   }

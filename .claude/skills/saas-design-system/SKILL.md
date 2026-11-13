@@ -97,7 +97,7 @@ If the session is interrupted (compaction, crash, new session):
 1. Read `production/session-state/active.md` — it records the current system and
    which sections are complete
 2. Read `design/prd/[system-name].md` — sections with real content are done;
-   sections with `[To be designed]` still need work. Read it by section: check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise find the headings: if `.basinfy/` exists, use `basinfy_search` and `basinfy_read`; otherwise use the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Grep tool (pattern `^#`, content mode) and Read those ranges with offset and limit.
+   sections with `[To be designed]` still need work. Read it by section: Use the project discovery protocol to find the relevant headings and read those sections. When the index cannot provide them, find the headings with a local text search and read the matching ranges.
 3. Resume from the next incomplete section — no need to re-discuss completed ones
 
 This is why incremental writing matters: every approved section survives any

@@ -125,7 +125,7 @@ Rules for every layer, each with its source (the `project.yaml` key,
 
 - **Naming** from `naming.*`: classes, variables, signals and events, files,
   constants.
-- **Performance budgets** from `performance.*`: target LCP, target FID/INP,
+- **Performance budgets** from `performance.*`: target LCP, target INP,
   target CLS, max initial bundle size, API p95 latency.
 - **Forbidden APIs** from stack reference documentation, **only those that apply to what this
   project builds.** Never copy deprecated lists blindly: scope each rule to the relevant
@@ -278,7 +278,7 @@ read its ADR.
 | Target | Value | Source |
 |--------|-------|--------|
 | Target LCP (ms) | [value] | [`performance.target_lcp_ms` in project.yaml] |
-| Target FID/INP (ms) | [value] | [`performance.target_fid_ms` in project.yaml] |
+| Target INP (ms) | [value] | [`performance.target_inp_ms` in project.yaml] |
 | Target CLS | [value] | [`performance.target_cls` in project.yaml] |
 | Max Initial Bundle (KB) | [value] | [`performance.max_initial_bundle_kb` in project.yaml] |
 | API p95 Latency (ms) | [value] | [`performance.api_p95_latency_ms` in project.yaml] |

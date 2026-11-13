@@ -1,6 +1,6 @@
 ---
 name: saas-team-ui
-description: "Orchestrate the UI team through the complete frontend pipeline — ux-designer, design-system-director, frontend-engineer, qa-tester — UX spec, design tokens, responsive components, and visual testing."
+description: "Orchestrate the UI team through the complete frontend pipeline — ux-designer, design-system-director, frontend-engineer, qa-manual-tester — UX spec, design tokens, responsive components, and visual testing."
 argument-hint: "[UI feature description] [--review full|lean|solo]"
 user-invocable: true
 allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-team-ui/../../hooks/yaml-helper.sh" resolve_config *)
@@ -27,8 +27,8 @@ through design token alignment, responsive component development, and visual val
 When this skill is invoked with a valid argument, orchestrate the team:
 
 1. **UX Specification**:
-   - `ux-designer`: Author UX specification (`design/ux/[feature]-spec.md`)
-   - Specify layout zones, user interaction map, edge cases (empty states, loading, errors), and WCAG 2.2 accessibility checklist
+   - `ux-designer`: Author or extend the UX specification (`design/ux/[feature].md`)
+   - Record the primary task, screen purpose from `/saas-frontend-taste`, layout zones, interaction map, edge cases (empty states, loading, errors), and WCAG 2.2 accessibility checklist.
 
 2. **Design Tokens & Visual Design**:
    - `design-system-director`: Align component with `design/ui/design-tokens.md`
@@ -36,21 +36,14 @@ When this skill is invoked with a valid argument, orchestrate the team:
 
 3. **Frontend Implementation & Anti-Slop Layout**:
    - `frontend-engineer`: Build accessible React/Vue components (using Tailwind CSS, Radix UI / shadcn/ui primitives):
-     - Enforce `/saas-frontend-taste` standards: 1440x900 viewport rhythm (1 section per screen, equal margins), real interactive UI fragments (code diffs, pipeline boards, metrics cards from `saas-frontend-taste/assets/ui/`)
-     - Ensure semantic HTML (`<nav>`, `<main>`, `<dialog>`, `<button>`)
-     - Implement keyboard accessibility (Tab order, Enter/Space, Escape to close)
-     - Bind component state to backend API queries/mutations
-   - `frontend-engineer`: Build accessible React/Vue components (using Tailwind CSS, Radix UI / shadcn/ui primitives):
+     - Apply the `/saas-frontend-taste` criteria for the screen purpose. Use full-screen rhythm and landing-kit fragments only on landing-kit pages.
      - Ensure semantic HTML (`<nav>`, `<main>`, `<dialog>`, `<button>`)
      - Implement keyboard accessibility (Tab order, Enter/Space, Escape to close)
      - Bind component state to backend API queries/mutations
 
 4. **Visual & Accessibility Testing**:
-   - `qa-tester`: Verify WCAG contrast ratios (minimum 4.5:1), responsive layout from 320px to 2560px, and keyboard operability.
-   - Run automated verification:
-     - `node .claude/skills/saas-frontend-taste/scripts/copy-lint.mjs <file> --kind software` (anti-slop copy)
-     - `node .claude/skills/saas-frontend-taste/scripts/consistency.mjs <file> --page software` (headless Chrome consistency across 1440, 1024, 820, 768, 390)
-   - `qa-tester`: Verify WCAG contrast ratios (minimum 4.5:1), responsive layout from 320px to 2560px, and keyboard operability.
+   - `qa-manual-tester`: Walk the primary task and review the rendered route using Phase 3 of `/saas-frontend-taste`. Report design findings and technical findings with evidence for each viewport or state tested.
+   - Use project tools for responsive, keyboard, contrast and interaction checks. Apply the landing-kit scripts only when the kit's conventions apply.
 
 5. **Verdict**:
-   - Output: **COMPLETE** — UI feature specified, styled, implemented, and validated.
+   - **COMPLETE** when the feature is implemented and all required checks have passed. **NEEDS REVISION** when a known blocker remains. **NOT ASSESSED** when required verification could not run. Include evidence and the next action.

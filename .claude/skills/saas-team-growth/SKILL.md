@@ -1,6 +1,6 @@
 ---
 name: saas-team-growth
-description: "Orchestrate the growth & acquisition team — growth-engineer, seo-strategist, copywriter, frontend-engineer, analytics-engineer — landing page, SEO, tracking, and viral loops."
+description: "Orchestrate the growth & acquisition team — growth-director, ux-content-strategist, frontend-engineer, data-telemetry-engineer — landing page, SEO, tracking, and viral loops."
 argument-hint: "[growth initiative description] [--review full|lean|solo]"
 user-invocable: true
 allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-team-growth/../../hooks/yaml-helper.sh" resolve_config *)
@@ -27,16 +27,15 @@ analytics instrumentation, lead capture, and referral loops.
 When this skill is invoked with a valid argument, orchestrate the team:
 
 1. **Strategy & Copy Phase**:
-   - `growth-engineer`: Map conversion funnel (Visitor → Lead → Signup → Activated User)
-   - `copywriter`: High-converting headlines, value proposition hooks, social proof, and primary CTAs
-   - `seo-strategist`: Keyword architecture, metadata, OpenGraph tags, JSON-LD schema, and sitemap plan
+   - `growth-director`: Map the conversion funnel and plan keyword architecture, metadata, Open Graph tags, structured data, and the sitemap.
+   - `ux-content-strategist`: High-converting headlines, value proposition hooks, social proof, and primary CTAs
 
 2. **Frontend & Interactive Experience**:
    - `frontend-engineer`: Implement responsive landing page, interactive product demo, newsletter/signup form
-   - Optimize Core Web Vitals (LCP < 2.5s, CLS = 0, FID/INP < 100ms)
+   - Optimize Core Web Vitals (LCP < 2.5s, CLS = 0, INP < 200ms)
 
 3. **Analytics & Instrumentation**:
-   - `analytics-engineer`: Instrument tracking events (PostHog, Segment, Mixpanel, GA4)
+   - `data-telemetry-engineer`: Instrument tracking events (PostHog, Segment, Mixpanel, GA4)
    - Track key conversion milestones: page view, CTA click, signup started, signup completed
 
 4. **Review & Validation**:

@@ -134,7 +134,7 @@ After reading stories, load supporting context once (not per story):
   (**Acceptance Criteria** and **Edge Cases** always, plus **Formulas** for any
   system that defines numeric rules); at `minimal`, **Acceptance
   Criteria only**. Do not load the full PRD
-  text. check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise find the section headings with the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Grep tool (pattern `^#`, content mode) and Read those ranges with offset and limit. These sections contain the testable requirements, the math
+  text. Use the project discovery protocol to find the relevant headings and read those sections. When the index cannot provide them, find the headings with a local text search and read the matching ranges. These sections contain the testable requirements, the math
   to verify, and the boundary conditions tests must cover. If an Edge Cases section is absent (or
   not expected at minimal), note per PRD: "No Edge Cases section found — edge case
   coverage will be inferred from acceptance criteria only."

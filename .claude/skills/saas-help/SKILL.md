@@ -43,14 +43,14 @@ the artifact globs that indicate completion.
 
 ---
 
-## Step 1b: Find Skills Not in the Catalog
+## Step 1b: Find Additional Workflows
 
 After reading the catalog, Glob `.claude/skills/*/SKILL.md` to get the full list
 of installed skills. For each file, extract the `name:` field from its frontmatter.
 
 Compare against the `command:` values in the catalog. Any skill whose name does
-not appear as a catalog command is an **uncataloged skill** — still usable but not
-part of the phase-gated workflow.
+not appear as a catalog command is an **additional workflow** available outside
+the phase ladder. Use `studio-tests/catalog.yaml` for the full skill inventory.
 
 Collect these for the output in Step 7 — show them as a footer block:
 
@@ -60,7 +60,7 @@ Collect these for the output in Step 7 — show them as a footer block:
 - `/skill-name` — [description]
 ```
 
-Only show this block if at least one uncataloged skill exists. Limit to the 10
+Only show this block if at least one additional workflow applies. Limit to the 10
 most relevant based on the user's current phase (QA skills in production, team
 skills in production/polish, etc.).
 
@@ -147,12 +147,7 @@ against the working tree and reports one line per step. Map its statuses:
 | `PATTERN_MISS` | **Incomplete** — the file exists but lacks its marker; say so, since "missing" would send the user to recreate a file they already have |
 | `NO_CHECK` | **MANUAL** if the step carries a `note=`, else **UNKNOWN** — completion is not trackable (e.g. repeatable implementation work) |
 
-Do not re-derive any of this with Glob/Grep. `any_of` in particular is a list of
-**alternatives** — one match is enough — and hand-evaluating it risks a false
-"incomplete": `engine-setup` is satisfied by `stack.frontend`
-in `project.yaml` **or** by the legacy `Engine:` line in
-`.claude/docs/technical-preferences.md`, and the script reports which alternative
-matched (`alt=`/`match=`).
+Prefer the helper. If shell execution is unavailable or denied, use native file reads and globs to evaluate the selected path or phase against the same catalog. An `any_of` step is satisfied when one alternative matches. Distinguish an empty match from a search you could not perform. Report checks you could not complete as **UNKNOWN**, and disclose that you used native file tools.
 
 **`NO_CHECK` never means done.** The script prints a `NO_CHECK:` total before the
 rows; if most of a phase is NO_CHECK, say that plainly rather than implying the
@@ -189,11 +184,11 @@ one call:
 Bash: bash .claude/scripts/artifact-check.sh --path minimal
 ```
 
-Map the statuses exactly as in Step 4. `implement` and `story-done` are
+Map the statuses exactly as in Step 4, including its fallback when the helper cannot run. `implement` and `story-done` are
 `NO_CHECK` by design — the story status lines below are their check. The next
 step is the first of these that applies:
 
-1. `engine-setup` not PRESENT → `/saas-setup-stack`
+1. `stack-setup` not PRESENT → `/saas-setup-stack`
 2. `product-brief` not PRESENT → `/saas-reverse-document design [code root]` when the
    code root already holds the application (10 or more source files, the test Step 2
    uses for `production`): at `minimal` it writes `design/product-brief.md` from

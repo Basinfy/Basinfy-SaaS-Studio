@@ -1,14 +1,16 @@
 ---
 name: saas-lgpd-audit-logging
 description: Design and implement immutable, hash-chained audit logging for accountability (LGPD Art. 6, X) and incident registration (Res. 15/2024 Art. 10, 5-year retention). Use when user asks 'audit log', 'log de auditoria', 'logging LGPD', 'accountability log', or as part of audit pipeline. Outputs schema + middleware patterns for Next.js.
+argument-hint: "[scope or artifact path]"
 user-invocable: true
+allowed-tools: Read, Glob, Grep, AskUserQuestion
 model: sonnet
 ---
 
 # Audit Logging
 
 > **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / sk_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
+> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
 > Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
 > Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
 

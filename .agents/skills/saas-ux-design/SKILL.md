@@ -3,11 +3,15 @@ name: saas-ux-design
 description: "Section-by-section UX spec authoring for a screen, flow or App Shell. Reads the customer journey to provide context; also project-wide accessibility."
 argument-hint: "[screen/flow name] or 'app-shell' or 'patterns' or 'accessibility'"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Agent, Bash(bash "*/.claude/skills/saas-ux-design/../../hooks/yaml-helper.sh" resolve_config *)
-model: sonnet
 ---
 
-!`bash "${CLAUDE_SKILL_DIR}/../../hooks/yaml-helper.sh" resolve_config --keys locale,automation,workflow,docs.density`
+<!-- Generated from .claude/skills by scripts/sync-agent-skills.py. -->
+
+## Running this workflow on this client
+
+Run shell commands from the project root. On Windows, use Git Bash for the `bash` commands if `bash` resolves to an unavailable WSL distribution. Shared studio files are under `.claude/`; run the local Studio installer for this project if those files are missing. Read `.claude/docs/config-resolution.md` and apply its defaults when configuration cannot be resolved. Use this client's tools for reads, edits, and structured questions. If structured questions are unavailable, ask in chat and wait when a decision requires approval. Use the client's delegation feature with the role brief in `.claude/agents/` when available. Otherwise perform the specialist checks in sequence and disclose that they were done in one session. If a workflow requires independent sign-off, report it as pending until an independent reviewer can provide it. Treat `Task*` steps as local workflow tracking using the client's equivalent when available. Report missing tools and unexecuted checks explicitly.
+
+Run `bash .claude/hooks/yaml-helper.sh resolve_config --keys locale,automation,workflow,docs.density` and use its output below.
 
 Resolved above — use as-is. No block → defaults in
 `.claude/docs/config-resolution.md`.
@@ -103,7 +107,7 @@ the other two.**
 | UX Spec (screen or flow) | `references/sections-ux-spec.md` |
 | App Shell Design | `references/sections-app-shell.md` |
 | Interaction Pattern Library | `references/sections-patterns.md` |
-| Accessibility Requirements | `.claude/docs/templates/guidance/accessibility-requirements-guide.md` |
+| Accessibility Requirements | `.claude/docs/templates/accessibility-requirements.md` |
 
 > The accessibility guidance lives under `templates/guidance/` rather than this
 > skill's `references/` because the template it documents

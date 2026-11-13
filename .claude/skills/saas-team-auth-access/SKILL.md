@@ -1,6 +1,6 @@
 ---
 name: saas-team-auth-access
-description: "Orchestrate the authentication & access team — security-engineer, backend-engineer, frontend-engineer, qa-tester — auth, RBAC, multi-tenancy, sessions, and invites."
+description: "Orchestrate the authentication & access team — auth-security-specialist, backend-engineer, frontend-engineer, qa-manual-tester — auth, RBAC, multi-tenancy, sessions, and invites."
 argument-hint: "[auth/access feature description] [--review full|lean|solo]"
 user-invocable: true
 allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-team-auth-access/../../hooks/yaml-helper.sh" resolve_config *)
@@ -27,7 +27,7 @@ RBAC permissions, session handling, team invites, and organization switching.
 When this skill is invoked with a valid argument, orchestrate the team:
 
 1. **Security & Data Modeling**:
-   - `security-engineer`: Specify threat model, cookie security flags (`HttpOnly`, `SameSite=Lax`, `Secure`), session duration, and CSRF strategy
+   - `auth-security-specialist`: Specify threat model, cookie security flags (`HttpOnly`, `SameSite=Lax`, `Secure`), session duration, and CSRF strategy
    - `backend-engineer`: Database migration for `User`, `Account`, `Session`, `Organization`, and `Membership` models
    - Define Row-Level Security (RLS) policies or middleware tenant guards
 
@@ -39,7 +39,7 @@ When this skill is invoked with a valid argument, orchestrate the team:
    - Session context provider (`useUser`, `useTenant`), protected route wrappers, and error alert banners
 
 4. **Testing & Security Validation**:
-   - `qa-tester`: Test valid and invalid login attempts, token tampering, expired links, and cross-tenant access denial
+   - `qa-manual-tester`: Test valid and invalid login attempts, token tampering, expired links, and cross-tenant access denial
 
 5. **Verdict**:
    - Output: **COMPLETE** — authentication and access controls designed, implemented, and verified.

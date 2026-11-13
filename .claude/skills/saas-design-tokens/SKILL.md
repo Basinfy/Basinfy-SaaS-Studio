@@ -42,7 +42,7 @@ Every `AskUserQuestion` call follows `.claude/docs/automation-modes.md`
 - `minimal` — core tokens (colors, typography, spacing).
 
 **Context Check**:
-Read `design/product-concept.md` or `design/product-brief.md`. If neither exists, prompt:
+Read `design/prd/product-concept.md` or `design/product-brief.md`. Use `design/product-concept.md` as a legacy fallback. If none exists, prompt:
 > "No product concept found. Run `/saas-brainstorm` first to establish product pillars and target audience."
 
 ---

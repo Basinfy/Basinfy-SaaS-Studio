@@ -1,14 +1,16 @@
 ---
 name: saas-lgpd-legacy-retrofit
 description: Run a gap analysis and retrofit plan for an existing system that wasn't built with LGPD in mind. Use when user asks 'auditar projeto legado LGPD', 'gap analysis LGPD', 'sistema antigo LGPD', 'temos LGPD?', 'estamos em compliance?', or when invoking saas-lgpd-audit on a legacy codebase. Produces prioritized remediation plan in `.lgpd/gaps.md`. Entry point for Pipeline B.
+argument-hint: "[scope or artifact path]"
 user-invocable: true
+allowed-tools: Read, Glob, Grep, AskUserQuestion
 model: sonnet
 ---
 
 # Legacy Retrofit — LGPD Gap Analysis
 
 > **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / sk_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
+> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
 > Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
 > Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
 

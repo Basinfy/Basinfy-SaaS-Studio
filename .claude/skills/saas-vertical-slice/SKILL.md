@@ -57,7 +57,7 @@ Every `AskUserQuestion` call follows `.claude/docs/automation-modes.md`
 `automation_always_ask` categories always prompt).
 
 Read the following files to understand the full design intent. Read each PRD, ADR
-and the control manifest by section: check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise find the headings you need with the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Grep tool (pattern `^#`, content mode) and Read those ranges with offset and limit.
+and the control manifest by section: Use the project discovery protocol to find the relevant headings and read those sections. When the index cannot provide them, find the headings with a local text search and read the matching ranges.
 - `CLAUDE.md` — tech stack and engine
 - `design/prd/product-concept.md` — core value proposition and product pillars (or
   `design/product-brief.md`, the one-page brief that replaces it at `rigor: minimal` —

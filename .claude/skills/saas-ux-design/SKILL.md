@@ -103,7 +103,7 @@ the other two.**
 | UX Spec (screen or flow) | `references/sections-ux-spec.md` |
 | App Shell Design | `references/sections-app-shell.md` |
 | Interaction Pattern Library | `references/sections-patterns.md` |
-| Accessibility Requirements | `.claude/docs/templates/guidance/accessibility-requirements-guide.md` |
+| Accessibility Requirements | `.claude/docs/templates/accessibility-requirements.md` |
 
 > The accessibility guidance lives under `templates/guidance/` rather than this
 > skill's `references/` because the template it documents

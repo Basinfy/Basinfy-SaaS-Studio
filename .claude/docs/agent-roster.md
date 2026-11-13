@@ -34,7 +34,7 @@ Which model an agent runs on is set by the `model:` line in its own file; `model
 | `api-integrations-specialist` | Integrations & Webhooks | Third-party API clients, incoming webhook handlers, asynchronous queues, resilience |
 | `dev-tools-engineer` | Developer Tooling | Internal admin panels, seed scripts, developer tools, CLI utilities |
 | `ai-engineer` | AI & LLM Systems | LLM integrations (Anthropic, OpenAI, Gemini), RAG pipelines, embeddings, vector stores |
-| `web-perf-analyst` | Web Performance | Core Web Vitals (LCP, FID/INP, CLS), slow SQL query profiling, bundle optimization |
+| `web-perf-analyst` | Web Performance | Core Web Vitals (LCP, INP, CLS), slow SQL query profiling, bundle optimization |
 | `appsec-engineer` | Application Security | OWASP Top 10 compliance, XSS/CSRF/SQLi prevention, secrets audits, vulnerability scanning |
 | `devops-engineer` | CI/CD & Deployments | GitHub Actions workflows, preview deployments, containerized builds, automated checks |
 | `billing-engineer` | Billing & Subscriptions | Stripe/Paddle integration, subscription lifecycle, checkout webhooks, usage-based metering |

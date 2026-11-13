@@ -45,7 +45,7 @@ A system name or retrofit path is **required**. If missing:
 If the argument starts with `retrofit` or the argument is a file path to an
 existing `.md` file in `design/prd/`, enter **retrofit mode**:
 
-1. Read the existing PRD file. Read it by section: check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise find the headings: if `.basinfy/` exists, use `basinfy_search` and `basinfy_read`; otherwise use the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Grep tool (pattern `^#`, content mode) and Read those ranges with offset and limit.
+1. Read the existing PRD file. Read it by section: Use the project discovery protocol to find the relevant headings and read those sections. When the index cannot provide them, find the headings with a local text search and read the matching ranges.
 2. Identify which of the 8 **possible** sections are present (scan for section
    headings): Overview / Problem Statement, User Stories / Personas, Detailed Requirements / Rules, Formulas / Data Models,
    Edge Cases, Dependencies, Configuration Parameters, Acceptance Criteria.

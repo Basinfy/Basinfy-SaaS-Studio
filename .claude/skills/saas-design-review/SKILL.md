@@ -456,7 +456,7 @@ verbatim).
 Once the systems-index and review-log widgets are answered, check project state and show one final `AskUserQuestion`:
 
 Before building options, read:
-- `design/prd/features-modules-index.md` — find any system with Status: In Review or Needs Revision (other than the one just reviewed). Read it by section: check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise find the headings: if `.basinfy/` exists, use `basinfy_search` and `basinfy_read`; otherwise use the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Grep tool (pattern `^#`, content mode) and Read those ranges with offset and limit.
+- `design/prd/features-modules-index.md` — find any system with Status: In Review or Needs Revision (other than the one just reviewed). Read it by section: Use the project discovery protocol to find the relevant headings and read those sections. When the index cannot provide them, find the headings with a local text search and read the matching ranges.
 - Count `.md` files in `design/prd/` (excluding product-concept.md, features-modules-index.md) to determine if `/saas-review-all-prds` is worth offering (≥2 PRDs)
 - Find the next system with Status: Not Started in design order
 

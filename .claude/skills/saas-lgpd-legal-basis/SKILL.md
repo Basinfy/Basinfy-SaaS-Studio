@@ -1,14 +1,16 @@
 ---
 name: saas-lgpd-legal-basis
 description: Choose and document the lawful basis (base legal) for each personal data processing activity under LGPD Art. 7 (common data) or Art. 11 (sensitive data). Use when the user is designing a new feature that processes personal data, reviewing an existing activity, asking "qual base legal usar", "consentimento ou legítimo interesse", "podemos coletar isso", or running an LGPD audit step. Produces `.lgpd/legal-basis.md` with one entry per activity. Always cite the article. Use whenever someone is about to write code that touches personal data.
+argument-hint: "[scope or artifact path]"
 user-invocable: true
+allowed-tools: Read, Glob, Grep, AskUserQuestion
 model: sonnet
 ---
 
 # Base Legal LGPD
 
 > **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / sk_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
+> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
 > Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
 > Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
 

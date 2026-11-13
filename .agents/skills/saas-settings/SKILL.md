@@ -3,9 +3,13 @@ name: saas-settings
 description: "View or change project config — effective merged values, or set locally in project.local.yaml."
 argument-hint: "[key | key=value | --local key=value]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Bash(bash "*/.claude/skills/saas-settings/../../hooks/yaml-helper.sh" resolve_setting *), Bash(bash "*/.claude/skills/saas-settings/../../hooks/yaml-helper.sh" get_yaml_key *), Bash(bash "*/.claude/skills/saas-settings/../../hooks/yaml-helper.sh" validate_yaml_enum *), Bash(bash "*/.claude/skills/saas-settings/../../hooks/yaml-helper.sh" validate_enum_value *), Bash(bash "*/.claude/skills/saas-settings/../../hooks/yaml-helper.sh" is_locally_overridable *), Bash(bash .claude/scripts/config-set.sh *), Bash(grep -B14 '^> ### RESERVED' .claude/docs/effects-map.md), Bash(grep -E '^## ')
-model: sonnet
 ---
+
+<!-- Generated from .claude/skills by scripts/sync-agent-skills.py. -->
+
+## Running this workflow on this client
+
+Run shell commands from the project root. On Windows, use Git Bash for the `bash` commands if `bash` resolves to an unavailable WSL distribution. Shared studio files are under `.claude/`; run the local Studio installer for this project if those files are missing. Read `.claude/docs/config-resolution.md` and apply its defaults when configuration cannot be resolved. Use this client's tools for reads, edits, and structured questions. If structured questions are unavailable, ask in chat and wait when a decision requires approval. Use the client's delegation feature with the role brief in `.claude/agents/` when available. Otherwise perform the specialist checks in sequence and disclose that they were done in one session. If a workflow requires independent sign-off, report it as pending until an independent reviewer can provide it. Treat `Task*` steps as local workflow tracking using the client's equivalent when available. Report missing tools and unexecuted checks explicitly.
 
 # /saas-settings — view or change project config
 
@@ -55,7 +59,7 @@ All four subcommands need `yaml-helper.sh`. Run each helper call as its own
 plain command:
 
 ```bash
-bash "${CLAUDE_SKILL_DIR}/../../hooks/yaml-helper.sh" <helper call>
+bash .claude/hooks/yaml-helper.sh <helper call>
 ```
 
 `<helper call>` is the function each phase below names, for example

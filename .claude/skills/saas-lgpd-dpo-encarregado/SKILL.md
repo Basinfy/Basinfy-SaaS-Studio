@@ -1,14 +1,16 @@
 ---
 name: saas-lgpd-dpo-encarregado
 description: Designate and publish the Encarregado (DPO) per LGPD Art. 41 + Resolução CD/ANPD nº 18/2024. Use when user asks 'designar DPO', 'encarregado LGPD', 'quem é o DPO', or as part of audit pipeline. Note ATPP exemption (Res. 2/2022 Art. 11) but recommend designation anyway as best practice.
+argument-hint: "[scope or artifact path]"
 user-invocable: true
+allowed-tools: Read, Glob, Grep, AskUserQuestion
 model: sonnet
 ---
 
 # Encarregado / DPO (Art. 41 LGPD + Res. 18/2024)
 
 > **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / sk_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
+> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
 > Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
 > Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
 

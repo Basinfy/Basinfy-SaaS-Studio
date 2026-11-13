@@ -1,14 +1,16 @@
 ---
 name: saas-lgpd-dpa
 description: Draft and review Data Processing Agreements (DPA) with operadores under LGPD Art. 39. Use when user mentions 'DPA', 'contrato com operador', 'cláusulas LGPD', 'data processing agreement', or onboarding a new third-party service (analytics, cloud, payment, email, SMS, observability). Outputs DPA template + per-vendor sheets in `.lgpd/vendors/`.
+argument-hint: "[scope or artifact path]"
 user-invocable: true
+allowed-tools: Read, Glob, Grep, AskUserQuestion
 model: sonnet
 ---
 
 # DPA — Data Processing Agreement (Art. 39 LGPD)
 
 > **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / sk_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
+> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
 > Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
 > Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
 

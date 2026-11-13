@@ -6,6 +6,10 @@ import json
 import subprocess
 import glob
 import re
+from hashlib import sha256
+from pathlib import Path
+from shutil import copyfile
+from tempfile import TemporaryDirectory
 
 print("=================================================================")
 print("     BASINFY SAAS STUDIO — COMPREHENSIVE AUDIT & TEST        ")
@@ -241,6 +245,203 @@ try:
 except Exception as e:
     ERRORS.append(f"bin/cli.js uninstall check failed: {e}")
 
+for script in ("copy-lint.mjs", "consistency.mjs"):
+    syntax = subprocess.run(
+        ["node", "--check", f".claude/skills/saas-frontend-taste/scripts/{script}"],
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+    )
+    check(syntax.returncode == 0, f"{script} parses as JavaScript", syntax.stderr.strip())
+
+# 9.9 Codex installation and uninstall run against an isolated fixture.
+with TemporaryDirectory(prefix="studio-codex-") as fixture:
+    cli = ["node", "bin/cli.js"]
+    dry_project = Path(fixture, "dry-run")
+    dry_install = subprocess.run(cli + ["codex", "--inject", "--dry-run", "--target", str(dry_project)], capture_output=True)
+    check(dry_install.returncode == 0 and not dry_project.exists(), "Install dry run leaves the project untouched", f"rc={dry_install.returncode}")
+    api_failure = """
+const { Readable } = require('node:stream');
+require('node:https').get = (options, callback) => {
+    const response = Readable.from(['{}']);
+    response.statusCode = 503;
+    queueMicrotask(() => callback(response));
+    return response;
+};
+process.argv.splice(1, 0, 'bin/cli.js');
+require('./bin/cli.js');
+"""
+    update = subprocess.run(["node", "-e", api_failure, "--", "update", "--target", str(dry_project)], capture_output=True)
+    check(update.returncode != 0 and b"HTTP 503" in update.stderr and not dry_project.exists(),
+          "Update fails without modifying the project when the remote commit cannot be resolved", f"rc={update.returncode}")
+
+    archive_source = Path(fixture, "Basinfy-update-fixture")
+    archive_docs = archive_source / ".claude/docs"
+    archive_docs.mkdir(parents=True)
+    (archive_docs / "upgrade-fixture.md").write_text("updated", encoding="utf-8")
+    (archive_docs / "tracked.md").write_text("new upstream", encoding="utf-8")
+    (archive_docs / "custom.md").write_text("upstream text", encoding="utf-8")
+    (archive_source / "GEMINI.md").write_text("Antigravity integration", encoding="utf-8")
+    (archive_source / "CODEX.md").write_text("new Codex integration", encoding="utf-8")
+    archived_codex = archive_source / ".codex"
+    archived_codex.mkdir()
+    (archived_codex / "instructions.md").write_text("new global instructions", encoding="utf-8")
+    (archive_source / "package.json").write_text('{"version":"9.8.7"}', encoding="utf-8")
+    archive = Path(fixture, "upgrade.tar.gz")
+    subprocess.run(["tar", "-czf", str(archive), "-C", fixture, archive_source.name], check=True)
+    update_project = Path(fixture, "update-target")
+    update_project.mkdir()
+    (update_project / "project.yaml").write_text("custom: true\n", encoding="utf-8")
+    (update_project / "CODEX.md").write_text("my rules", encoding="utf-8")
+    update_docs = update_project / ".claude/docs"
+    update_docs.mkdir(parents=True)
+    (update_docs / "tracked.md").write_bytes(b"old upstream")
+    (update_docs / "custom.md").write_text("user edits", encoding="utf-8")
+    (update_project / ".claude/framework-version.json").write_text(json.dumps({
+        "name": "Basinfy-SaaS-Studio", "commit": "old",
+        "files": {".claude/docs/tracked.md": sha256(b"old upstream").hexdigest()},
+    }), encoding="utf-8")
+    commit = "0123456789abcdef0123456789abcdef01234567"
+    archive_mock = """
+const fs = require('node:fs');
+const { Readable } = require('node:stream');
+const [archive, commit] = process.argv.splice(1, 2);
+require('node:https').get = (options, headers, callback) => {
+    if (typeof headers === 'function') {
+        callback = headers;
+        const response = Readable.from([JSON.stringify({ sha: commit })]);
+        response.statusCode = 200;
+        queueMicrotask(() => callback(response));
+        return response;
+    }
+    if (!options.endsWith('/tar.gz/' + commit)) throw new Error('Archive did not use the resolved commit');
+    const response = fs.createReadStream(archive);
+    response.statusCode = 200;
+    queueMicrotask(() => callback(response));
+    return response;
+};
+process.argv.splice(1, 0, 'bin/cli.js');
+require('./bin/cli.js');
+"""
+    updated = subprocess.run(["node", "-e", archive_mock, "--", str(archive), commit, "update", "--target", str(update_project)],
+                             capture_output=True, text=True, encoding="utf-8", errors="replace")
+    version_file = update_project / ".claude/framework-version.json"
+    installed_version = json.loads(version_file.read_text(encoding="utf-8")) if version_file.is_file() else {}
+    check(updated.returncode == 0 and installed_version.get("commit") == commit and installed_version.get("version") == "9.8.7"
+          and (update_project / ".claude/docs/upgrade-fixture.md").is_file()
+          and (update_project / "project.yaml").read_text(encoding="utf-8") == "custom: true\n",
+          "Update applies and records the selected archive while preserving project settings", updated.stdout + updated.stderr)
+    check((update_docs / "tracked.md").read_text(encoding="utf-8") == "new upstream"
+          and (update_docs / "custom.md").read_text(encoding="utf-8") == "user edits"
+          and (update_project / "CODEX.md").read_text(encoding="utf-8") == "my rules"
+          and not (update_project / "GEMINI.md").exists(),
+          "Update refreshes tracked content, preserves user edits and does not add unselected integrations", updated.stdout + updated.stderr)
+    global_home = Path(fixture, "update-home")
+    (global_home / ".codex").mkdir(parents=True)
+    copyfile(Path(".codex/instructions.md"), global_home / ".codex/instructions.md")
+    global_mock = "const [fixtureHome] = process.argv.splice(1, 1); require('os').homedir = () => fixtureHome;\n" + archive_mock
+    updated_global = subprocess.run(["node", "-e", global_mock, "--", str(global_home), str(archive), commit, "update", "--global"],
+                                    capture_output=True, text=True, encoding="utf-8", errors="replace")
+    global_stamp = global_home / ".agents/framework-version.json"
+    check(updated_global.returncode == 0 and global_stamp.is_file()
+          and json.loads(global_stamp.read_text(encoding="utf-8")).get("commit") == commit
+          and (global_home / ".codex/instructions.md").read_text(encoding="utf-8") == "new global instructions"
+          and not (global_home / ".claude").exists(),
+          "Global update refreshes installed integrations without installing other clients", updated_global.stdout + updated_global.stderr)
+    for platform in ("claude", "codex", "antigravity", "cursor", "copilot", "windsurf", "cline", "continue", "aider", "devin", "zed", "agents", "all"):
+        project = Path(fixture, platform)
+        install = subprocess.run(cli + [platform, "--inject", "--target", str(project)], capture_output=True)
+        skill_dir = project / (".claude/skills" if platform == "claude" else ".agents/skills")
+        skill_entries = list(skill_dir.glob("saas-*/SKILL.md"))
+        support_files = ["project.yaml", ".claude/agents/frontend-engineer.md", ".claude/hooks/yaml-helper.sh",
+                         ".claude/docs/workflow-catalog.yaml", "studio-tests/catalog.yaml", "templates/seo/api-catalog-route.ts"]
+        missing = [name for name in support_files if not (project / name).is_file()]
+        stamp = json.loads((project / ".claude/framework-version.json").read_text(encoding="utf-8"))
+        helper = ".claude/hooks/yaml-helper.sh"
+        if stamp.get("files", {}).get(helper) != sha256((project / helper).read_bytes()).hexdigest():
+            missing.append("recorded helper checksum")
+        if platform in ("windsurf", "cline"):
+            native = project / f".{platform}/skills"
+            if len(list(native.glob("saas-*/SKILL.md"))) != len(skill_folders):
+                missing.append(str(native))
+        check(install.returncode == 0 and len(skill_entries) == len(skill_folders) and not missing,
+              f"{platform} project installation includes skills and runtime files",
+              f"rc={install.returncode}, skills={len(skill_entries)}, missing={missing}")
+        if platform in ("claude", "codex", "antigravity"):
+            rc, out, err = run_bash([".claude/scripts/artifact-check.sh", "--path", "minimal"], cwd=project)
+            check(rc == 0 and "PATH: minimal" in out and
+                  re.search(r"STEP: stack-setup .*status=PRESENT", out) and
+                  re.search(r"STEP: product-brief .*status=ABSENT", out) and
+                  re.search(r"STEP: create-stories .*status=ABSENT", out),
+                  f"{platform} installation resolves the minimal workflow", f"rc={rc}, stderr={err}")
+            config = project / "project.yaml"
+            installed_config = config.read_text(encoding="utf-8")
+            config.write_text('project:\n  name: "Next.js fixture"\nstack:\n  frontend: ""\n', encoding="utf-8")
+            rc, out, err = run_bash([".claude/scripts/artifact-check.sh", "--path", "minimal"], cwd=project)
+            check(rc == 0 and re.search(r"STEP: stack-setup .*status=(ABSENT|PATTERN_MISS)", out),
+                  f"{platform} installation does not treat an empty stack as configured", f"rc={rc}, stderr={err}")
+            config.write_text(installed_config, encoding="utf-8")
+            brief = project / "design/product-brief.md"
+            story = project / "production/epics/sample/story-001.md"
+            for artifact in (brief, story):
+                artifact.parent.mkdir(parents=True, exist_ok=True)
+                artifact.write_text("# Fixture\n", encoding="utf-8")
+            rc, out, err = run_bash([".claude/scripts/artifact-check.sh", "--path", "minimal"], cwd=project)
+            check(rc == 0 and re.search(r"STEP: product-brief .*status=PRESENT", out) and
+                  re.search(r"STEP: create-stories .*status=PRESENT", out),
+                  f"{platform} installation detects new brief and story artifacts", f"rc={rc}, stderr={err}")
+
+    codex = Path(fixture, ".codex")
+    codex.mkdir()
+    shipped = codex / "instructions.md"
+    shipped.write_bytes(Path(".codex/instructions.md").read_bytes())
+    customized = codex / "hooks.json"
+    customized.write_text("customized", encoding="utf-8")
+    unrelated = codex / "history.jsonl"
+    unrelated.touch()
+    isolate_home = "const [fixtureHome] = process.argv.splice(1, 1); require('os').homedir = () => fixtureHome; require('./bin/cli.js')"
+    uninstall = subprocess.run(
+        ["node", "-e", isolate_home, "--", fixture, "bin/cli.js", "uninstall", "codex", "--global", "--force"],
+        capture_output=True,
+    )
+    check(uninstall.returncode == 0 and not shipped.exists() and unrelated.is_file() and customized.is_file(),
+          "Codex global uninstall preserves unrelated and customized files",
+          f"rc={uninstall.returncode}, stderr={uninstall.stderr.decode('utf-8', errors='replace')}")
+
+    isolated_cli = ["node", "-e", isolate_home, "--", fixture, "bin/cli.js"]
+    for client, skills_path, source in (
+        ("claude", ".claude/skills", ".claude/skills"),
+        ("antigravity", ".gemini/config/skills", ".agents/skills"),
+    ):
+        installed = Path(fixture, skills_path, "saas-help")
+        installed.mkdir(parents=True)
+        copyfile(Path(source, "saas-help", "SKILL.md"), installed / "SKILL.md")
+        custom = installed / "notes.md"
+        custom.write_text("user notes", encoding="utf-8")
+        result = subprocess.run(isolated_cli + ["uninstall", client, "--global", "--force"], capture_output=True)
+        check(result.returncode == 0 and not (installed / "SKILL.md").exists() and custom.is_file(),
+              f"{client} global uninstall preserves additions inside studio skill directories", f"rc={result.returncode}")
+
+    project = Path(fixture, "all")
+    custom = project / ".agents/skills/saas-help/notes.md"
+    custom.write_text("user notes", encoding="utf-8")
+    result = subprocess.run(cli + ["uninstall", "codex", "--target", str(project), "--force"], capture_output=True)
+    check(result.returncode == 0 and not (project / "CODEX.md").exists() and
+          (project / ".agents/skills/saas-help/SKILL.md").is_file(),
+          "Removing a single client preserves shared workflows", f"rc={result.returncode}")
+    result = subprocess.run(cli + ["uninstall", "all", "--target", str(project), "--force"], capture_output=True)
+    check(result.returncode == 0 and not (project / ".agents/skills/saas-help/SKILL.md").exists() and custom.is_file(),
+          "Removing all clients preserves user additions", f"rc={result.returncode}")
+
+    project = Path(fixture, "codex")
+    hook = project / ".codex/studio-hook.cjs"
+    patch = "*** Begin Patch\n*** Update File: .claude/skills/saas-help/SKILL.md\n*** End Patch"
+    hook_result = subprocess.run(
+        ["node", str(hook), "post"], cwd=project,
+        input=json.dumps({"cwd": str(project), "tool_input": {"command": patch}}),
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+    )
+    check(hook_result.returncode == 0 and "Skill modified: saas-help" in hook_result.stdout,
+          "Codex patch hook forwards edits to the shared validator", hook_result.stdout + hook_result.stderr)
+
 # 10. Template Cleanliness (Zero Gaming Terminology)
 print("\n--- 10. Template Cleanliness Check ---")
 forbidden_pattern = re.compile(r'\b(Player Fantasy|Tuning Knobs|Game Feel|Hades|God of War|Celeste|Godot|Unity|Unreal|GDScript|gameplay)\b', re.IGNORECASE)
@@ -287,6 +488,40 @@ try:
     check(all(s.get("name", "").startswith("saas-") for s in cat_skills), "All 108 skills in catalog.yaml have saas- prefix", "Some skills lack saas- prefix")
     missing_specs = [s.get("name") for s in cat_skills if not (s.get("spec") and os.path.exists(s["spec"]))]
     check(len(missing_specs) == 0, "All 108 skill spec files in catalog.yaml exist", f"Missing specs: {missing_specs}")
+    skill_names = [entry["name"] for entry in cat_skills]
+    check(sorted(skill_names) == sorted(skill_folders), "Skill catalog matches installed skills", "Check missing, stale or duplicate entries")
+    unknown_commands = sorted({cmd.split()[0].lstrip('/') for cmd in wf_commands} - set(skill_names))
+    check(not unknown_commands, "Workflow commands resolve to installed skills", f"Unknown: {unknown_commands}")
+    cat_agents = cat_data.get("agents", [])
+    agent_names = [entry["name"] for entry in cat_agents]
+    disk_agent_names = sorted(p.stem for p in Path(agents_dir).glob("*.md"))
+    check(sorted(agent_names) == disk_agent_names, "Agent catalog matches installed agents", "Check missing, stale or duplicate entries")
+    dangling_agent_specs = [entry["spec"] for entry in cat_agents if entry.get("spec") and not Path(entry["spec"]).is_file()]
+    check(not dangling_agent_specs, "Configured agent specs exist", f"Missing: {dangling_agent_specs}")
+    unknown_team_roles = []
+    for filename in sorted(Path(skills_dir).glob("saas-team-*/SKILL.md")):
+        contents = filename.read_text(encoding="utf-8")
+        roles = re.findall(r"(?m)^\s*-\s+`([a-z][a-z-]*)`:", contents)
+        unknown_team_roles.extend(f"{filename.parent.name}: {role}" for role in roles if role not in disk_agent_names)
+    check(not unknown_team_roles, "Team workflows reference installed agent roles", f"Unknown roles: {unknown_team_roles}")
+    seo_errors = []
+    for folder in Path(skills_dir).glob("saas-seo*"):
+        for filename in folder.rglob("*.md"):
+            contents = filename.read_text(encoding="utf-8")
+            if "${CLAUDE_PLUGIN_ROOT}" in contents or "scripts/claude-seo" in contents:
+                seo_errors.append(f"{filename}: references the legacy plugin runtime")
+            for target in set(re.findall(r"(?:scripts/seo/[a-z_]+\.py|\.claude/skills/saas-seo[\w/-]*/references/[\w-]+\.md)", contents)):
+                if not Path(target).is_file():
+                    seo_errors.append(f"{filename}: {target} is missing")
+    check(not seo_errors, "SEO workflows reference Studio scripts and documentation", "\n".join(seo_errors))
+
+    for filename in sorted(Path(skills_dir).glob("*/SKILL.md")):
+        contents = filename.read_text(encoding="utf-8")
+        fields = yaml.safe_load(contents.split("---", 2)[1])
+        required = {"name", "description", "argument-hint", "user-invocable", "allowed-tools"}
+        missing = required - fields.keys()
+        if missing or fields.get("name") != filename.parent.name or re.search(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", contents):
+            ERRORS.append(f"Invalid skill frontmatter or control characters: {filename}; missing fields: {sorted(missing)}")
 except Exception as e:
     ERRORS.append(f"catalog.yaml parse error: {e}")
 
@@ -446,22 +681,11 @@ multi_llm_files = [
 missing_llm_files = [f for f in multi_llm_files if not os.path.exists(f)]
 check(len(missing_llm_files) == 0, "All multi-LLM configuration files exist", f"Missing: {missing_llm_files}")
 
-parity_rule_files = [
-    "AGENTS.md", "GEMINI.md", "CODEX.md",
-    ".cursorrules", ".windsurfrules", ".clinerules",
-    ".continue/rules.md", ".devin/AGENTS.md", ".github/copilot-instructions.md"
-]
-
-parity_failures = []
-for rf in parity_rule_files:
-    if os.path.exists(rf):
-        c = open(rf, "r", encoding="utf-8", errors="ignore").read()
-        if "50 Specialized Agents" not in c and "50 specialized agents" not in c and "50 agentes" not in c:
-            parity_failures.append(f"{rf}: missing 50 agents mention")
-        if "108" not in c and "96" not in c and "95" not in c:
-            parity_failures.append(f"{rf}: missing 108 workflows mention")
-
-check(len(parity_failures) == 0, "Exact rules parity (50 agents, 108 workflows) across all AI platforms", f"Failures: {parity_failures}")
+parity = subprocess.run(
+    [sys.executable, "scripts/sync-agent-skills.py", "--verify"],
+    capture_output=True, text=True, encoding="utf-8", errors="replace",
+)
+check(parity.returncode == 0, "Portable skill files match the canonical build", (parity.stdout + parity.stderr).strip())
 
 # 15. Final Result Summary
 print("\n=================================================================")

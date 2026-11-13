@@ -1,14 +1,16 @@
 ---
 name: saas-lgpd-encryption-keys
 description: Configure encryption at rest, in transit, and key management aligned with LGPD Art. 46 (security duty) and the ANPD's Guia de Segurança da Informação para ATPP. Use when user asks 'criptografia LGPD', 'KMS', 'TDE', 'encryption at rest', 'rotação de chaves', 'pgcrypto', 'column-level encryption'. Tailored for Prisma/PostgreSQL/Better Auth stack.
+argument-hint: "[scope or artifact path]"
 user-invocable: true
+allowed-tools: Read, Glob, Grep, AskUserQuestion
 model: sonnet
 ---
 
 # Encryption & Key Management
 
 > **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / sk_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
+> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
 > Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
 > Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
 

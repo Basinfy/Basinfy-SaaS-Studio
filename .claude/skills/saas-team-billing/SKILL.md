@@ -1,6 +1,6 @@
 ---
 name: saas-team-billing
-description: "Orchestrate the billing team — pricing-economist, backend-engineer, frontend-engineer, qa-tester — plans, Stripe Checkout, webhooks, and customer portal."
+description: "Orchestrate the billing team — pricing-economist, backend-engineer, frontend-engineer, qa-manual-tester — plans, Stripe Checkout, webhooks, and customer portal."
 argument-hint: "[billing feature description] [--review full|lean|solo]"
 user-invocable: true
 allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-team-billing/../../hooks/yaml-helper.sh" resolve_config *)
@@ -43,7 +43,7 @@ When this skill is invoked with a valid argument, orchestrate the team:
      - Upgrade prompt modals when users hit plan limits
 
 4. **Testing with Stripe Mock Webhooks**:
-   - `qa-tester`: Verify successful checkout redirects, subscription state updates via Stripe CLI (`stripe trigger invoice.payment_succeeded`), expired card handling, and downgrade access revocation.
+   - `qa-manual-tester`: Verify successful checkout redirects, subscription state updates via Stripe CLI (`stripe trigger invoice.payment_succeeded`), expired card handling, and downgrade access revocation.
 
 5. **Verdict**:
    - Output: **COMPLETE** — billing pipeline designed, implemented, and verified with Stripe tests.

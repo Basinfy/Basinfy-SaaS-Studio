@@ -11,6 +11,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const readline = require('readline');
+const { createHash } = require('node:crypto');
 
 const PKG_ROOT = path.resolve(__dirname, '..');
 const pkgJson = JSON.parse(fs.readFileSync(path.join(PKG_ROOT, 'package.json'), 'utf8'));
@@ -106,7 +107,7 @@ ${c.bold}EXAMPLES:${c.reset}
 }
 
 // Recursive copy helper
-function copyRecursive(src, dest, force = false, filter = null) {
+function copyRecursive(src, dest, force = false, filter = null, onCopy = null) {
   if (!fs.existsSync(src)) return 0;
   let count = 0;
   const stat = fs.statSync(src);
@@ -118,7 +119,7 @@ function copyRecursive(src, dest, force = false, filter = null) {
     const entries = fs.readdirSync(src);
     for (const entry of entries) {
       if (filter && !filter(entry, path.join(src, entry))) continue;
-      count += copyRecursive(path.join(src, entry), path.join(dest, entry), force, filter);
+      count += copyRecursive(path.join(src, entry), path.join(dest, entry), force, filter, onCopy);
     }
   } else {
     if (fs.existsSync(dest) && !force) {
@@ -129,6 +130,7 @@ function copyRecursive(src, dest, force = false, filter = null) {
       fs.mkdirSync(destDir, { recursive: true });
     }
     fs.copyFileSync(src, dest);
+    if (onCopy) onCopy(dest);
     // Preserve executable permissions on unix-like systems
     if (src.endsWith('.sh') || src.endsWith('cli.js')) {
       try {
@@ -164,9 +166,11 @@ function getGlobalPaths() {
     },
     windsurf: {
       rules: path.join(home, '.codeium', 'windsurf', 'rules'),
+      skills: path.join(home, '.codeium', 'windsurf', 'skills'),
     },
     cline: {
       rules: path.join(home, '.clinerules'),
+      skills: path.join(home, '.cline', 'skills'),
     },
     continue: {
       rules: path.join(home, '.continue', 'rules.md'),
@@ -188,16 +192,23 @@ function installGlobal(targets, force) {
   console.log(`\n${c.bold}${c.magenta}🌐 Executing Global Installation...${c.reset}\n`);
   const gPaths = getGlobalPaths();
   let totalFiles = 0;
+  const root = os.homedir();
+  const copied = {};
+  const installCopy = (source, destination, overwrite) =>
+    copyRecursive(source, destination, overwrite, null, file => {
+      copied[path.relative(root, file).split(path.sep).join('/')] = fileHash(file);
+    });
+  const portableSkills = path.join(PKG_ROOT, '.agents', 'skills');
 
   // 1. Claude Code
   if (targets.claude || targets.all) {
     process.stdout.write(`  ${c.cyan}•${c.reset} Installing globally for Claude Code (~/.claude/)... `);
     let cCount = 0;
-    cCount += copyRecursive(path.join(PKG_ROOT, '.claude', 'agents'), gPaths.claude.agents, force);
-    cCount += copyRecursive(path.join(PKG_ROOT, '.claude', 'skills'), gPaths.claude.skills, force);
-    cCount += copyRecursive(path.join(PKG_ROOT, '.claude', 'director-gates'), gPaths.claude.directorGates, force);
-    cCount += copyRecursive(path.join(PKG_ROOT, '.claude', 'rules'), gPaths.claude.rules, force);
-    cCount += copyRecursive(path.join(PKG_ROOT, '.claude', 'scripts'), gPaths.claude.scripts, force);
+    cCount += installCopy(path.join(PKG_ROOT, '.claude', 'agents'), gPaths.claude.agents, force);
+    cCount += installCopy(path.join(PKG_ROOT, '.claude', 'skills'), gPaths.claude.skills, force);
+    cCount += installCopy(path.join(PKG_ROOT, '.claude', 'director-gates'), gPaths.claude.directorGates, force);
+    cCount += installCopy(path.join(PKG_ROOT, '.claude', 'rules'), gPaths.claude.rules, force);
+    cCount += installCopy(path.join(PKG_ROOT, '.claude', 'scripts'), gPaths.claude.scripts, force);
     totalFiles += cCount;
     console.log(`${c.green}✔ Done (${cCount} files)${c.reset}`);
   }
@@ -206,17 +217,17 @@ function installGlobal(targets, force) {
   if (targets.antigravity || targets.all) {
     process.stdout.write(`  ${c.cyan}•${c.reset} Installing globally for Antigravity & Gemini CLI (~/.gemini/config/skills/)... `);
     let aCount = 0;
-    aCount += copyRecursive(
+    aCount += installCopy(
       path.join(PKG_ROOT, '.agents', 'skills', 'basinfy-saas-studio'),
       gPaths.antigravity.studioSkill,
       force
     );
-    const skillsSource = path.join(PKG_ROOT, '.claude', 'skills');
+    const skillsSource = path.join(PKG_ROOT, '.agents', 'skills');
     if (fs.existsSync(skillsSource)) {
       const skillDirs = fs.readdirSync(skillsSource);
       for (const sk of skillDirs) {
         if (sk.startsWith('saas-')) {
-          aCount += copyRecursive(
+          aCount += installCopy(
             path.join(skillsSource, sk),
             path.join(gPaths.antigravity.skillsDir, sk),
             force
@@ -232,8 +243,8 @@ function installGlobal(targets, force) {
   if (targets.cursor || targets.all) {
     process.stdout.write(`  ${c.cyan}•${c.reset} Installing globally for Cursor (~/.cursor/)... `);
     let curCount = 0;
-    curCount += copyRecursive(path.join(PKG_ROOT, '.cursor', 'rules'), gPaths.cursor.rules, force);
-    curCount += copyRecursive(path.join(PKG_ROOT, '.cursor', 'skills'), gPaths.cursor.skills, force);
+    curCount += installCopy(path.join(PKG_ROOT, '.cursor', 'rules'), gPaths.cursor.rules, force);
+    curCount += installCopy(path.join(PKG_ROOT, '.cursor', 'skills'), gPaths.cursor.skills, force);
     totalFiles += curCount;
     console.log(`${c.green}✔ Done (${curCount} files)${c.reset}`);
   }
@@ -242,7 +253,7 @@ function installGlobal(targets, force) {
   if (targets.codex || targets.all) {
     process.stdout.write(`  ${c.cyan}•${c.reset} Installing globally for OpenAI Codex (~/.codex/)... `);
     let codexCount = 0;
-    codexCount += copyRecursive(path.join(PKG_ROOT, '.codex'), gPaths.codex.dir, force);
+    codexCount += installCopy(path.join(PKG_ROOT, '.codex', 'instructions.md'), path.join(gPaths.codex.dir, 'instructions.md'), force);
     totalFiles += codexCount;
     console.log(`${c.green}✔ Done (${codexCount} files)${c.reset}`);
   }
@@ -251,7 +262,8 @@ function installGlobal(targets, force) {
   if (targets.windsurf || targets.all) {
     process.stdout.write(`  ${c.cyan}•${c.reset} Installing globally for Windsurf (~/.codeium/windsurf/)... `);
     let wCount = 0;
-    wCount += copyRecursive(path.join(PKG_ROOT, '.windsurf', 'rules'), gPaths.windsurf.rules, force);
+    wCount += installCopy(path.join(PKG_ROOT, '.windsurf', 'rules'), gPaths.windsurf.rules, force);
+    wCount += installCopy(portableSkills, gPaths.windsurf.skills, force);
     totalFiles += wCount;
     console.log(`${c.green}✔ Done (${wCount} files)${c.reset}`);
   }
@@ -259,10 +271,9 @@ function installGlobal(targets, force) {
   // 6. Cline & Roo Code
   if (targets.cline || targets.all) {
     process.stdout.write(`  ${c.cyan}•${c.reset} Installing globally for Cline & Roo (~/.clinerules)... `);
-    let clCount = 0;
+    let clCount = installCopy(portableSkills, gPaths.cline.skills, force);
     if (fs.existsSync(path.join(PKG_ROOT, '.clinerules'))) {
-      fs.copyFileSync(path.join(PKG_ROOT, '.clinerules'), gPaths.cline.rules);
-      clCount++;
+      clCount += installCopy(path.join(PKG_ROOT, '.clinerules'), gPaths.cline.rules, force);
     }
     totalFiles += clCount;
     console.log(`${c.green}✔ Done (${clCount} files)${c.reset}`);
@@ -272,31 +283,39 @@ function installGlobal(targets, force) {
   if (targets.continue || targets.all) {
     process.stdout.write(`  ${c.cyan}•${c.reset} Installing globally for Continue.dev (~/.continue/)... `);
     let contCount = 0;
-    contCount += copyRecursive(path.join(PKG_ROOT, '.continue'), path.dirname(gPaths.continue.rules), force);
+    contCount += installCopy(path.join(PKG_ROOT, '.continue'), path.dirname(gPaths.continue.rules), force);
     totalFiles += contCount;
     console.log(`${c.green}✔ Done (${contCount} files)${c.reset}`);
   }
 
   // 8. Universal Open Agents (~/.agents/)
-  if (targets.agents || targets.all) {
+  if (targets.agents || targets.codex || targets.cursor || targets.copilot || targets.vscode || targets.all) {
     process.stdout.write(`  ${c.cyan}•${c.reset} Installing globally for Universal Open Agents (~/.agents/)... `);
     let agCount = 0;
-    agCount += copyRecursive(path.join(PKG_ROOT, '.agents'), gPaths.agents.dir, force);
+    agCount += installCopy(path.join(PKG_ROOT, '.agents'), gPaths.agents.dir, force);
     totalFiles += agCount;
     console.log(`${c.green}✔ Done (${agCount} files)${c.reset}`);
   }
 
+  if (totalFiles) {
+    const stamp = path.join(root, '.agents', 'framework-version.json');
+    const metadata = readStudioStamp(stamp);
+    writeStudioStamp(stamp, { ...metadata, name: 'Basinfy-SaaS-Studio',
+      version: pkgJson.version, files: { ...metadata.files, ...copied } });
+  }
+
   console.log(`\n${c.green}${c.bold}🎉 Global installation successfully completed!${c.reset} (${totalFiles} files installed)`);
-  console.log(`\n${c.bold}Basinfy SaaS Studio is now available globally across all AI coding assistants:${c.reset}`);
-  console.log(`  ${c.cyan}• Claude Code:${c.reset} Type ${c.bold}/saas-help${c.reset} or ${c.bold}/saas-start${c.reset} in any terminal session.`);
-  console.log(`  ${c.cyan}• Antigravity & Gemini CLI:${c.reset} The ${c.bold}basinfy-saas-studio${c.reset} and all 96 ${c.bold}/saas-*${c.reset} skills are active.`);
-  console.log(`  ${c.cyan}• Cursor / Windsurf / Codex:${c.reset} Studio rules and gates are active across all projects.`);
-  console.log(`  ${c.cyan}• VS Code / Copilot / Continue / Cline:${c.reset} Native rules and modes enabled.`);
+  console.log(`\n${c.bold}Run a local installation in each project to add its configuration, workflow catalog and helpers.${c.reset}`);
 }
 
 // Local workspace installation executor
 function installLocal(targetDir, targets, mode, force) {
   const dest = path.resolve(process.cwd(), targetDir);
+  if (fs.existsSync(dest) && fs.realpathSync(dest) === fs.realpathSync(PKG_ROOT)) {
+    console.error('Choose a different target directory from the Studio package source.');
+    process.exitCode = 1;
+    return;
+  }
   console.log(`\n${c.bold}${c.magenta}📦 Installing Basinfy SaaS Studio to: ${c.cyan}${dest}${c.reset}`);
   console.log(`   ${c.dim}Mode: ${mode.toUpperCase()} | Force overwrite: ${force}${c.reset}\n`);
 
@@ -305,15 +324,36 @@ function installLocal(targetDir, targets, mode, force) {
   }
 
   let totalFiles = 0;
+  const copied = {};
+  const installCopy = (source, destination, overwrite, filter) =>
+    copyRecursive(source, destination, overwrite, filter, file => {
+      copied[path.relative(dest, file).split(path.sep).join('/')] = fileHash(file);
+    });
+
+  const claudeTarget = targets.claude || targets.all;
+  const portableTarget = targets.all || Object.entries(targets).some(([name, enabled]) => enabled && name !== 'claude');
+  const claudeSource = path.join(PKG_ROOT, '.claude');
+  const claudeDestination = path.join(dest, '.claude');
+  for (const entry of fs.readdirSync(claudeSource)) {
+    if (entry === 'framework-version.json') continue;
+    if (!claudeTarget && !['agents', 'director-gates', 'docs', 'hooks', 'rules', 'scripts', 'skills'].includes(entry)) continue;
+    totalFiles += installCopy(path.join(claudeSource, entry), path.join(claudeDestination, entry), force);
+  }
+  for (const filename of ['project.yaml', 'project.local.yaml.example']) {
+    totalFiles += installCopy(path.join(PKG_ROOT, filename), path.join(dest, filename));
+  }
+  if (portableTarget) {
+    totalFiles += installCopy(path.join(PKG_ROOT, '.agents'), path.join(dest, '.agents'), force);
+    for (const filename of ['AGENTS.md', 'CONVENTIONS.md']) {
+      totalFiles += installCopy(path.join(PKG_ROOT, filename), path.join(dest, filename), force);
+    }
+  }
 
   // 1. Claude Code
   if (targets.claude || targets.all) {
     process.stdout.write(`  ${c.cyan}•${c.reset} Configuring Claude Code (.claude/, CLAUDE.md, project.yaml)... `);
     let count = 0;
-    count += copyRecursive(path.join(PKG_ROOT, '.claude'), path.join(dest, '.claude'), force);
-    count += copyRecursive(path.join(PKG_ROOT, 'CLAUDE.md'), path.join(dest, 'CLAUDE.md'), force);
-    count += copyRecursive(path.join(PKG_ROOT, 'project.yaml'), path.join(dest, 'project.yaml'), force);
-    count += copyRecursive(path.join(PKG_ROOT, 'project.local.yaml.example'), path.join(dest, 'project.local.yaml.example'), force);
+    count += installCopy(path.join(PKG_ROOT, 'CLAUDE.md'), path.join(dest, 'CLAUDE.md'), force);
     totalFiles += count;
     console.log(`${c.green}✔ Done (${count} files)${c.reset}`);
   }
@@ -322,8 +362,8 @@ function installLocal(targetDir, targets, mode, force) {
   if (targets.cursor || targets.all) {
     process.stdout.write(`  ${c.cyan}•${c.reset} Configuring Cursor (.cursor/, .cursorrules)... `);
     let count = 0;
-    count += copyRecursive(path.join(PKG_ROOT, '.cursor'), path.join(dest, '.cursor'), force);
-    count += copyRecursive(path.join(PKG_ROOT, '.cursorrules'), path.join(dest, '.cursorrules'), force);
+    count += installCopy(path.join(PKG_ROOT, '.cursor'), path.join(dest, '.cursor'), force);
+    count += installCopy(path.join(PKG_ROOT, '.cursorrules'), path.join(dest, '.cursorrules'), force);
     totalFiles += count;
     console.log(`${c.green}✔ Done (${count} files)${c.reset}`);
   }
@@ -332,9 +372,7 @@ function installLocal(targetDir, targets, mode, force) {
   if (targets.antigravity || targets.all) {
     process.stdout.write(`  ${c.cyan}•${c.reset} Configuring Antigravity & Gemini CLI (GEMINI.md, .agents/)... `);
     let count = 0;
-    count += copyRecursive(path.join(PKG_ROOT, '.agents'), path.join(dest, '.agents'), force);
-    count += copyRecursive(path.join(PKG_ROOT, 'GEMINI.md'), path.join(dest, 'GEMINI.md'), force);
-    count += copyRecursive(path.join(PKG_ROOT, 'CONVENTIONS.md'), path.join(dest, 'CONVENTIONS.md'), force);
+    count += installCopy(path.join(PKG_ROOT, 'GEMINI.md'), path.join(dest, 'GEMINI.md'), force);
     totalFiles += count;
     console.log(`${c.green}✔ Done (${count} files)${c.reset}`);
   }
@@ -343,8 +381,8 @@ function installLocal(targetDir, targets, mode, force) {
   if (targets.codex || targets.all) {
     process.stdout.write(`  ${c.cyan}•${c.reset} Configuring OpenAI Codex (CODEX.md, .codex/)... `);
     let count = 0;
-    count += copyRecursive(path.join(PKG_ROOT, 'CODEX.md'), path.join(dest, 'CODEX.md'), force);
-    count += copyRecursive(path.join(PKG_ROOT, '.codex'), path.join(dest, '.codex'), force);
+    count += installCopy(path.join(PKG_ROOT, 'CODEX.md'), path.join(dest, 'CODEX.md'), force);
+    count += installCopy(path.join(PKG_ROOT, '.codex'), path.join(dest, '.codex'), force);
     totalFiles += count;
     console.log(`${c.green}✔ Done (${count} files)${c.reset}`);
   }
@@ -353,8 +391,8 @@ function installLocal(targetDir, targets, mode, force) {
   if (targets.vscode || targets.copilot || targets.all) {
     process.stdout.write(`  ${c.cyan}•${c.reset} Configuring VS Code & GitHub Copilot (.vscode/, .github/)... `);
     let count = 0;
-    count += copyRecursive(path.join(PKG_ROOT, '.vscode'), path.join(dest, '.vscode'), force);
-    count += copyRecursive(path.join(PKG_ROOT, '.github'), path.join(dest, '.github'), force);
+    count += installCopy(path.join(PKG_ROOT, '.vscode'), path.join(dest, '.vscode'), force);
+    count += installCopy(path.join(PKG_ROOT, '.github'), path.join(dest, '.github'), force, (_, source) => source !== path.join(PKG_ROOT, '.github', 'workflows'));
     totalFiles += count;
     console.log(`${c.green}✔ Done (${count} files)${c.reset}`);
   }
@@ -363,8 +401,9 @@ function installLocal(targetDir, targets, mode, force) {
   if (targets.windsurf || targets.all) {
     process.stdout.write(`  ${c.cyan}•${c.reset} Configuring Windsurf (.windsurf/, .windsurfrules)... `);
     let count = 0;
-    count += copyRecursive(path.join(PKG_ROOT, '.windsurf'), path.join(dest, '.windsurf'), force);
-    count += copyRecursive(path.join(PKG_ROOT, '.windsurfrules'), path.join(dest, '.windsurfrules'), force);
+    count += installCopy(path.join(PKG_ROOT, '.windsurf'), path.join(dest, '.windsurf'), force);
+    count += installCopy(path.join(PKG_ROOT, '.agents', 'skills'), path.join(dest, '.windsurf', 'skills'), force);
+    count += installCopy(path.join(PKG_ROOT, '.windsurfrules'), path.join(dest, '.windsurfrules'), force);
     totalFiles += count;
     console.log(`${c.green}✔ Done (${count} files)${c.reset}`);
   }
@@ -373,8 +412,9 @@ function installLocal(targetDir, targets, mode, force) {
   if (targets.cline || targets.all) {
     process.stdout.write(`  ${c.cyan}•${c.reset} Configuring Cline & Roo-Code (.clinerules, .roomodes)... `);
     let count = 0;
-    count += copyRecursive(path.join(PKG_ROOT, '.clinerules'), path.join(dest, '.clinerules'), force);
-    count += copyRecursive(path.join(PKG_ROOT, '.roomodes'), path.join(dest, '.roomodes'), force);
+    count += installCopy(path.join(PKG_ROOT, '.clinerules'), path.join(dest, '.clinerules'), force);
+    count += installCopy(path.join(PKG_ROOT, '.agents', 'skills'), path.join(dest, '.cline', 'skills'), force);
+    count += installCopy(path.join(PKG_ROOT, '.roomodes'), path.join(dest, '.roomodes'), force);
     totalFiles += count;
     console.log(`${c.green}✔ Done (${count} files)${c.reset}`);
   }
@@ -383,7 +423,7 @@ function installLocal(targetDir, targets, mode, force) {
   if (targets.continue || targets.all) {
     process.stdout.write(`  ${c.cyan}•${c.reset} Configuring Continue.dev (.continue/)... `);
     let count = 0;
-    count += copyRecursive(path.join(PKG_ROOT, '.continue'), path.join(dest, '.continue'), force);
+    count += installCopy(path.join(PKG_ROOT, '.continue'), path.join(dest, '.continue'), force);
     totalFiles += count;
     console.log(`${c.green}✔ Done (${count} files)${c.reset}`);
   }
@@ -392,8 +432,8 @@ function installLocal(targetDir, targets, mode, force) {
   if (targets.aider || targets.all) {
     process.stdout.write(`  ${c.cyan}•${c.reset} Configuring Aider (.aider.conf.yml, .aiderignore)... `);
     let count = 0;
-    count += copyRecursive(path.join(PKG_ROOT, '.aider.conf.yml'), path.join(dest, '.aider.conf.yml'), force);
-    count += copyRecursive(path.join(PKG_ROOT, '.aiderignore'), path.join(dest, '.aiderignore'), force);
+    count += installCopy(path.join(PKG_ROOT, '.aider.conf.yml'), path.join(dest, '.aider.conf.yml'), force);
+    count += installCopy(path.join(PKG_ROOT, '.aiderignore'), path.join(dest, '.aiderignore'), force);
     totalFiles += count;
     console.log(`${c.green}✔ Done (${count} files)${c.reset}`);
   }
@@ -402,27 +442,35 @@ function installLocal(targetDir, targets, mode, force) {
   if (targets.devin || targets.zed || targets.agents || targets.all) {
     process.stdout.write(`  ${c.cyan}•${c.reset} Configuring Devin, Zed & Universal AGENTS.md (.devin/, .zed/, AGENTS.md)... `);
     let count = 0;
-    count += copyRecursive(path.join(PKG_ROOT, '.devin'), path.join(dest, '.devin'), force);
-    count += copyRecursive(path.join(PKG_ROOT, '.zed'), path.join(dest, '.zed'), force);
-    count += copyRecursive(path.join(PKG_ROOT, 'AGENTS.md'), path.join(dest, 'AGENTS.md'), force);
+    count += installCopy(path.join(PKG_ROOT, '.devin'), path.join(dest, '.devin'), force);
+    count += installCopy(path.join(PKG_ROOT, '.zed'), path.join(dest, '.zed'), force);
     totalFiles += count;
     console.log(`${c.green}✔ Done (${count} files)${c.reset}`);
   }
 
-  // 11. Scaffold Mode specifics (templates, docs, design, production dirs)
+  totalFiles += installCopy(path.join(PKG_ROOT, 'templates'), path.join(dest, 'templates'), force);
+  totalFiles += installCopy(path.join(PKG_ROOT, 'scripts', 'seo'), path.join(dest, 'scripts', 'seo'), force);
+  totalFiles += installCopy(path.join(PKG_ROOT, 'scripts', 'sync-agent-skills.py'), path.join(dest, 'scripts', 'sync-agent-skills.py'), force);
+  totalFiles += installCopy(path.join(PKG_ROOT, 'studio-tests'), path.join(dest, 'studio-tests'), force);
+
+  // 11. Scaffold Mode specifics (docs, design, production dirs)
   if (mode === 'scaffold') {
     process.stdout.write(`  ${c.cyan}•${c.reset} Scaffolding SaaS product directories (design/, docs/, production/)... `);
     let count = 0;
-    count += copyRecursive(path.join(PKG_ROOT, 'design'), path.join(dest, 'design'), force);
-    count += copyRecursive(path.join(PKG_ROOT, 'docs'), path.join(dest, 'docs'), force);
-    count += copyRecursive(path.join(PKG_ROOT, 'production'), path.join(dest, 'production'), force);
-    count += copyRecursive(path.join(PKG_ROOT, 'studio-tests'), path.join(dest, 'studio-tests'), force);
-    count += copyRecursive(path.join(PKG_ROOT, '.gitignore'), path.join(dest, '.gitignore'), force);
-    count += copyRecursive(path.join(PKG_ROOT, 'README.md'), path.join(dest, 'README.md'), force);
-    count += copyRecursive(path.join(PKG_ROOT, 'README.en.md'), path.join(dest, 'README.en.md'), force);
+    count += installCopy(path.join(PKG_ROOT, 'design'), path.join(dest, 'design'), force);
+    count += installCopy(path.join(PKG_ROOT, 'docs'), path.join(dest, 'docs'), force);
+    count += installCopy(path.join(PKG_ROOT, 'production'), path.join(dest, 'production'), force);
+    count += installCopy(path.join(PKG_ROOT, '.gitignore'), path.join(dest, '.gitignore'), force);
+    count += installCopy(path.join(PKG_ROOT, 'README.md'), path.join(dest, 'README.md'), force);
+    count += installCopy(path.join(PKG_ROOT, 'README.en.md'), path.join(dest, 'README.en.md'), force);
     totalFiles += count;
     console.log(`${c.green}✔ Done (${count} files)${c.reset}`);
   }
+
+  const stamp = path.join(dest, '.claude', 'framework-version.json');
+  const metadata = readStudioStamp(stamp);
+  writeStudioStamp(stamp, { ...metadata, name: 'Basinfy-SaaS-Studio',
+    version: pkgJson.version, files: { ...metadata.files, ...copied } });
 
   console.log(`\n${c.green}${c.bold}🎉 Studio successfully installed at: ${c.cyan}${dest}${c.reset} (${totalFiles} files)`);
   console.log(`\n${c.bold}Next Steps:${c.reset}`);
@@ -568,47 +616,47 @@ function parseArgs() {
       parsed.mode = 'inject';
     } else if (a === 'claude' || a === '--claude') {
       parsed.targets.claude = true;
-      parsed.command = 'claude';
+      parsed.command ||= 'claude';
     } else if (a === 'antigravity' || a === '--antigravity' || a === 'gemini' || a === '--gemini') {
       parsed.targets.antigravity = true;
-      parsed.command = 'antigravity';
+      parsed.command ||= 'antigravity';
     } else if (a === 'cursor' || a === '--cursor') {
       parsed.targets.cursor = true;
-      parsed.command = 'cursor';
+      parsed.command ||= 'cursor';
     } else if (a === 'codex' || a === '--codex' || a === 'chatgpt' || a === '--chatgpt') {
       parsed.targets.codex = true;
-      parsed.command = 'codex';
+      parsed.command ||= 'codex';
     } else if (a === 'vscode' || a === '--vscode') {
       parsed.targets.vscode = true;
       parsed.targets.copilot = true;
-      parsed.command = 'vscode';
+      parsed.command ||= 'vscode';
     } else if (a === 'copilot' || a === '--copilot') {
       parsed.targets.copilot = true;
-      parsed.command = 'copilot';
+      parsed.command ||= 'copilot';
     } else if (a === 'windsurf' || a === '--windsurf') {
       parsed.targets.windsurf = true;
-      parsed.command = 'windsurf';
+      parsed.command ||= 'windsurf';
     } else if (a === 'cline' || a === '--cline' || a === 'roo' || a === '--roo') {
       parsed.targets.cline = true;
-      parsed.command = 'cline';
+      parsed.command ||= 'cline';
     } else if (a === 'continue' || a === '--continue') {
       parsed.targets.continue = true;
-      parsed.command = 'continue';
+      parsed.command ||= 'continue';
     } else if (a === 'aider' || a === '--aider') {
       parsed.targets.aider = true;
-      parsed.command = 'aider';
+      parsed.command ||= 'aider';
     } else if (a === 'devin' || a === '--devin') {
       parsed.targets.devin = true;
-      parsed.command = 'devin';
+      parsed.command ||= 'devin';
     } else if (a === 'zed' || a === '--zed') {
       parsed.targets.zed = true;
-      parsed.command = 'zed';
+      parsed.command ||= 'zed';
     } else if (a === 'agents' || a === '--agents' || a === 'opencode' || a === '--opencode') {
       parsed.targets.agents = true;
-      parsed.command = 'agents';
+      parsed.command ||= 'agents';
     } else if (a === 'all' || a === '--all') {
       parsed.targets.all = true;
-      parsed.command = 'all';
+      parsed.command ||= 'all';
     } else if (a === 'init') {
       parsed.command = 'init';
     } else if (a === 'update' || a === '--update' || a === 'upgrade') {
@@ -630,6 +678,108 @@ function parseArgs() {
 }
 
 // Framework Auto-Updater implementation
+function fileHash(file) {
+  return createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+}
+
+function readStudioStamp(stamp) {
+  try {
+    if (!fs.lstatSync(stamp).isFile()) return {};
+    const metadata = JSON.parse(fs.readFileSync(stamp, 'utf8'));
+    if (metadata.name === 'Basinfy-SaaS-Studio') return metadata;
+  } catch (_) {}
+  return {};
+}
+
+function writeStudioStamp(stamp, metadata) {
+  const directory = path.dirname(stamp);
+  if (fs.existsSync(directory) && !fs.lstatSync(directory).isDirectory()) {
+    throw new Error(`Cannot write update metadata to ${directory}.`);
+  }
+  fs.mkdirSync(directory, { recursive: true });
+  const pending = path.join(directory, `framework-version.${process.pid}.tmp`);
+  fs.writeFileSync(pending, JSON.stringify(metadata, null, 2) + '\n', { flag: 'wx' });
+  fs.renameSync(pending, stamp);
+}
+
+function updateWorkspace(sourceRoot, targetDir, isGlobal = false) {
+  const stamp = path.join(targetDir, isGlobal ? '.agents' : '.claude', 'framework-version.json');
+  const previous = readStudioStamp(stamp).files || {};
+  const files = { ...previous };
+  const skipped = [];
+  let count = 0;
+
+  function copy(source, relative = source) {
+    const incoming = path.join(sourceRoot, source);
+    if (!fs.existsSync(incoming)) return;
+    const incomingStat = fs.lstatSync(incoming);
+    const destination = path.join(targetDir, relative);
+    for (let parent = path.dirname(destination); parent !== targetDir; parent = path.dirname(parent)) {
+      if (parent === path.dirname(parent)) throw new Error(`Update path is outside its installation: ${relative}`);
+      if (fs.existsSync(parent) && !fs.lstatSync(parent).isDirectory()) {
+        skipped.push(relative);
+        return;
+      }
+    }
+    const existing = fs.existsSync(destination) ? fs.lstatSync(destination) : null;
+    if (incomingStat.isDirectory() && (!existing || existing.isDirectory())) {
+      for (const child of fs.readdirSync(incoming)) copy(path.join(source, child), path.join(relative, child));
+      return;
+    }
+    if (!incomingStat.isFile()) return;
+    const key = relative.split(path.sep).join('/');
+    const nextHash = fileHash(incoming);
+    if (existing) {
+      const shipped = path.join(PKG_ROOT, source);
+      const actual = existing.isFile() ? fileHash(destination) : null;
+      if (!actual || (actual !== nextHash && actual !== (Object.hasOwn(previous, key) ? previous[key] : undefined) &&
+          !(fs.existsSync(shipped) && fs.lstatSync(shipped).isFile() && actual === fileHash(shipped)))) {
+        skipped.push(key);
+        return;
+      }
+      if (actual === nextHash) {
+        files[key] = nextHash;
+        return;
+      }
+    }
+    count += copyRecursive(incoming, destination, true);
+    files[key] = nextHash;
+  }
+
+  if (isGlobal) {
+    const globalPaths = getGlobalPaths();
+    const existing = (source, destination) => {
+      if (fs.existsSync(destination)) copy(source, path.relative(targetDir, destination));
+    };
+    for (const [name, destination] of Object.entries(globalPaths.claude)) {
+      existing(path.join('.claude', name === 'directorGates' ? 'director-gates' : name), destination);
+    }
+    for (const destination of [globalPaths.antigravity.skillsDir, globalPaths.agents.skillsDir,
+      globalPaths.windsurf.skills, globalPaths.cline.skills]) existing('.agents/skills', destination);
+    existing('.cursor/rules', globalPaths.cursor.rules);
+    existing('.cursor/skills', globalPaths.cursor.skills);
+    existing('.codex/instructions.md', path.join(globalPaths.codex.dir, 'instructions.md'));
+    existing('.windsurf/rules', globalPaths.windsurf.rules);
+    existing('.clinerules', globalPaths.cline.rules);
+    existing('.continue', path.dirname(globalPaths.continue.rules));
+    return { count, files, skipped, stamp };
+  }
+
+  for (const item of ['agents', 'director-gates', 'docs', 'hooks', 'rules', 'scripts', 'skills']) copy(path.join('.claude', item));
+  for (const item of ['templates', 'scripts/seo', 'scripts/sync-agent-skills.py', 'studio-tests']) copy(item);
+  for (const item of ['.agents', '.cursor', '.windsurf/rules', '.codex', '.vscode', '.github/prompts',
+    '.github/copilot-instructions.md', '.continue', '.devin', '.zed', 'CLAUDE.md', 'AGENTS.md', 'GEMINI.md',
+    'CODEX.md', '.cursorrules', '.windsurfrules', '.clinerules', 'CONVENTIONS.md', '.aider.conf.yml',
+    '.aiderignore', '.roomodes', 'bin/cli.js', '.claude/settings.json', '.claude/statusline.sh']) {
+    if (fs.existsSync(path.join(targetDir, item))) copy(item);
+  }
+  for (const client of ['windsurf', 'cline']) {
+    const installed = path.join(`.${client}`, 'skills');
+    if (fs.existsSync(path.join(targetDir, installed))) copy(path.join('.agents', 'skills'), installed);
+  }
+  return { count, files, skipped, stamp };
+}
+
 function executeUpdate(opts) {
   banner();
   console.log(`${c.bold}${c.cyan}🔄 Basinfy SaaS Studio — Framework Updater${c.reset}\n`);
@@ -637,11 +787,16 @@ function executeUpdate(opts) {
   const targetDir = path.resolve(opts.target || '.');
   const isGlobal = opts.global;
   const repo = 'Basinfy/Basinfy-SaaS-Studio';
+  if (!isGlobal && fs.existsSync(targetDir) && fs.realpathSync(targetDir) === fs.realpathSync(PKG_ROOT)) {
+    console.error('Update a consumer project with --target. Update the Studio source through Git.');
+    process.exitCode = 1;
+    return;
+  }
 
   console.log(`  ${c.dim}Checking GitHub repository (${repo})...${c.reset}`);
 
   const https = require('https');
-  const { execSync } = require('child_process');
+  const { execFileSync } = require('child_process');
 
   const fetchJson = (urlPath) => {
     return new Promise((resolve, reject) => {
@@ -669,19 +824,15 @@ function executeUpdate(opts) {
 
   fetchJson(`/repos/${repo}/commits/master`)
     .then(({ status, data: commitData }) => {
-      let latestSha = 'latest';
-      let commitMsg = '';
-      if (status === 200 && commitData && commitData.sha) {
-        latestSha = commitData.sha.substring(0, 7);
-        commitMsg = commitData.commit && commitData.commit.message ? commitData.commit.message.split('\n')[0] : '';
-        console.log(`  ${c.green}✔ Remote commit on GitHub:${c.reset} ${c.bold}${latestSha}${c.reset} (${c.dim}${commitMsg}${c.reset})`);
-      } else {
-        console.log(`  ${c.yellow}⚠ Could not fetch GitHub API info (status ${status}). Proceeding with package update...${c.reset}`);
+      if (status !== 200 || !/^[a-f0-9]{40}$/.test(commitData?.sha || '')) {
+        throw new Error(`Could not resolve the remote Studio commit (HTTP ${status}).`);
       }
+      const latestSha = commitData.sha;
+      console.log(`  ${c.green}✔ Remote commit on GitHub:${c.reset} ${c.bold}${latestSha}${c.reset}`);
 
       // Check local version stamp
       let installedSha = null;
-      const vFile = path.join(targetDir, '.claude', 'framework-version.json');
+      const vFile = isGlobal ? path.join(os.homedir(), '.agents', 'framework-version.json') : path.join(targetDir, '.claude', 'framework-version.json');
       if (fs.existsSync(vFile)) {
         try {
           const vObj = JSON.parse(fs.readFileSync(vFile, 'utf8'));
@@ -701,94 +852,48 @@ function executeUpdate(opts) {
 
       const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'basinfy-update-'));
       const tarPath = path.join(tmpDir, 'repo.tar.gz');
-      const file = fs.createWriteStream(tarPath);
-
       function download(url) {
-        https.get(url, { headers: { 'User-Agent': 'Basinfy-SaaS-Studio-Updater' } }, (res) => {
-          if (res.statusCode === 301 || res.statusCode === 302) {
-            download(res.headers.location);
+        const request = https.get(url, { headers: { 'User-Agent': 'Basinfy-SaaS-Studio-Updater' } }, (res) => {
+          if (res.statusCode !== 200) {
+            res.resume();
+            request.destroy(new Error(`Archive download returned HTTP ${res.statusCode}.`));
             return;
           }
+          const file = fs.createWriteStream(tarPath);
+          file.on('error', error => request.destroy(error));
+          res.on('error', error => request.destroy(error));
           res.pipe(file);
           file.on('finish', () => {
             file.close(() => {
               try {
-                execSync(`tar -xzf "${tarPath}" -C "${tmpDir}"`);
+                execFileSync('tar', ['-xzf', tarPath, '-C', tmpDir]);
                 const extractedName = fs.readdirSync(tmpDir).find(f => f.startsWith('Basinfy') && fs.statSync(path.join(tmpDir, f)).isDirectory());
                 if (!extractedName) {
                   throw new Error('Could not find extracted repository directory');
                 }
                 const sourceRoot = path.join(tmpDir, extractedName);
 
-                let updatedCount = 0;
-
-                if (isGlobal) {
-                  const gPaths = getGlobalPaths();
-                  updatedCount += copyRecursive(path.join(sourceRoot, '.claude', 'agents'), gPaths.claude.agents, true);
-                  updatedCount += copyRecursive(path.join(sourceRoot, '.claude', 'skills'), gPaths.claude.skills, true);
-                  updatedCount += copyRecursive(path.join(sourceRoot, '.claude', 'director-gates'), gPaths.claude.directorGates, true);
-                  updatedCount += copyRecursive(path.join(sourceRoot, '.claude', 'rules'), gPaths.claude.rules, true);
-                  updatedCount += copyRecursive(path.join(sourceRoot, '.claude', 'scripts'), gPaths.claude.scripts, true);
-
-                  updatedCount += copyRecursive(path.join(sourceRoot, '.agents', 'skills', 'basinfy-saas-studio'), gPaths.antigravity.studioSkill, true);
-                  const skillsSrc = path.join(sourceRoot, '.claude', 'skills');
-                  if (fs.existsSync(skillsSrc)) {
-                    for (const sk of fs.readdirSync(skillsSrc)) {
-                      if (sk.startsWith('saas-')) {
-                        updatedCount += copyRecursive(path.join(skillsSrc, sk), path.join(gPaths.antigravity.skillsDir, sk), true);
-                      }
-                    }
-                  }
-
-                  updatedCount += copyRecursive(path.join(sourceRoot, '.cursor', 'rules'), gPaths.cursor.rules, true);
-                  updatedCount += copyRecursive(path.join(sourceRoot, '.cursor', 'skills'), gPaths.cursor.skills, true);
-                  updatedCount += copyRecursive(path.join(sourceRoot, '.codex'), gPaths.codex.dir, true);
-
-                  console.log(`\n  ${c.green}✔ Global installation successfully updated! (${updatedCount} files synced)${c.reset}\n`);
-                } else {
-                  const frameworkDirs = ['.claude', '.agents', '.cursor', '.windsurf', '.codex', '.vscode', '.github', '.continue', '.devin', '.zed'];
-                  for (const fd of frameworkDirs) {
-                    const srcFd = path.join(sourceRoot, fd);
-                    if (fs.existsSync(srcFd)) {
-                      updatedCount += copyRecursive(srcFd, path.join(targetDir, fd), true);
-                    }
-                  }
-
-                  const ruleFiles = ['CLAUDE.md', 'AGENTS.md', 'GEMINI.md', 'CODEX.md', '.cursorrules', '.windsurfrules', '.clinerules', 'CONVENTIONS.md', '.aider.conf.yml', '.aiderignore', '.roomodes'];
-                  for (const rf of ruleFiles) {
-                    const srcRf = path.join(sourceRoot, rf);
-                    if (fs.existsSync(srcRf)) {
-                      fs.copyFileSync(srcRf, path.join(targetDir, rf));
-                      updatedCount++;
-                    }
-                  }
-
-                  const srcCli = path.join(sourceRoot, 'bin', 'cli.js');
-                  const destCli = path.join(targetDir, 'bin', 'cli.js');
-                  if (fs.existsSync(srcCli) && fs.existsSync(destCli)) {
-                    fs.copyFileSync(srcCli, destCli);
-                    try { fs.chmodSync(destCli, 0o755); } catch (_) {}
-                    updatedCount++;
-                  }
-
-                  const targetVFile = path.join(targetDir, '.claude', 'framework-version.json');
-                  const vPayload = {
-                    name: 'Basinfy-SaaS-Studio',
-                    version: pkgJson.version,
-                    repository: repo,
-                    branch: 'master',
-                    commit: latestSha,
-                    updated_at: new Date().toISOString()
-                  };
-                  fs.mkdirSync(path.dirname(targetVFile), { recursive: true });
-                  fs.writeFileSync(targetVFile, JSON.stringify(vPayload, null, 2) + '\n');
-
-                  console.log(`\n  ${c.green}✔ Project successfully updated to commit ${latestSha}! (${updatedCount} framework files synced)${c.reset}`);
-                  console.log(`  ${c.dim}🔒 All user code (src/), configs (project.yaml, project.local.yaml), and secrets (.env) were untouched.${c.reset}\n`);
+                const version = JSON.parse(fs.readFileSync(path.join(sourceRoot, 'package.json'), 'utf8')).version;
+                if (!version) throw new Error('The update archive is missing its package version.');
+                const workspace = updateWorkspace(sourceRoot, isGlobal ? os.homedir() : targetDir, isGlobal);
+                const metadata = {
+                  name: 'Basinfy-SaaS-Studio',
+                  version,
+                  repository: repo,
+                  branch: 'master',
+                  commit: latestSha,
+                  updated_at: new Date().toISOString(),
+                  files: workspace.files,
+                };
+                writeStudioStamp(workspace.stamp, metadata);
+                console.log(`Updated Studio to commit ${latestSha} (${workspace.count} files synced).`);
+                if (workspace.skipped.length) {
+                  console.log(`Preserved ${workspace.skipped.length} customized or untracked paths: ${workspace.skipped.join(', ')}`);
                 }
 
               } catch (e) {
                 console.error(`  ${c.red}✖ Update failed during extraction: ${e.message}${c.reset}`);
+                process.exitCode = 1;
               } finally {
                 try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch (_) {}
               }
@@ -796,14 +901,16 @@ function executeUpdate(opts) {
           });
         }).on('error', (err) => {
           console.error(`  ${c.red}✖ Download failed: ${err.message}${c.reset}`);
+          process.exitCode = 1;
           try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch (_) {}
         });
       }
 
-      download(`https://github.com/${repo}/archive/refs/heads/master.tar.gz`);
+      download(`https://codeload.github.com/${repo}/tar.gz/${latestSha}`);
     })
     .catch((err) => {
       console.error(`  ${c.red}✖ Error connecting to GitHub: ${err.message}${c.reset}`);
+      process.exitCode = 1;
     });
 }
 
@@ -829,14 +936,23 @@ function removeFileOrDir(itemPath, dryRun = false) {
   }
 }
 
-function cleanEmptyDir(dirPath) {
-  try {
-    if (fs.existsSync(dirPath) && fs.statSync(dirPath).isDirectory()) {
-      if (fs.readdirSync(dirPath).length === 0) {
-        fs.rmdirSync(dirPath);
-      }
-    }
-  } catch (_) {}
+function removeMatchingInstallFiles(source, installed, dryRun, recorded = {}) {
+  if (!fs.existsSync(installed)) return 0;
+  const stat = fs.lstatSync(installed);
+  if (stat.isFile() && Object.hasOwn(recorded, installed) && fileHash(installed) === recorded[installed]) {
+    return removeFileOrDir(installed, dryRun);
+  }
+  if (!fs.existsSync(source)) return 0;
+  if (stat.isDirectory() && fs.lstatSync(source).isDirectory()) {
+    return fs.readdirSync(source).reduce((count, entry) => {
+      return count + removeMatchingInstallFiles(path.join(source, entry), path.join(installed, entry), dryRun, recorded);
+    }, 0);
+  }
+  if (stat.isFile() && fs.lstatSync(source).isFile() &&
+      fs.readFileSync(installed).equals(fs.readFileSync(source))) {
+    return removeFileOrDir(installed, dryRun);
+  }
+  return 0;
 }
 
 function uninstallGlobal(targets, dryRun = false) {
@@ -850,260 +966,88 @@ function uninstallGlobal(targets, dryRun = false) {
   const gPaths = getGlobalPaths();
   let totalRemoved = 0;
 
-  // 1. Claude Code (~/.claude/)
+  const root = os.homedir();
+  const metadata = readStudioStamp(path.join(root, '.agents', 'framework-version.json'));
+  const recorded = Object.fromEntries(Object.entries(metadata.files || {}).map(([relative, hash]) => [path.join(root, relative), hash]));
+  const pairs = [];
   if (targets.claude || targets.all) {
-    console.log(`  ${c.cyan}•${c.reset} Checking Claude Code global studio files (~/.claude/)...`);
-    let cCount = 0;
-
-    const srcAgents = path.join(PKG_ROOT, '.claude', 'agents');
-    if (fs.existsSync(srcAgents) && fs.existsSync(gPaths.claude.agents)) {
-      for (const f of fs.readdirSync(srcAgents)) {
-        cCount += removeFileOrDir(path.join(gPaths.claude.agents, f), dryRun);
-      }
-      if (!dryRun) cleanEmptyDir(gPaths.claude.agents);
+    for (const [name, destination] of Object.entries(gPaths.claude)) {
+      pairs.push([path.join('.claude', name === 'directorGates' ? 'director-gates' : name), destination]);
     }
-
-    const srcSkills = path.join(PKG_ROOT, '.claude', 'skills');
-    if (fs.existsSync(srcSkills) && fs.existsSync(gPaths.claude.skills)) {
-      for (const sk of fs.readdirSync(srcSkills)) {
-        cCount += removeFileOrDir(path.join(gPaths.claude.skills, sk), dryRun);
-      }
-      if (!dryRun) cleanEmptyDir(gPaths.claude.skills);
-    }
-
-    const srcGates = path.join(PKG_ROOT, '.claude', 'director-gates');
-    if (fs.existsSync(srcGates) && fs.existsSync(gPaths.claude.directorGates)) {
-      for (const f of fs.readdirSync(srcGates)) {
-        cCount += removeFileOrDir(path.join(gPaths.claude.directorGates, f), dryRun);
-      }
-      if (!dryRun) cleanEmptyDir(gPaths.claude.directorGates);
-    }
-
-    const srcRules = path.join(PKG_ROOT, '.claude', 'rules');
-    if (fs.existsSync(srcRules) && fs.existsSync(gPaths.claude.rules)) {
-      for (const f of fs.readdirSync(srcRules)) {
-        cCount += removeFileOrDir(path.join(gPaths.claude.rules, f), dryRun);
-      }
-      if (!dryRun) cleanEmptyDir(gPaths.claude.rules);
-    }
-
-    const srcScripts = path.join(PKG_ROOT, '.claude', 'scripts');
-    if (fs.existsSync(srcScripts) && fs.existsSync(gPaths.claude.scripts)) {
-      for (const f of fs.readdirSync(srcScripts)) {
-        cCount += removeFileOrDir(path.join(gPaths.claude.scripts, f), dryRun);
-      }
-      if (!dryRun) cleanEmptyDir(gPaths.claude.scripts);
-    }
-
-    const vFile = path.join(os.homedir(), '.claude', 'framework-version.json');
-    if (fs.existsSync(vFile)) {
-      try {
-        const vObj = JSON.parse(fs.readFileSync(vFile, 'utf8'));
-        if (vObj.name === 'Basinfy-SaaS-Studio') {
-          cCount += removeFileOrDir(vFile, dryRun);
-        }
-      } catch (_) {}
-    }
-
-    totalRemoved += cCount;
-    console.log(`    ${c.green}Claude Code: ${cCount} items ${dryRun ? 'would be removed' : 'removed'}.${c.reset}\n`);
   }
-
-  // 2. Antigravity & Gemini CLI (~/.gemini/config/skills/)
   if (targets.antigravity || targets.all) {
-    console.log(`  ${c.cyan}•${c.reset} Checking Antigravity / Gemini CLI global skills (~/.gemini/config/skills/)...`);
-    let aCount = 0;
-
-    if (fs.existsSync(gPaths.antigravity.studioSkill)) {
-      aCount += removeFileOrDir(gPaths.antigravity.studioSkill, dryRun);
-    }
-
-    const srcSkills = path.join(PKG_ROOT, '.claude', 'skills');
-    if (fs.existsSync(srcSkills) && fs.existsSync(gPaths.antigravity.skillsDir)) {
-      for (const sk of fs.readdirSync(srcSkills)) {
-        if (sk.startsWith('saas-')) {
-          const destSkill = path.join(gPaths.antigravity.skillsDir, sk);
-          aCount += removeFileOrDir(destSkill, dryRun);
-        }
-      }
-    }
-
-    totalRemoved += aCount;
-    console.log(`    ${c.green}Antigravity: ${aCount} items ${dryRun ? 'would be removed' : 'removed'}.${c.reset}\n`);
+    pairs.push([path.join('.agents', 'skills'), gPaths.antigravity.skillsDir]);
+    pairs.push([path.join('.claude', 'skills'), gPaths.antigravity.skillsDir]);
   }
-
-  // 3. Cursor (~/.cursor/)
   if (targets.cursor || targets.all) {
-    console.log(`  ${c.cyan}•${c.reset} Checking Cursor global studio rules and skills (~/.cursor/)...`);
-    let curCount = 0;
-
-    const srcRules = path.join(PKG_ROOT, '.cursor', 'rules');
-    if (fs.existsSync(srcRules) && fs.existsSync(gPaths.cursor.rules)) {
-      for (const f of fs.readdirSync(srcRules)) {
-        curCount += removeFileOrDir(path.join(gPaths.cursor.rules, f), dryRun);
-      }
-      if (!dryRun) cleanEmptyDir(gPaths.cursor.rules);
-    }
-
-    const srcSkills = path.join(PKG_ROOT, '.cursor', 'skills');
-    if (fs.existsSync(srcSkills) && fs.existsSync(gPaths.cursor.skills)) {
-      for (const f of fs.readdirSync(srcSkills)) {
-        curCount += removeFileOrDir(path.join(gPaths.cursor.skills, f), dryRun);
-      }
-      if (!dryRun) cleanEmptyDir(gPaths.cursor.skills);
-    }
-
-    totalRemoved += curCount;
-    console.log(`    ${c.green}Cursor: ${curCount} items ${dryRun ? 'would be removed' : 'removed'}.${c.reset}\n`);
+    pairs.push([path.join('.cursor', 'rules'), gPaths.cursor.rules]);
+    pairs.push([path.join('.cursor', 'skills'), gPaths.cursor.skills]);
   }
-
-  // 4. OpenAI Codex (~/.codex/)
   if (targets.codex || targets.all) {
-    console.log(`  ${c.cyan}•${c.reset} Checking OpenAI Codex global files (~/.codex/)...`);
-    let codexCount = 0;
-    if (fs.existsSync(gPaths.codex.dir)) {
-      codexCount += removeFileOrDir(gPaths.codex.dir, dryRun);
-    }
-    totalRemoved += codexCount;
-    console.log(`    ${c.green}OpenAI Codex: ${codexCount} items ${dryRun ? 'would be removed' : 'removed'}.${c.reset}\n`);
+    pairs.push(['.codex', gPaths.codex.dir]);
   }
-
-  // 5. Windsurf (~/.codeium/windsurf/rules/)
+  if (targets.agents || targets.all) {
+    pairs.push(['.agents', gPaths.agents.dir]);
+  }
   if (targets.windsurf || targets.all) {
-    console.log(`  ${c.cyan}•${c.reset} Checking Windsurf global rules (~/.codeium/windsurf/rules/)...`);
-    let wCount = 0;
-    const srcRules = path.join(PKG_ROOT, '.windsurf', 'rules');
-    if (fs.existsSync(srcRules) && fs.existsSync(gPaths.windsurf.rules)) {
-      for (const f of fs.readdirSync(srcRules)) {
-        wCount += removeFileOrDir(path.join(gPaths.windsurf.rules, f), dryRun);
-      }
-      if (!dryRun) cleanEmptyDir(gPaths.windsurf.rules);
-    }
-    totalRemoved += wCount;
-    console.log(`    ${c.green}Windsurf: ${wCount} items ${dryRun ? 'would be removed' : 'removed'}.${c.reset}\n`);
+    pairs.push([path.join('.windsurf', 'rules'), gPaths.windsurf.rules]);
+    pairs.push([path.join('.agents', 'skills'), gPaths.windsurf.skills]);
+  }
+  if (targets.continue || targets.all) {
+    pairs.push(['.continue', path.dirname(gPaths.continue.rules)]);
+  }
+  if (targets.cline || targets.all) {
+    pairs.push(['.clinerules', gPaths.cline.rules]);
+    pairs.push([path.join('.agents', 'skills'), gPaths.cline.skills]);
+  }
+  for (const [source, destination] of pairs) {
+    totalRemoved += removeMatchingInstallFiles(path.join(PKG_ROOT, source), destination, dryRun, recorded);
   }
 
-  console.log(`${c.bold}${dryRun ? '🔍 Dry-run complete:' : '🎉 Uninstallation complete:'}${c.reset} ${c.bold}${totalRemoved}${c.reset} items ${dryRun ? 'would be removed' : 'removed'} globally.`);
-  if (!dryRun) {
-    console.log(`\n${c.dim}Basinfy SaaS Studio global integration has been cleanly removed from your machine.${c.reset}`);
-  }
+  console.log(`\n${dryRun ? 'Dry-run complete:' : 'Global uninstallation complete:'} ${totalRemoved} matching files ${dryRun ? 'would be removed' : 'removed'}.`);
 }
 
 function uninstallLocal(targetDir, targets, dryRun = false, cleanAll = false, keepConfig = false) {
-  const dest = path.resolve(process.cwd(), targetDir);
-  if (!dryRun && path.resolve(dest) === path.resolve(PKG_ROOT)) {
-    console.error(`\n  ${c.red}✖ Safety Guard Triggered:${c.reset} Cannot uninstall from the Basinfy SaaS Studio source repository itself.`);
-    console.error(`  ${c.dim}To remove global integrations from ~/.claude, ~/.gemini, etc., use: ${c.cyan}npx github:Basinfy/Basinfy-SaaS-Studio uninstall --global${c.reset}\n`);
-    return;
+  const dest = path.resolve(targetDir);
+  if (!dryRun && fs.existsSync(dest) && fs.realpathSync(dest) === fs.realpathSync(PKG_ROOT)) {
+    throw new Error('Cannot uninstall from the Studio source repository.');
   }
-
-  console.log(`\n${c.bold}${c.magenta}📦 Uninstalling Basinfy SaaS Studio from: ${c.cyan}${dest}${c.reset}`);
-  if (dryRun) {
-    console.log(`   ${c.yellow}${c.bold}MODE: DRY-RUN (Simulation only — no files will be deleted)${c.reset}\n`);
-  } else {
-    console.log(`   ${c.dim}Clean scaffold folders: ${cleanAll} | Keep project.yaml: ${keepConfig}${c.reset}\n`);
+  const integrations = {
+    claude: ['CLAUDE.md', '.claude/settings.json', '.claude/statusline.sh'],
+    cursor: ['.cursor', '.cursorrules'],
+    antigravity: ['GEMINI.md'],
+    codex: ['CODEX.md', '.codex'],
+    vscode: ['.vscode', '.github/prompts', '.github/copilot-instructions.md'],
+    copilot: ['.vscode', '.github/prompts', '.github/copilot-instructions.md'],
+    windsurf: ['.windsurf', '.windsurfrules'],
+    cline: ['.clinerules', '.roomodes'],
+    continue: ['.continue'],
+    aider: ['.aider.conf.yml', '.aiderignore'],
+    devin: ['.devin'],
+    zed: ['.zed'],
+  };
+  const files = new Set(Object.entries(integrations).flatMap(([client, items]) => targets.all || targets[client] ? items : []));
+  if (targets.all) {
+    for (const item of ['.claude', '.agents', 'AGENTS.md', 'CONVENTIONS.md', 'project.local.yaml.example',
+      'templates', 'scripts/seo', 'scripts/sync-agent-skills.py', 'studio-tests']) files.add(item);
+    if (!keepConfig) files.add('project.yaml');
   }
-
-  let totalRemoved = 0;
-
-  // 1. Claude Code
-  if (targets.claude || targets.all) {
-    let count = 0;
-    count += removeFileOrDir(path.join(dest, '.claude'), dryRun);
-    count += removeFileOrDir(path.join(dest, 'CLAUDE.md'), dryRun);
-    count += removeFileOrDir(path.join(dest, 'project.local.yaml.example'), dryRun);
-    if (!keepConfig) {
-      count += removeFileOrDir(path.join(dest, 'project.yaml'), dryRun);
-    }
-    totalRemoved += count;
-  }
-
-  // 2. Cursor
-  if (targets.cursor || targets.all) {
-    let count = 0;
-    count += removeFileOrDir(path.join(dest, '.cursor'), dryRun);
-    count += removeFileOrDir(path.join(dest, '.cursorrules'), dryRun);
-    totalRemoved += count;
-  }
-
-  // 3. Antigravity & Gemini CLI
-  if (targets.antigravity || targets.all) {
-    let count = 0;
-    count += removeFileOrDir(path.join(dest, '.agents'), dryRun);
-    count += removeFileOrDir(path.join(dest, 'GEMINI.md'), dryRun);
-    count += removeFileOrDir(path.join(dest, 'CONVENTIONS.md'), dryRun);
-    totalRemoved += count;
-  }
-
-  // 4. OpenAI Codex
-  if (targets.codex || targets.all) {
-    let count = 0;
-    count += removeFileOrDir(path.join(dest, 'CODEX.md'), dryRun);
-    count += removeFileOrDir(path.join(dest, '.codex'), dryRun);
-    totalRemoved += count;
-  }
-
-  // 5. VS Code & Copilot
-  if (targets.vscode || targets.copilot || targets.all) {
-    let count = 0;
-    count += removeFileOrDir(path.join(dest, '.vscode'), dryRun);
-    count += removeFileOrDir(path.join(dest, '.github'), dryRun);
-    totalRemoved += count;
-  }
-
-  // 6. Windsurf
-  if (targets.windsurf || targets.all) {
-    let count = 0;
-    count += removeFileOrDir(path.join(dest, '.windsurf'), dryRun);
-    count += removeFileOrDir(path.join(dest, '.windsurfrules'), dryRun);
-    totalRemoved += count;
-  }
-
-  // 7. Cline & Roo Code
-  if (targets.cline || targets.all) {
-    let count = 0;
-    count += removeFileOrDir(path.join(dest, '.clinerules'), dryRun);
-    count += removeFileOrDir(path.join(dest, '.roomodes'), dryRun);
-    totalRemoved += count;
-  }
-
-  // 8. Continue
-  if (targets.continue || targets.all) {
-    totalRemoved += removeFileOrDir(path.join(dest, '.continue'), dryRun);
-  }
-
-  // 9. Aider
-  if (targets.aider || targets.all) {
-    let count = 0;
-    count += removeFileOrDir(path.join(dest, '.aider.conf.yml'), dryRun);
-    count += removeFileOrDir(path.join(dest, '.aiderignore'), dryRun);
-    totalRemoved += count;
-  }
-
-  // 10. Devin & Zed & Universal AGENTS.md
-  if (targets.devin || targets.zed || targets.agents || targets.all) {
-    let count = 0;
-    count += removeFileOrDir(path.join(dest, '.devin'), dryRun);
-    count += removeFileOrDir(path.join(dest, '.zed'), dryRun);
-    count += removeFileOrDir(path.join(dest, 'AGENTS.md'), dryRun);
-    totalRemoved += count;
-  }
-
-  // 11. Scaffold Mode folders (if requested)
   if (cleanAll) {
-    console.log(`\n  ${c.dim}Cleaning scaffold directories...${c.reset}`);
-    let scCount = 0;
-    scCount += removeFileOrDir(path.join(dest, 'design'), dryRun);
-    scCount += removeFileOrDir(path.join(dest, 'docs'), dryRun);
-    scCount += removeFileOrDir(path.join(dest, 'production'), dryRun);
-    scCount += removeFileOrDir(path.join(dest, 'studio-tests'), dryRun);
-    totalRemoved += scCount;
+    for (const item of ['design', 'docs', 'production', 'studio-tests']) files.add(item);
   }
-
-  console.log(`\n${c.bold}${dryRun ? '🔍 Dry-run complete:' : '🎉 Local uninstallation complete:'}${c.reset} ${c.bold}${totalRemoved}${c.reset} items ${dryRun ? 'would be removed' : 'removed'}.`);
-  if (!dryRun) {
-    console.log(`  ${c.dim}🔒 Any existing application code (src/, components/, api/) remained completely untouched.${c.reset}`);
+  let removed = 0;
+  const stamp = path.join(dest, '.claude', 'framework-version.json');
+  const manifest = readStudioStamp(stamp);
+  const recorded = Object.fromEntries(Object.entries(manifest.files || {}).map(([relative, hash]) => [path.join(dest, relative), hash]));
+  for (const client of ['windsurf', 'cline']) {
+    if (targets.all || targets[client]) {
+      removed += removeMatchingInstallFiles(path.join(PKG_ROOT, '.agents', 'skills'), path.join(dest, `.${client}`, 'skills'), dryRun, recorded);
+    }
   }
+  for (const item of files) {
+    removed += removeMatchingInstallFiles(path.join(PKG_ROOT, item), path.join(dest, item), dryRun, recorded);
+  }
+  console.log(`\n${dryRun ? 'Dry-run complete:' : 'Local uninstallation complete:'} ${removed} matching files ${dryRun ? 'would be removed' : 'removed'}.`);
 }
 
 function executeUninstall(opts) {
@@ -1243,6 +1187,10 @@ function main() {
   }
 
   if (opts.command === 'update') {
+    if (opts.dryRun) {
+      console.log(`Dry-run: would check for a Studio update ${opts.global ? 'globally' : `in ${path.resolve(opts.target)}`}.`);
+      return;
+    }
     executeUpdate(opts);
     return;
   }
@@ -1262,6 +1210,12 @@ function main() {
 
   if (!hasSpecificTarget) {
     opts.targets.all = true;
+  }
+
+  if (opts.dryRun) {
+    const selected = Object.keys(opts.targets).filter(target => opts.targets[target]);
+    console.log(`Dry-run: would install ${selected.join(', ')} ${opts.global ? 'globally' : `in ${path.resolve(opts.target)} (${opts.mode})`}.`);
+    return;
   }
 
   if (opts.global) {

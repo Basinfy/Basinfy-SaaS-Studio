@@ -83,7 +83,7 @@ pipeline names — not from an example. Both sets differ per orchestrator.
 
 The pipeline below reads as a multi-agent fan-out and at the shipped default it
 is one or two agents — `team-release` names ten and runs one, `team-content`
-names four across four phases and runs `copywriter` alone. **The collapse is correct**:
+names four across four phases and runs `ux-content-strategist` alone. **The collapse is correct**:
 `team.size` is rigor-fronted and the narrow default is the token lever.
 Without saying so, a reader cannot
 distinguish a correctly-collapsed run from a broken pipeline, and the per-agent

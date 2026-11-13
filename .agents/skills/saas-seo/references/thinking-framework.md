@@ -25,12 +25,12 @@ not a recommendation.
 
 Collect signals without interpreting them. For a website audit this means:
 
-- Raw HTML + rendered HTML (via `"${CLAUDE_PLUGIN_ROOT}/scripts/claude-seo" run render_page.py`)
+- Raw HTML + rendered HTML (via `python scripts/seo/render_page.py`)
 - Schema.org markup actually present (via `seo-schema`)
 - SERP visibility for the site's published topics (via `seo-dataforseo` /
   Google APIs when available)
 - Backlink + brand-mention landscape (via `seo-backlinks`)
-- Core Web Vitals field data from CrUX (via `"${CLAUDE_PLUGIN_ROOT}/scripts/claude-seo" run pagespeed_check.py`)
+- Core Web Vitals field data from CrUX (via `python scripts/seo/pagespeed_check.py`)
 - AI-search citation patterns (via `seo-geo`)
 - Competitor pages on the target's primary keywords
 
@@ -94,7 +94,7 @@ Reduce the findings to first principles:
   missing canonical) that gates everything else.)
 - What does **Google's primary-source guidance** say about the
   recommendation? When community claims and Google contradict, defer
-  to Google (see `${CLAUDE_PLUGIN_ROOT}/skills/seo-geo/references/google-ai-optimization-guide.md`).
+  to Google (see `.claude/skills/saas-seo-geo/references/google-ai-optimization-guide.md`).
 
 **Discipline:** the highest-leverage constraint goes first in the action
 plan, even if it's less interesting than the "growth" recommendations.

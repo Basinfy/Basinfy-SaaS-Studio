@@ -104,8 +104,7 @@ spam when used to **scale low-value pages** (QRG §4.6.5 scaled content abuse,
 Two operational requirements with concrete enforcement surfaces:
 
 1. **Merchant Center: AI-generated product images:** must carry IPTC
-   `DigitalSourceType: TrainedAlgorithmicMedia` metadata. See
-   `${CLAUDE_PLUGIN_ROOT}/skills/seo-images/SKILL.md` for the audit + injection pattern.
+   `DigitalSourceType: TrainedAlgorithmicMedia` metadata. Inspect the image metadata and record whether the tag is present.
 2. **AI-generated product titles and descriptions:** must be separately
    specified and labeled as AI-generated in the merchant feed.
 
@@ -115,17 +114,17 @@ The AI optimization guide pivots near the end to **AI agents**, not just
 summarizers. Agents interact with sites through three channels: screenshots
 plus a vision model, raw HTML/DOM, and the browser accessibility tree.
 
-Full audit criteria: `${CLAUDE_PLUGIN_ROOT}/skills/seo-agentic/references/agent-friendly-pages.md` (run `/seo agentic`).
+Full audit criteria: `.claude/skills/saas-seo-agentic/references/agent-friendly-pages.md` (run `/saas-seo-agentic`).
 
 The guide itself does not mention WebMCP (checked 2026-09-23); WebMCP status,
 consumers and safe patterns are tracked separately in
-`${CLAUDE_PLUGIN_ROOT}/skills/seo-agentic/references/webmcp.md`. The guide does
+`.claude/skills/saas-seo-agentic/references/webmcp.md`. The guide does
 name **UCP** (Universal
 Commerce Protocol, open standard co-developed with Shopify, Etsy, Wayfair,
 Target, Walmart; Google-confirmed reference implementation in AI Mode in
 Search; ucp.dev lists 2026-08-25 as the latest date-based release, while
 Google's merchant guide documents 2026-04-08). UCP audit criteria:
-`${CLAUDE_PLUGIN_ROOT}/skills/seo-ecommerce/references/ucp-universal-commerce-protocol.md`.
+`.claude/skills/saas-seo-agentic/references/agentic-commerce-protocols.md`.
 
 ## How claude-seo treats this guide
 
@@ -135,7 +134,7 @@ Google's merchant guide documents 2026-04-08). UCP audit criteria:
    if a recommendation contradicts Google's stated position, flag it.
 3. Where a third-party claim and Google contradict, claude-seo defers to
    Google and notes the contradiction explicitly.
-4. `seo-ecommerce` and `seo-images` enforce the two operational requirements
+4. For ecommerce audits, verify the two operational requirements
    above for sites using AI to generate product content.
 
 ## Last verified
@@ -146,4 +145,4 @@ Google's merchant guide documents 2026-04-08). UCP audit criteria:
 - Any of the linked policy docs revise eligibility or enforcement language.
 - The UCP / WebMCP standards advance (UCP spec 2026-08-25 on ucp.dev, 2026-04-08
   in Google's merchant guide; WebMCP status is tracked in
-  `${CLAUDE_PLUGIN_ROOT}/skills/seo-agentic/references/vendor-matrix.md`).
+  `.claude/skills/saas-seo-agentic/references/vendor-matrix.md`).

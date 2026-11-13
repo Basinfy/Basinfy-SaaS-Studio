@@ -3,11 +3,15 @@ name: saas-create-control-manifest
 description: "Builds a short list of must-do and never-do coding rules per system from accepted ADRs. Use when the user wants programmer rules or a quick reference sheet from the ADRs, or needs it regenerated after ADR changes."
 argument-hint: "[update — regenerate from current ADRs] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-create-control-manifest/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/adr-status.sh*), Bash(bash .claude/scripts/md-section.sh *)
-model: sonnet
 ---
 
-!`bash "${CLAUDE_SKILL_DIR}/../../hooks/yaml-helper.sh" resolve_config --keys locale,review_mode,review_gate,automation`
+<!-- Generated from .claude/skills by scripts/sync-agent-skills.py. -->
+
+## Running this workflow on this client
+
+Run shell commands from the project root. On Windows, use Git Bash for the `bash` commands if `bash` resolves to an unavailable WSL distribution. Shared studio files are under `.claude/`; run the local Studio installer for this project if those files are missing. Read `.claude/docs/config-resolution.md` and apply its defaults when configuration cannot be resolved. Use this client's tools for reads, edits, and structured questions. If structured questions are unavailable, ask in chat and wait when a decision requires approval. Use the client's delegation feature with the role brief in `.claude/agents/` when available. Otherwise perform the specialist checks in sequence and disclose that they were done in one session. If a workflow requires independent sign-off, report it as pending until an independent reviewer can provide it. Treat `Task*` steps as local workflow tracking using the client's equivalent when available. Report missing tools and unexecuted checks explicitly.
+
+Run `bash .claude/hooks/yaml-helper.sh resolve_config --keys locale,review_mode,review_gate,automation` and use its output below.
 
 Resolved above — use as-is; `--review` overrides `review_mode` for this run. No
 block → defaults in `.claude/docs/config-resolution.md`.
@@ -125,7 +129,7 @@ Rules for every layer, each with its source (the `project.yaml` key,
 
 - **Naming** from `naming.*`: classes, variables, signals and events, files,
   constants.
-- **Performance budgets** from `performance.*`: target LCP, target FID/INP,
+- **Performance budgets** from `performance.*`: target LCP, target INP,
   target CLS, max initial bundle size, API p95 latency.
 - **Forbidden APIs** from stack reference documentation, **only those that apply to what this
   project builds.** Never copy deprecated lists blindly: scope each rule to the relevant
@@ -278,7 +282,7 @@ read its ADR.
 | Target | Value | Source |
 |--------|-------|--------|
 | Target LCP (ms) | [value] | [`performance.target_lcp_ms` in project.yaml] |
-| Target FID/INP (ms) | [value] | [`performance.target_fid_ms` in project.yaml] |
+| Target INP (ms) | [value] | [`performance.target_inp_ms` in project.yaml] |
 | Target CLS | [value] | [`performance.target_cls` in project.yaml] |
 | Max Initial Bundle (KB) | [value] | [`performance.max_initial_bundle_kb` in project.yaml] |
 | API p95 Latency (ms) | [value] | [`performance.api_p95_latency_ms` in project.yaml] |

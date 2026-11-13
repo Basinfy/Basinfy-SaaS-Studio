@@ -1,14 +1,16 @@
 ---
 name: saas-lgpd-audit
 description: Maestro orchestrator for end-to-end LGPD (Lei 13.709/2018) compliance in a software project. Use for "como estamos de LGPD", "audite LGPD", "nos deixe LGPD seguros", "gap analysis LGPD", "compliance LGPD", "auditar privacidade", "LGPD do projeto", or any request to assess, implement, or retrofit privacy compliance — including English phrasings like "are we privacy-safe", "audit our privacy", or "we collect personal data, what do we need". Chains specialized sub-skills (data mapping, legal basis, consent, DSAR, incident response, ROPA, RIPD, retention, vendor audit, DPA, international transfer, encarregado, and ECA Digital / Lei 15.211/2025 for platforms with minors) and produces versioned artifacts under .lgpd/. Trigger even when the word "LGPD" is not used.
+argument-hint: "[scope or audit context]"
 user-invocable: true
+allowed-tools: Read, Glob, Grep, AskUserQuestion
 model: sonnet
 ---
 
 # LGPD Audit — Maestro de Conformidade
 
 > **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / sk_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
+> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
 > Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
 > Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
 
@@ -158,7 +160,7 @@ Não prossiga sem resposta explícita.
 Ao chegar em um passo do pipeline, **ative a sub-skill pelo nome** (ex.: `saas-lgpd-data-mapping`) — o mecanismo de ativação varia por agente; veja [`references/skill-activation.md`](references/skill-activation.md). Se o seu agente não expõe ativação de skill por nome, leia o `SKILL.md` da filha diretamente como fallback. Em cada passo:
 
 1. Consulte `references/skill-routing.md` para localizar a skill alvo.
-2. Ative a sub-skill pelo nome (`lgpd-{nome}`); como fallback, leia `../lgpd-{nome}/SKILL.md` (as filhas são pastas-irmãs de `saas-lgpd-audit/`).
+2. Ative a sub-skill pelo nome (`saas-lgpd-{nome}`); como fallback, leia `../saas-lgpd-{nome}/SKILL.md` (as filhas são pastas-irmãs de `saas-lgpd-audit/`).
 3. Execute as instruções dela usando o contexto acumulado em `.lgpd/`.
 4. Atualize `.lgpd/STATUS.md` ao concluir o passo.
 5. Avance para o próximo passo do pipeline.

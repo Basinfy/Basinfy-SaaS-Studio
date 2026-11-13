@@ -1,14 +1,16 @@
 ---
 name: saas-lgpd-eca-digital-minors
 description: Implement obligations under Lei nº 15.211/2025 (ECA Digital), in force since 17 March 2026, for platforms accessed by minors or 'likely to be accessed' by them. Use when user mentions 'ECA Digital', 'menores', 'crianças e adolescentes', 'verificação de idade', 'controle parental', or when the project may have users under 18 (community, social media, education, content streaming). Covers age verification, parental linking, profiling ban, random rewards ban, transparency reports.
+argument-hint: "[scope or artifact path]"
 user-invocable: true
+allowed-tools: Read, Glob, Grep, AskUserQuestion
 model: sonnet
 ---
 
 # ECA Digital — Lei nº 15.211/2025
 
 > **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / sk_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
+> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
 > Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
 > Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
 

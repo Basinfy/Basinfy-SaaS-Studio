@@ -1082,344 +1082,351 @@ skills:
   priority: standard
   category: seo
 agents:
-- name: product-director
-  spec: studio-tests/agents/directors/product-director.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: director
-- name: technical-director
-  spec: studio-tests/agents/directors/technical-director.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: director
-- name: producer
-  spec: studio-tests/agents/directors/producer.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: director
-- name: design-system-director
-  spec: studio-tests/agents/directors/saas-design-system-director.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: director
-- name: lead-engineer
-  spec: studio-tests/agents/leads/lead-engineer.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: lead
-- name: qa-lead
-  spec: studio-tests/agents/leads/qa-lead.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: lead
-- name: ux-content-strategist
-  spec: studio-tests/agents/leads/ux-content-strategist.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: lead
-- name: growth-director
-  spec: studio-tests/agents/leads/growth-director.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: lead
-- name: lead-product-manager
-  spec: studio-tests/agents/leads/lead-product-manager.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: lead
-- name: database-architect
-  spec: studio-tests/agents/leads/database-architect.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: lead
-- name: user-flow-architect
-  spec: studio-tests/agents/leads/user-flow-architect.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: lead
-- name: backend-engineer
-  spec: studio-tests/agents/specialists/backend-engineer.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: specialist
-- name: ai-programmer
-  spec: studio-tests/agents/specialists/ai-programmer.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: specialist
-- name: ui-motion-designer
-  spec: studio-tests/agents/specialists/ui-motion-designer.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: specialist
-- name: pricing-economist
-  spec: studio-tests/agents/specialists/pricing-economist.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: specialist
-- name: cloud-infra-engineer
-  spec: studio-tests/agents/specialists/cloud-infra-engineer.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: specialist
-- name: tools-programmer
-  spec: studio-tests/agents/specialists/tools-programmer.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: specialist
-- name: network-programmer
-  spec: studio-tests/agents/specialists/network-programmer.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: specialist
-- name: security-engineer
-  spec: studio-tests/agents/qa/security-engineer.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: specialist
 - name: accessibility-auditor
-  spec: studio-tests/agents/qa/accessibility-auditor.md
+  spec: ''
   last_spec: ''
   last_spec_result: ''
   last_category: ''
   last_category_result: ''
   category: specialist
-- name: ux-designer
-  spec: studio-tests/agents/specialists/ux-designer.md
+- name: ai-engineer
+  spec: ''
   last_spec: ''
   last_spec_result: ''
   last_category: ''
   last_category_result: ''
   category: specialist
-- name: ui-programmer
-  spec: studio-tests/agents/specialists/ui-programmer.md
+- name: api-integrations-specialist
+  spec: ''
   last_spec: ''
   last_spec_result: ''
   last_category: ''
   last_category_result: ''
   category: specialist
-- name: performance-analyst
-  spec: studio-tests/agents/specialists/performance-analyst.md
+- name: appsec-engineer
+  spec: ''
   last_spec: ''
   last_spec_result: ''
   last_category: ''
   last_category_result: ''
   category: specialist
-- name: nextjs-specialist
-  spec: studio-tests/agents/engine/nextjs/nextjs-specialist.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: engine
-- name: react-specialist
-  spec: studio-tests/agents/engine/nextjs/react-specialist.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: engine
-- name: tailwind-shadcn-specialist
-  spec: studio-tests/agents/engine/nextjs/tailwind-shadcn-specialist.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: engine
-- name: supabase-specialist
-  spec: studio-tests/agents/engine/nextjs/supabase-specialist.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: engine
-- name: prisma-drizzle-specialist
-  spec: studio-tests/agents/engine/nextjs/prisma-drizzle-specialist.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: engine
-- name: fastapi-specialist
-  spec: studio-tests/agents/engine/fastapi/fastapi-specialist.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: engine
 - name: auth-security-specialist
-  spec: studio-tests/agents/engine/fastapi/auth-security-specialist.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: engine
-- name: go-specialist
-  spec: studio-tests/agents/engine/fastapi/go-specialist.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: engine
-- name: python-backend-specialist
-  spec: studio-tests/agents/engine/fastapi/python-backend-specialist.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: engine
-- name: queue-worker-specialist
-  spec: studio-tests/agents/engine/fastapi/queue-worker-specialist.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: engine
-- name: cloudflare-specialist
-  spec: studio-tests/agents/engine/cloudflare/cloudflare-specialist.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: engine
-- name: docker-k8s-specialist
-  spec: studio-tests/agents/engine/cloudflare/docker-k8s-specialist.md
+  spec: ''
   last_spec: ''
   last_spec_result: ''
   last_category: ''
   last_category_result: ''
   category: engine
 - name: aws-specialist
-  spec: studio-tests/agents/engine/cloudflare/aws-specialist.md
+  spec: ''
   last_spec: ''
   last_spec_result: ''
   last_category: ''
   last_category_result: ''
   category: engine
+- name: backend-engineer
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: specialist
+- name: billing-engineer
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: operations
+- name: cloud-infra-engineer
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: specialist
+- name: cloudflare-specialist
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: engine
+- name: customer-success-ops
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: operations
+- name: data-telemetry-engineer
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: specialist
+- name: database-architect
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: lead
+- name: delivery-producer
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: director
+- name: design-system-director
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: director
+- name: dev-tools-engineer
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: specialist
+- name: devops-engineer
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: operations
+- name: docker-k8s-specialist
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: engine
+- name: dpo-privacy-specialist
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: specialist
 - name: email-messaging-specialist
-  spec: studio-tests/agents/engine/cloudflare/email-messaging-specialist.md
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: engine
+- name: fastapi-specialist
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: engine
+- name: frontend-engineer
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: specialist
+- name: go-specialist
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: engine
+- name: growth-director
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: lead
+- name: lead-engineer
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: lead
+- name: lead-product-manager
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: lead
+- name: localization-lead
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: operations
+- name: nextjs-specialist
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: engine
+- name: onboarding-specialist
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: specialist
+- name: pricing-economist
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: specialist
+- name: prisma-drizzle-specialist
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: engine
+- name: product-director
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: director
+- name: python-backend-specialist
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: engine
+- name: qa-lead
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: lead
+- name: qa-manual-tester
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: qa
+- name: queue-worker-specialist
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: engine
+- name: rapid-prototyper
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: specialist
+- name: react-specialist
+  spec: ''
   last_spec: ''
   last_spec_result: ''
   last_category: ''
   last_category_result: ''
   category: engine
 - name: realtime-websockets-specialist
-  spec: studio-tests/agents/engine/cloudflare/realtime-websockets-specialist.md
+  spec: ''
   last_spec: ''
   last_spec_result: ''
   last_category: ''
   last_category_result: ''
   category: engine
-- name: devops-engineer
-  spec: studio-tests/agents/operations/devops-engineer.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: operations
 - name: release-manager
-  spec: studio-tests/agents/operations/release-manager.md
+  spec: ''
   last_spec: ''
   last_spec_result: ''
   last_category: ''
   last_category_result: ''
   category: operations
 - name: sre-observability-engineer
-  spec: studio-tests/agents/operations/sre-observability-engineer.md
+  spec: ''
   last_spec: ''
   last_spec_result: ''
   last_category: ''
   last_category_result: ''
   category: operations
-- name: customer-success-ops
-  spec: studio-tests/agents/operations/customer-success-ops.md
+- name: supabase-specialist
+  spec: ''
   last_spec: ''
   last_spec_result: ''
   last_category: ''
   last_category_result: ''
-  category: operations
-- name: analytics-engineer
-  spec: studio-tests/agents/operations/analytics-engineer.md
+  category: engine
+- name: tailwind-shadcn-specialist
+  spec: ''
   last_spec: ''
   last_spec_result: ''
   last_category: ''
   last_category_result: ''
-  category: operations
-- name: billing-engineer
-  spec: studio-tests/agents/operations/billing-engineer.md
+  category: engine
+- name: technical-director
+  spec: ''
   last_spec: ''
   last_spec_result: ''
   last_category: ''
   last_category_result: ''
-  category: operations
-- name: localization-lead
-  spec: studio-tests/agents/operations/localization-lead.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: operations
-- name: qa-manual-tester
-  spec: studio-tests/agents/qa/qa-manual-tester.md
-  last_spec: ''
-  last_spec_result: ''
-  last_category: ''
-  last_category_result: ''
-  category: qa
-- name: rapid-prototyper
-  spec: studio-tests/agents/specialists/rapid-prototyper.md
+  category: director
+- name: technical-writer
+  spec: ''
   last_spec: ''
   last_spec_result: ''
   last_category: ''
   last_category_result: ''
   category: specialist
-- name: writer
-  spec: studio-tests/agents/specialists/writer.md
+- name: ui-motion-designer
+  spec: ''
   last_spec: ''
   last_spec_result: ''
   last_category: ''
   last_category_result: ''
   category: specialist
-- name: onboarding-specialist
-  spec: studio-tests/agents/specialists/onboarding-specialist.md
+- name: user-flow-architect
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: lead
+- name: ux-content-strategist
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: lead
+- name: ux-designer
+  spec: ''
+  last_spec: ''
+  last_spec_result: ''
+  last_category: ''
+  last_category_result: ''
+  category: specialist
+- name: web-perf-analyst
+  spec: ''
   last_spec: ''
   last_spec_result: ''
   last_category: ''

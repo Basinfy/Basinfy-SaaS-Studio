@@ -1,6 +1,6 @@
 ---
 name: saas-team-polish
-description: "Orchestrate the polish team — performance-analyst, ui-motion-designer, frontend-engineer, qa-tester — Core Web Vitals, micro-interactions, loading states, and UI polish."
+description: "Orchestrate the polish team — web-perf-analyst, ui-motion-designer, frontend-engineer, qa-manual-tester — Core Web Vitals, micro-interactions, loading states, and UI polish."
 argument-hint: "[area or feature to polish] [--review full|lean|solo]"
 user-invocable: true
 allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-team-polish/../../hooks/yaml-helper.sh" resolve_config *)
@@ -27,7 +27,7 @@ tasteful micro-animations, loading skeletons, accessible focus states, and respo
 When this skill is invoked with a valid argument, orchestrate the team:
 
 1. **Performance & Audit Phase**:
-   - `performance-analyst`: Measure initial metrics (Lighthouse score, initial JS bundle size, Largest Contentful Paint, Cumulative Layout Shift)
+   - `web-perf-analyst`: Measure initial metrics (Lighthouse score, initial JS bundle size, Largest Contentful Paint, Cumulative Layout Shift)
    - Profile slow database queries or unmemoized React component re-renders
 
 2. **Micro-Interactions & Loading States**:
@@ -50,7 +50,7 @@ When this skill is invoked with a valid argument, orchestrate the team:
      - Harden dark mode color contrast and focus rings (`focus-visible:ring-2`)
 
 4. **Cross-Browser & Device Verification**:
-   - `qa-tester`: Verify jank-free UI animations (fluid transitions without frame drops), mobile touch responsiveness, Safari rendering quirks, and reduced-motion fallback.
+   - `qa-manual-tester`: Verify jank-free UI animations (fluid transitions without frame drops), mobile touch responsiveness, Safari rendering quirks, and reduced-motion fallback.
 
 5. **Verdict**:
    - Output: **COMPLETE** — performance optimized and UI polished to enterprise standard.

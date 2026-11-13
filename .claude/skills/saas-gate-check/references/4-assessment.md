@@ -92,7 +92,7 @@ gate files:
   Anchor (from `design/prd/product-concept.md`, else the "Art & audio direction"
   line of `design/product-brief.md`), and the design tokens path.
 
-Tell each director to read any PRD, ADR or the design tokens by section: check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise find the headings: if `.basinfy/` exists, use `basinfy_search` and `basinfy_read`; otherwise use the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Grep tool (pattern `^#`, content mode) and Read those ranges with offset and limit.
+Tell each director to read any PRD, ADR or the design tokens by section: Use the project discovery protocol to find the relevant headings and read those sections. When the index cannot provide them, find the headings with a local text search and read the matching ranges.
 
 Pass each context item as one of three things, so no director has to guess:
 - **Present** — its path or value (`0` blocked stories is a value).

@@ -1,6 +1,6 @@
 ---
 name: basinfy-saas-studio
-description: "Turn your AI session into an autonomous SaaS and software engineering studio with 49 specialized agents, 74 workflow skills (/saas-*), 28 director gates, and complete architecture across Next.js, FastAPI, Supabase, Tailwind, and Stripe."
+description: "Turn your AI session into an autonomous SaaS and software engineering studio with 50 specialized agents, 108 workflow skills (/saas-*), 28 director gates, and complete architecture across Next.js, FastAPI, Supabase, Tailwind, and Stripe."
 user-invocable: true
 argument-hint: "[command or topic]"
 ---
@@ -8,7 +8,7 @@ argument-hint: "[command or topic]"
 # Basinfy SaaS Studio
 
 Turn a single AI session into a complete, structured software engineering studio for SaaS platforms, cloud applications, and modern web services.
-Organized into 3 tiers of 49 specialized agents, 74 workflow skills (`/saas-*`), 28 formal Director Gates, automated validation hooks, and enterprise coding standards.
+Organized into 3 tiers of 50 specialized agents, 108 workflow skills (`/saas-*`), 28 formal Director Gates, automated validation hooks, and enterprise coding standards.
 
 ## Quick Start Workflows
 
@@ -36,12 +36,12 @@ Organized into 3 tiers of 49 specialized agents, 74 workflow skills (`/saas-*`),
 
 4. **Security, Hardening & Launch**:
    - `/saas-security-audit` — OWASP Top 10 security audit, PostgreSQL RLS verification, and dependency CVE scans.
-   - `/saas-perf-profile` — Profile Core Web Vitals (LCP, FID, CLS) and API p95 latencies.
+   - `/saas-perf-profile` — Profile Core Web Vitals (LCP, INP, CLS) and API p95 latencies.
    - `/saas-load-test` — Stress test endpoints, worker queues, and database connection pools.
    - `/saas-release-checklist` — Pre-deployment checklist (DNS, SSL, production secrets, rollback plan).
    - `/saas-launch-checklist` — Go-To-Market launch checklist (Product Hunt, docs, customer support).
 
-## Studio Hierarchy (49 Agents)
+## Studio Hierarchy (50 Agents)
 
 - **Tier 1 — Strategic Directors (Claude Opus / MaxTurns: 30)**:
   - `product-director`: Guards the product vision, ICP, UVP, positioning, pricing, and strategic scope.

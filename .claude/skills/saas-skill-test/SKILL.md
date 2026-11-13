@@ -615,5 +615,5 @@ After any mode completes, offer contextual follow-up:
 - After `spec [name]` FAIL: "Review the failing assertions and update the skill
   or agent, or the test spec, to resolve the mismatch."
 - After `audit`: "Start with the critical-priority gaps. Use the spec template
-  at `studio-tests/templates/saas-skill-test-spec.md` (agents:
+  at `studio-tests/templates/skill-test-spec.md` (agents:
   `agent-test-spec.md`) to create new specs."

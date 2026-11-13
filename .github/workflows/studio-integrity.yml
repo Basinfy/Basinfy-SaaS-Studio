@@ -1,0 +1,29 @@
+name: Studio integrity
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  integrity:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install PyYAML
+      - run: npm test
+      - run: npm run test:package
+      - run: python studio-tests/test-agent-readiness.py
+      - run: python studio-tests/test-client-smoke.py
+      - run: npm run test:bench -- --verify-specs

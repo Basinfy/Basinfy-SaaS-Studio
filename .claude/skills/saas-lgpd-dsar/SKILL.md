@@ -1,14 +1,16 @@
 ---
 name: saas-lgpd-dsar
 description: Implement endpoints and workflow for data subject access requests (direitos do titular) under LGPD Art. 18. Use when user asks for "DSAR", "direitos do titular", "exportar dados do usuário", "portabilidade LGPD", "exclusão de conta LGPD", "right to be forgotten", or as part of audit pipeline. Covers all 9 rights (confirmação, acesso, correção, anonimização, portabilidade, eliminação, info compartilhamento, info não-consentir, revogação). The 15-day deadline (Art. 19, II) is non-negotiable — encoded in this skill. Outputs `.lgpd/dsar/workflow.md` + endpoint specs.
+argument-hint: "[scope or artifact path]"
 user-invocable: true
+allowed-tools: Read, Glob, Grep, AskUserQuestion
 model: sonnet
 ---
 
 # DSAR — Direitos do Titular (Art. 18 LGPD)
 
 > **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / sk_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
+> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
 > Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
 > Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
 

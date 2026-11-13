@@ -56,7 +56,7 @@ the two happened — a reader cannot tell from a green result.
 
 `performance.enforce` decides what a budget violation *means* in this run. It
 does not change which budgets are measured — `performance.target_lcp_ms`,
-`target_fid_ms`, `target_cls`, `max_initial_bundle_kb` and `api_p95_latency_ms` are profiled the
+`target_inp_ms`, `target_cls`, `max_initial_bundle_kb` and `api_p95_latency_ms` are profiled the
 same way at every level:
 
 | Value | Effect on this profile's findings |
@@ -88,7 +88,7 @@ record of what it agreed to, and design docs are the fallback, not the source:
 
 ```bash
 bash "${CLAUDE_SKILL_DIR}/../../hooks/yaml-helper.sh" get_effective_yaml_key performance.target_lcp_ms
-bash "${CLAUDE_SKILL_DIR}/../../hooks/yaml-helper.sh" get_effective_yaml_key performance.target_fid_ms
+bash "${CLAUDE_SKILL_DIR}/../../hooks/yaml-helper.sh" get_effective_yaml_key performance.target_inp_ms
 bash "${CLAUDE_SKILL_DIR}/../../hooks/yaml-helper.sh" get_effective_yaml_key performance.target_cls
 bash "${CLAUDE_SKILL_DIR}/../../hooks/yaml-helper.sh" get_effective_yaml_key performance.max_initial_bundle_kb
 bash "${CLAUDE_SKILL_DIR}/../../hooks/yaml-helper.sh" get_effective_yaml_key performance.api_p95_latency_ms
@@ -98,6 +98,8 @@ Run each line as its own plain command, one key per call: the helper moves to
 the project root itself, so it works when the session was started in a
 subfolder, and this skill pre-approves that form only (a `source` or `cd ... &&`
 wrapper asks the user every time). Empty output means that budget is not set.
+
+Existing projects may still have `performance.target_fid_ms`. FID and INP measure different aspects of responsiveness. If the project has only a FID budget, flag the old key and ask the user to set an INP budget via `/saas-settings`. Until then, report INP as `NOT ASSESSED` unless an explicit INP budget was recorded in the design docs.
 
 > **Resolve these budgets from `project.yaml`, not from prose.** Phase 0 above
 > states these budgets "are profiled the same way at every level". A user
@@ -173,7 +175,7 @@ Generated: [Date]
 | Metric | Budget | Estimated Current | Status |
 |--------|--------|-------------------|--------|
 | LCP (Largest Contentful Paint) | [2000ms] | [estimate] | [OK/WARNING/OVER/NOT ASSESSED] |
-| INP / FID (Input Latency) | [100ms] | [estimate] | [OK/WARNING/OVER/NOT ASSESSED] |
+| INP (Interaction to Next Paint) | [committed budget] | [estimate] | [OK/WARNING/OVER/NOT ASSESSED] |
 | CLS (Layout Shift) | [0.1] | [estimate] | [OK/WARNING/OVER/NOT ASSESSED] |
 | API p95 Latency | [250ms] | [estimate] | [OK/WARNING/OVER/NOT ASSESSED] |
 | Initial JS Bundle | [200KB] | [estimate] | [OK/WARNING/OVER/NOT ASSESSED] |

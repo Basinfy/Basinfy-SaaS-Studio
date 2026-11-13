@@ -24,6 +24,7 @@
     "docs",
     "production",
     "studio-tests",
+    "templates",
     ".aider.conf.yml",
     ".aiderignore",
     ".clinerules",
@@ -43,6 +44,8 @@
   "scripts": {
     "test": "python studio-tests/verify-integrity.py",
     "test:bench": "python studio-tests/bench/run-bench.py",
+    "test:package": "python studio-tests/test-package.py",
+    "test:client": "python studio-tests/client-smoke.py",
     "sync:skills": "python scripts/sync-agent-skills.py",
     "cli": "node bin/cli.js",
     "cli:help": "node bin/cli.js --help",

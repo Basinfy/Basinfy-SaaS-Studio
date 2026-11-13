@@ -1,14 +1,16 @@
 ---
 name: saas-lgpd-incident-response
 description: Execute the LGPD security incident response runbook (Art. 48 LGPD + Resolução CD/ANPD nº 15/2024). Use when user says "tivemos um incidente", "vazamento de dados", "data breach", "preciso comunicar a ANPD", "incident response LGPD", or as part of an audit pipeline preparing the runbook in advance. Encodes the 3-business-day deadline to notify ANPD and data subjects, the 12 mandatory items for ANPD notification, the 7 items for subject notification, and the 5-year retention requirement for ALL incident records (notified or not). Cite Resolution 15/2024 explicitly in outputs.
+argument-hint: "[scope or artifact path]"
 user-invocable: true
+allowed-tools: Read, Glob, Grep, AskUserQuestion
 model: sonnet
 ---
 
 # Incident Response LGPD
 
 > **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / sk_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
+> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
 > Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
 > Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
 
@@ -44,7 +46,7 @@ Se **A e B** → notificar. Se só A → documentar internamente. Se nenhum → 
 | Manter registro do incidente | **5 anos mínimo** |
 | ATPP | prazos em dobro (6 dias úteis), salvo risco à integridade física/moral |
 
-## Runbook — Hora 0 a Hora 72+
+## Runbook — Da detecção ao pós-incidente
 
 ### T+0h: Detecção
 - Quem detectou? Sistema (SIEM, DLP, antivirus)? Pessoa (funcionário, titular, pesquisador)?
@@ -69,7 +71,7 @@ Se **A e B** → notificar. Se só A → documentar internamente. Se nenhum → 
   - Categoria do Art. 5º? (qual)
 - [ ] Decisão: notificar ANPD? notificar titulares? Documentar decisão por escrito (Encarregado + jurídico).
 
-### T+24h a T+72h (3 dias úteis): Comunicação
+### Comunicação — até 3 dias úteis a partir do conhecimento da afetação de dados pessoais
 
 **À ANPD — 12 itens obrigatórios (Art. 6º, § 2º Res. 15/2024):**
 
@@ -102,7 +104,7 @@ Em **linguagem simples**. Comunicação **individualizada** (e-mail/SMS/carta/me
 
 Templates em `assets/notification-anpd.md` e `assets/notification-subject.md`.
 
-### T+72h+: Pós-incidente
+### Pós-incidente — após a comunicação inicial, quando aplicável
 - [ ] Continuar mitigando
 - [ ] Forense completa
 - [ ] Análise de causa raiz (5 whys, fishbone, post-mortem)

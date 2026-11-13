@@ -147,9 +147,9 @@ A report whose `Focus:` line names one pass only (a `consistency` or
   Formulas) at `standard`. A missing *required* section blocks; a missing section
   that is optional at the effective tier is advisory. A section reported PRESENT
   can still fail review if it is an empty heading — spot-read any section the
-  verdict actually turns on. Read PRDs by section: check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise find the headings: if `.basinfy/` exists, use `basinfy_search` and `basinfy_read`; otherwise use the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Grep tool (pattern `^#`, content mode) and Read those ranges with offset and limit.
-- For performance checks: read the budgets (`performance.target_framerate`,
-  `frame_budget_ms`, `draw_call_limit`, `memory_ceiling_mb`) from `project.yaml`
+  verdict actually turns on. Read PRDs by section: Use the project discovery protocol to find the relevant headings and read those sections. When the index cannot provide them, find the headings with a local text search and read the matching ranges.
+- For performance checks: read the budgets (`performance.target_lcp_ms`,
+  `target_inp_ms`, `target_cls`, `max_initial_bundle_kb`, `api_p95_latency_ms`) from `project.yaml`
   (else technical-preferences.md) and compare against any profiling data in
   `tests/performance/` or recent `/saas-perf-profile` output. What a breach *means*
   is set by `performance.enforce`, taken from the Phase 1 resolved block (it is
@@ -160,6 +160,7 @@ A report whose `Focus:` line names one pass only (a `consistency` or
 
   Only these three values are recognized. Surface anything else to the user and
   fall back to `warn` rather than guessing.
+  If only a legacy FID budget exists, mark INP as `NOT ASSESSED` until an INP budget is explicitly set. Compare each measurement only with a budget for the same metric.
 - For localization checks: `Grep` for hardcoded strings in the **code root** (resolve per `.claude/docs/code-root-resolution.md`). **If the code root is unresolved, report `NOT ASSESSED — code root unresolved` rather than zero hits.**
 
 ### Cross-Reference Checks

@@ -1,14 +1,16 @@
 ---
 name: saas-lgpd-privacy-policy
 description: Draft, version, and publish a privacy policy compliant with LGPD Art. 9 (seven mandatory elements) and ECA Digital if minors are present. Use when user asks "política de privacidade", "privacy policy", "termos de uso", "aviso de privacidade", or as part of an audit pipeline. Versions every published change. Output goes to `.lgpd/policies/privacy-policy-v{N}.md`. CHECKPOINT skill — never publish without legal review.
+argument-hint: "[scope or artifact path]"
 user-invocable: true
+allowed-tools: Read, Glob, Grep, AskUserQuestion
 model: sonnet
 ---
 
 # Política de Privacidade (Art. 9 LGPD)
 
 > **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / sk_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
+> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
 > Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
 > Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
 

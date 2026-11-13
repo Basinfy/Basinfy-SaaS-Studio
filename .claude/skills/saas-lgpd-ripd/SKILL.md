@@ -1,14 +1,16 @@
 ---
 name: saas-lgpd-ripd
 description: Produce a Relatório de Impacto à Proteção de Dados (RIPD / DPIA) under LGPD Art. 38 for high-risk processing activities. Use when user asks "RIPD", "DPIA", "relatório de impacto", "avaliação de impacto LGPD", or when saas-lgpd-data-mapping flagged an activity as high-risk under Resolução ANPD nº 2/2022 Art. 4 (large scale, profiling, sensitive data, minors/elderly, emerging tech, public surveillance, automated decisions). Produces `.lgpd/RIPD/ripd-{slug}.md`. Always cite the assessment methodology.
+argument-hint: "[scope or artifact path]"
 user-invocable: true
+allowed-tools: Read, Glob, Grep, AskUserQuestion
 model: sonnet
 ---
 
 # RIPD — Relatório de Impacto à Proteção de Dados
 
 > **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / sk_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
+> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
 > Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
 > Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
 

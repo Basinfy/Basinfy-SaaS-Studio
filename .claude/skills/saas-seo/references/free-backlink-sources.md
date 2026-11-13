@@ -41,11 +41,11 @@ Common Crawl *does* support as low-confidence findings, and note "limited to
 domain-level metrics" in the report. The same applies to any finding written with
 `source: not-assessed`.
 
-This is enforced, not advisory: `"${CLAUDE_PLUGIN_ROOT}/scripts/claude-seo" run validate_backlink_report.py` fails
-a report (`status: FAIL`) that carries a number in either case. See the
-`seo-backlinks` skill's "MUST NOT: score what you did not measure" section.
+Apply this evidence rule during the Studio review. If the backlink source cannot support a score, report the score as not assessed.
 
 ## Source Details
+
+Use authenticated provider APIs or exported reports when available. The Studio does not bundle provider-specific backlink clients.
 
 ### Moz API (Tier 1)
 - **Endpoint:** `https://api.moz.com/jsonrpc` (JSON-RPC 2.0)
@@ -53,7 +53,6 @@ a report (`status: FAIL`) that carries a number in either case. See the
 - **Signup:** https://moz.com/products/api (credit card required, not charged)
 - **Data:** Domain Authority (0-100), Page Authority, Spam Score (1-17%), link counts,
   referring domains, anchor text distribution
-- **Command:** `"${CLAUDE_PLUGIN_ROOT}/scripts/claude-seo" run moz_api.py`
 - **Commands:** `metrics`, `domains`, `anchors`, `pages`
 - **Blind spots:** No link velocity, no toxic link patterns beyond Spam Score,
   3-day update lag, smaller index than Ahrefs/Semrush
@@ -66,7 +65,6 @@ a report (`status: FAIL`) that carries a number in either case. See the
   are accessible to the same API account
 - **Data:** Inbound-link source URL, target URL, anchor text, sampled link
   counts, and referring-domain comparison totals
-- **Command:** `"${CLAUDE_PLUGIN_ROOT}/scripts/claude-seo" run bing_webmaster.py`
 - **Commands:** `links`, `counts`, `compare` (comparison requires both
   properties to be registered to the same API account)
 - **Blind spots:** Only Bing-indexed pages (~15% of web), verified sites only,
@@ -77,16 +75,13 @@ a report (`status: FAIL`) that carries a number in either case. See the
 - **Releases:** Quarterly (e.g., cc-main-2025-18)
 - **No auth needed:** Public data, free to download
 - **Data:** Domain-level in-degree, PageRank, harmonic centrality, referring domains
-- **Command:** `"${CLAUDE_PLUGIN_ROOT}/scripts/claude-seo" run commoncrawl_graph.py`
-- **Cache:** `~/.cache/claude-seo/commoncrawl/` (90-day TTL)
 - **Blind spots:** No anchor text, no page-level data, monthly/quarterly freshness,
   domain-level only (e.g., "nytimes.com links to example.com" but not which page)
 
 ### Verification Crawler (Always Available)
 - **No auth needed:** Uses existing fetch_page.py + parse_html.py
 - **Data:** Binary verification (link exists/lost/moved), anchor text, rel attributes
-- **Command:** `"${CLAUDE_PLUGIN_ROOT}/scripts/claude-seo" run verify_backlinks.py`
-- **Input:** JSON file with `[{"source_url": "..."}]` entries
+- **Procedure:** Fetch each known source with `python scripts/seo/fetch_page.py <source-url> --json` and inspect its links with `scripts/seo/parse_html.py`.
 - **Polite crawling:** 1-second delay between requests to same domain
 - **Best for:** Checking if known backlinks still exist, monitoring link health
 

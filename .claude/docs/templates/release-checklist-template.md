@@ -24,7 +24,7 @@ Generated: [Date]
   - [ ] Billing checkout, plan upgrade, invoice download, and cancellation
 - [ ] Performance benchmarks met:
   - [ ] API latency: p95 < 100ms, p99 < 250ms under peak load
-  - [ ] Lighthouse Core Web Vitals: LCP < 2.5s, FID/INP < 100ms, CLS < 0.1
+  - [ ] Lighthouse Core Web Vitals: LCP < 2.5s, INP ≤ 200ms, CLS < 0.1
   - [ ] Concurrency load test passed (sustained traffic without memory leaks)
 - [ ] Automated test suite 100% passing (Unit, Integration, E2E Playwright)
 

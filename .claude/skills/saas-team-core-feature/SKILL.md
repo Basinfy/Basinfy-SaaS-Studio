@@ -1,6 +1,6 @@
 ---
 name: saas-team-core-feature
-description: "Orchestrate the core feature team — lead-product-manager, backend-engineer, frontend-engineer, ai-engineer, qa-tester — design through implement and validate."
+description: "Orchestrate the core feature team — lead-product-manager, backend-engineer, frontend-engineer, ai-engineer, qa-manual-tester — design through implement and validate."
 argument-hint: "[core feature description] [--review full|lean|solo]"
 user-invocable: true
 allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-team-core-feature/../../hooks/yaml-helper.sh" resolve_config *)
@@ -42,7 +42,7 @@ When this skill is invoked with a valid argument, orchestrate the team through a
    - If AI-powered: `ai-engineer`: Streaming response handlers, embedding vector search
 
 4. **Validation Phase**:
-   - `qa-tester`: Integration test suite (Vitest/Pytest), E2E test scenarios (Playwright)
+   - `qa-manual-tester`: Integration test suite (Vitest/Pytest), E2E test scenarios (Playwright)
    - Verify acceptance criteria and error edge cases (empty states, rate limits, network failure)
 
 5. **Closing Verdict**:

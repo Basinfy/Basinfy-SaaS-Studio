@@ -52,7 +52,7 @@ If no engine is configured, stop and prompt:
 ### 0b. Design Context + Technical Requirements Extraction
 
 Load the approved design documents and extract technical requirements from each.
-Read each one by section: check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise find the headings you need with the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Grep tool (pattern `^#`, content mode) and Read those ranges with offset and limit.
+Read each one by section: Use the project discovery protocol to find the relevant headings and read those sections. When the index cannot provide them, find the headings with a local text search and read the matching ranges.
 
 1. `design/prd/product-concept.md` — product pillars, ICP, core value loop
 2. `design/prd/features-modules-index.md` — all systems, dependencies, priority tiers
@@ -155,7 +155,7 @@ Grep pattern="\*\*Domain\*\*" glob="docs/architecture/adr-*.md" output_mode="con
 Compatibility `Domain` field are exactly "what was decided and its domain". List
 the ADRs found, their status, and their domains from the scan. Full-read a
 specific ADR only when a new decision this session would collide with it and you
-need its reasoning — not to build the inventory. Read it by section: check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise check if `.basinfy/` exists: if present, use the Basinfy Protocol (`basinfy_search` then `basinfy_read`); otherwise find the headings: if `.basinfy/` exists, use `basinfy_search` and `basinfy_read`; otherwise use the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Basinfy Protocol (`basinfy_search` / `basinfy_read` if `.basinfy/` exists) or the Grep tool (pattern `^#`, content mode) and Read those ranges with offset and limit.
+need its reasoning — not to build the inventory. Read it by section: Use the project discovery protocol to find the relevant headings and read those sections. When the index cannot provide them, find the headings with a local text search and read the matching ranges.
 
 ### 0d. Generate Knowledge Gap Inventory
 

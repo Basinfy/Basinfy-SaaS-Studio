@@ -1,6 +1,6 @@
 ---
 name: web-perf-analyst
-description: "Web performance specialist — Core Web Vitals (LCP, FID, CLS), slow database queries, JavaScript bundle reduction, and HTTP cache policies."
+description: "Web performance specialist — Core Web Vitals (LCP, INP, CLS), slow database queries, JavaScript bundle reduction, and HTTP cache policies."
 model: sonnet
 maxTurns: 20
 memory: project
