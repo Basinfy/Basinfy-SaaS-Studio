@@ -14,6 +14,7 @@ project:
   domain: "mynextjssaas.com"
   stage: "concept" # concept | systems-design | technical-setup | pre-production | production | polish | release
   locale: "pt-BR" # pt-BR | en — controls interactive prompts and AskUserQuestion language
+  user_profile: "founder" # founder (layperson/business guided) | developer (technical trade-offs)
 
 stack:
   frontend: "nextjs" # nextjs | react-vite | vue-nuxt | sveltekit

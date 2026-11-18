@@ -10,13 +10,13 @@
 
 <p align="center">
   <strong>Estúdio Autônomo de Engenharia de Software e SaaS para Claude Code, Cursor, Antigravity e Agentes de IA</strong><br>
-  <em>Transforme sua sessão de IA em uma agência completa de desenvolvimento com 50 agentes especializados, 96 fluxos de trabalho e 28 gates de governança.</em>
+  <em>Transforme sua sessão de IA em uma agência completa de desenvolvimento com 50 agentes especializados, 108 fluxos de trabalho e 28 gates de governança.</em>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Arquitetura-Multi--Agente_%26_Multi--LLM-6366f1.svg" alt="Arquitetura" />
   <img src="https://img.shields.io/badge/Agentes_Especializados-50_Especialistas-10b981.svg" alt="Agentes" />
-  <img src="https://img.shields.io/badge/Comandos_Slash-95_Comandos_(/saas--*)-3b82f6.svg" alt="Comandos" />
+  <img src="https://img.shields.io/badge/Comandos_Slash-108_Comandos_(/saas--*)-3b82f6.svg" alt="Comandos" />
   <img src="https://img.shields.io/badge/Director_Gates-28_Gates_Formais-f59e0b.svg" alt="Gates" />
   <img src="https://img.shields.io/badge/Fases_do_Pipeline-7_Etapas_de_Engenharia-ec4899.svg" alt="Fases" />
   <img src="https://img.shields.io/badge/Linguagens-Python_•_TypeScript_•_Go_•_Node-3776ab.svg" alt="Linguagens" />
@@ -40,7 +40,7 @@ Em vez de você ter que ficar digitando prompts soltos como *"crie uma tela de l
    - **Especialistas dedicados** em Next.js, FastAPI, Supabase, Tailwind, Stripe, Docker, AWS e Segurança.
 
 2. **Ele segue um processo de engenharia ponta a ponta**:
-   O estúdio conduz seu projeto por 7 fases com 96 comandos práticos (`/saas-*`):
+   O estúdio conduz seu projeto por 7 fases com 108 comandos práticos (`/saas-*`):
    - **Quer tirar uma ideia do papel?** Digite `/saas-start` e o estúdio entrevista você, sugere stacks e cria a fundação do projeto.
    - **Quer especificar funcionalidades?** Digite `/saas-design-system` e ele gera especificações técnicas (PRDs) completas.
    - **Quer codificar uma funcionalidade?** Digite `/saas-dev-story [ID]` e o especialista constrói o código com testes automatizados e segurança.
@@ -54,6 +54,10 @@ Em vez de você ter que ficar digitando prompts soltos como *"crie uma tela de l
    - **Começando do zero?** Cria toda a estrutura, arquitetura, design tokens e banco de dados prontos para escalar.
    - **Já tem um projeto em andamento?** Injeta os agentes e workflows no repositório sem alterar nenhuma linha do seu código atual, analisa em que estágio seu projeto está e te ajuda a evoluir a partir dali.
 
+5. **Modo Fundador / Usuário Leigo (`user_profile: founder`) — Do Zero ao SaaS sem Saber Programar**:
+   - **Não sabe o que é banco de dados, ORM, API ou arquitetura?** Sem problema: você não precisa decorar nenhum dos 108 comandos nem entender jargões técnicos.
+   - Basta descrever sua ideia em português simples (*"Quero criar um sistema de agendamento para clínicas cobrando assinatura mensal"*): o **Maestro Contínuo** faz apenas perguntas de negócio com a opção **`(Recomendado)`** destacada, aplica automaticamente a *Golden Stack* segura (Next.js + Tailwind/shadcn + Supabase + Prisma + Stripe + Vercel) e protege seu SaaS nos bastidores com segurança multi-empresa (RLS), LGPD e SEO.
+
 ---
 
 ## 🚀 Instalação Rápida via NPX (Universal Multi-LLM)
@@ -63,7 +67,7 @@ Instale o **Basinfy SaaS Studio** com Node.js. Claude Code usa `.claude/skills/`
 Use `npm run test:package` para testar o pacote de distribuição e `npm run test:client -- codex` para testar a descoberta nativa. Com o cliente autenticado, adicione `--model` para executar um caso de leitura em um projeto descartável. O teste com modelo aceita `codex`, `claude` e `antigravity`, usa as permissões do cliente e pode consumir a cota da conta.
 
 ### 1. Instalação Global (Recomendado)
-Torne todos os **50 agentes** e **96 comandos `/saas-*`** disponíveis globalmente em **qualquer projeto ou pasta do seu computador**:
+Torne todos os **50 agentes** e **108 comandos `/saas-*`** disponíveis globalmente em **qualquer projeto ou pasta do seu computador**:
 
 ```bash
 # Instalação global para TODAS as ferramentas de IA da sua máquina:
@@ -98,6 +102,46 @@ npx github:Basinfy/Basinfy-SaaS-Studio cursor
 npx github:Basinfy/Basinfy-SaaS-Studio codex
 ```
 
+### 3. Instalação no WSL (Windows Subsystem for Linux)
+
+Windows e WSL têm diretórios de usuário separados. O instalador usa `os.homedir()` do Node.js em execução: com Node.js do Linux, instala no usuário da distribuição WSL; com Node.js do Windows, instala no perfil do Windows. Os nomes das pastas são os mesmos, mas uma instalação global no Windows não instala automaticamente no WSL.
+
+| Ambiente | Exemplo de diretório do usuário | Exemplo de skills globais |
+| :--- | :--- | :--- |
+| Windows | `C:\Users\Ana` | `C:\Users\Ana\.agents\skills` |
+| WSL (Linux) | `/home/ana` | `/home/ana/.agents/skills` |
+
+**Execute no terminal da distribuição WSL**, com Node.js 18+ e npm instalados no Linux. Confira o ambiente antes de instalar:
+
+```bash
+command -v node npm npx
+node -p 'process.platform + " | " + require("node:os").homedir()'
+# Esperado: linux | /home/seu-usuario (ou o home configurado no Linux)
+
+# Instalar globalmente para os clientes executados dentro do WSL:
+npx github:Basinfy/Basinfy-SaaS-Studio all --global
+
+# Ou somente para o Codex executado no WSL:
+npx github:Basinfy/Basinfy-SaaS-Studio codex --global
+```
+
+Se aparecer `win32`, o Node.js em execução é do Windows: configure Node.js e npm no Linux antes de instalar. Confira também se `npm` e `npx` pertencem à instalação Linux. Não use `sudo` para executar o instalador, pois a instalação global deve pertencer ao usuário que executa o cliente de IA.
+
+O mesmo comando universal atende ao WSL; não é necessária uma opção `--wsl`. Instale globalmente no ambiente em que o cliente de IA executa. Para usar clientes tanto no Windows quanto no WSL, execute a instalação em cada ambiente.
+
+Para adicionar os recursos locais a um projeto existente, execute no diretório do projeto dentro do WSL:
+
+```bash
+cd ~/meu-saas-app
+npx github:Basinfy/Basinfy-SaaS-Studio all --mode inject
+
+# Atualizar ou remover a instalação global do usuário do WSL:
+npx github:Basinfy/Basinfy-SaaS-Studio update --global
+npx github:Basinfy/Basinfy-SaaS-Studio uninstall --global
+```
+
+Os arquivos locais, como `.agents/skills/` e `.claude/`, ficam relativos ao projeto. Um projeto do Windows pode ser acessado pelo WSL, normalmente em `/mnt/c/Users/...`; isso não transforma o perfil global do Windows no home do Linux. Para projetos trabalhados com ferramentas Linux, a Microsoft recomenda armazená-los no sistema de arquivos Linux, por exemplo `~/meu-saas-app` ([documentação do WSL](https://learn.microsoft.com/en-us/windows/wsl/filesystems)).
+
 ### Matriz de Plataformas Suportadas:
 
 | Plataforma / Ferramenta | Caminho Global | Configurações Locais | Comandos Slash & Regras |
@@ -125,7 +169,7 @@ npx github:Basinfy/Basinfy-SaaS-Studio codex
 6. [SOPs Determinísticos de Engenharia de Software](#-sops-determinísticos-de-engenharia-de-software)
 7. [A Hierarquia dos 50 Agentes](#-a-hierarquia-dos-50-agentes)
 8. [O Pipeline de Software em 7 Fases](#-o-pipeline-de-software-em-7-fases)
-9. [Os 96 Comandos Slash (`/saas-*`)](#-os-95-comandos-slash-saas-)
+9. [Os 108 Comandos Slash (`/saas-*`)](#-os-95-comandos-slash-saas-)
 10. [Director Gates & Controle de Qualidade](#-director-gates--controle-de-qualidade)
 11. [Segurança Empresarial & Perímetro Defensivo](#-segurança-empresarial--perímetro-defensivo)
 12. [Deploy em Nuvem & Publicação de Ponta a Ponta](#-deploy-em-nuvem--publicação-de-ponta-a-ponta)
@@ -190,7 +234,7 @@ flowchart TD
         T3["Tier 3: Especialistas de Execução<br/>(Sonnet / MaxTurns: 20)"]
     end
 
-    subgraph SkillLayer["3. Motor de Habilidades (95 Comandos /saas-*)"]
+    subgraph SkillLayer["3. Motor de Habilidades (108 Comandos /saas-*)"]
         SK["Skills Canônicas & Avaliações Shell (!)<br/>Subpastas references/ dedicadas"]
     end
 
@@ -366,7 +410,7 @@ O ciclo de vida de desenvolvimento é estruturado em uma esteira contínua com p
 
 ---
 
-## 🛠 Os 96 Comandos Slash (`/saas-*`)
+## 🛠 Os 108 Comandos Slash (`/saas-*`)
 
 Todas as habilidades contam com namespace único e não conflitante:
 

@@ -16,7 +16,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Architecture-Claude_Code_Multi--Agent-6366f1.svg" alt="Architecture" />
   <img src="https://img.shields.io/badge/Specialized_Agents-50_Roster-10b981.svg" alt="Agents" />
-  <img src="https://img.shields.io/badge/Slash_Commands-95_Unique_(/saas--*)-3b82f6.svg" alt="Skills" />
+  <img src="https://img.shields.io/badge/Slash_Commands-108_Unique_(/saas--*)-3b82f6.svg" alt="Skills" />
   <img src="https://img.shields.io/badge/Director_Gates-28_Formal_Gates-f59e0b.svg" alt="Gates" />
   <img src="https://img.shields.io/badge/Lifecycle_Phases-7_Stage_Pipeline-ec4899.svg" alt="Phases" />
   <img src="https://img.shields.io/badge/Languages-Python_•_TypeScript_•_Go_•_Node-3776ab.svg" alt="Languages" />
@@ -40,7 +40,7 @@ The Antigravity smoke test supplies temporary session permissions for reading it
 For existing projects with `performance.target_fid_ms`, set an explicit `performance.target_inp_ms` budget in `project.yaml` or `project.local.yaml`. The current starter uses 200 ms. FID and INP are different measurements, so the profiler does not reuse an old FID budget for INP.
 
 ### 1. Global Installation (Recommended)
-Make all **50 agents** and **95 `/saas-*` commands** globally available in **any project or folder on your computer**:
+Make all **50 agents** and **108 `/saas-*` commands** globally available in **any project or folder on your computer**:
 
 ```bash
 # Install globally for ALL AI coding tools installed on your machine:
@@ -98,7 +98,7 @@ npx github:Basinfy/Basinfy-SaaS-Studio codex
 4. [Deterministic Autonomous Software Engineering SOPs](#-deterministic-autonomous-software-engineering-sops)
 5. [The 50-Agent Hierarchy](#-the-50-agent-hierarchy)
 6. [The 7-Phase Software Pipeline](#-the-7-phase-software-pipeline)
-7. [The 96 Slash Commands (`/saas-*`)](#-the-95-slash-commands-saas-)
+7. [The 108 Slash Commands (`/saas-*`)](#-the-95-slash-commands-saas-)
 8. [Director Gates & Quality Assurance](#-director-gates--quality-assurance)
 9. [Enterprise Security & Defensive Perimeter](#-enterprise-security--defensive-perimeter)
 10. [End-to-End Cloud Deployment & Publication](#-end-to-end-cloud-deployment--publication)
@@ -117,7 +117,7 @@ npx github:Basinfy/Basinfy-SaaS-Studio codex
 - **Hierarchical Governance (3 Tiers)**: Strategic vision owned by Claude Opus Directors; departmental execution managed by Claude Sonnet Leads; hands-on implementation performed by 38 specialized technical agents.
 - **Strict Collaboration Protocol**: Every critical mutation adheres to `Question -> Options -> Decision -> Draft -> Approval`. No silent file modifications.
 - **28 Formal Director Gates**: Phase transitions require objective sign-offs with standardized verdicts (`READY / CONCERNS / NOT READY`, `SOUND / LEAKY BOUNDARIES`, etc.).
-- **Collision-Proof Namespace (`/saas-*`)**: All 96 slash commands use the `/saas-` prefix, allowing coexistence with other Claude Code tools and extensions without namespace pollution.
+- **Collision-Proof Namespace (`/saas-*`)**: All 108 slash commands use the `/saas-` prefix, allowing coexistence with other Claude Code tools and extensions without namespace pollution.
 - **Production-Ready Security Controls**: Pre-commit hooks enforce zero API secret exposure, mandatory PostgreSQL Row Level Security (RLS), and cryptographic verification of Stripe webhooks using raw bodies.
 - **Durable Session Checkpointing**: `production/session-state/active.md` acts as an persistent state machine, surviving context compaction and session restarts.
 
@@ -351,7 +351,7 @@ Every SaaS project advances through a structured 7-stage lifecycle machine defin
 
 ---
 
-## 🛠 The 96 Slash Commands (`/saas-*`)
+## 🛠 The 108 Slash Commands (`/saas-*`)
 
 All slash commands reside in [`.claude/skills/`](.claude/skills/) and feature dynamic configuration injection:
 

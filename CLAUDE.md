@@ -1,97 +1,89 @@
-# Basinfy SaaS Studio -- Autonomous SaaS & Software Studio Agent Architecture
+# Autonomous SaaS Studio — Claude Code Master Constitution
 
-Full-lifecycle SaaS and modern software development managed through 50 coordinated Claude Code subagents across 7 lifecycle phases. Each agent owns a specific technical or strategic domain, enforcing strict separation of concerns, architectural discipline, and enterprise software quality.
+This workspace operates under the **Basinfy SaaS Studio** autonomous engineering platform: **50 specialized agents**, **108 `/saas-*` workflows & subcommands**, and **28 formal Director Gates** across **7 lifecycle phases**.
 
-## Technology Stack
+## Studio Reference Architecture
+- Directory & Stack Layout: @.claude/docs/directory-structure.md
+- Agent Coordination Rules: @.claude/docs/coordination-rules.md
+- Coding & Testing Standards: @.claude/docs/coding-standards.md
 
-- **Frontend**: Next.js 14+ (App Router) / React / Tailwind CSS / shadcn/ui
-- **Backend / APIs**: Next.js Server Actions & Route Handlers / FastAPI / Go / Node.js
-- **Database**: PostgreSQL (Supabase / Neon) with Row Level Security (RLS) & Prisma / Drizzle ORM
-- **Authentication**: Supabase Auth / NextAuth (Auth.js) / Clerk with RBAC
-- **Billing & Subscriptions**: Stripe / Paddle / LemonSqueezy (Webhooks with raw body signature check)
-- **Deployment & Cloud**: Vercel / Cloudflare Workers / AWS / Docker
-- **Version Control**: Git with trunk-based development
+## 1. Founder & Layperson Autopilot (`user_profile: founder | developer`)
+Check `project.user_profile` in `project.yaml` (defaults to `"founder"` when unset or when the user is non-technical):
+- **Natural-Language Continuous Maestro (Zero Command Memorization Required)**:
+  - Users NEVER need to memorize `/saas-*` slash commands. When a user describes an idea, problem, or next goal in plain language (e.g., *"Quero criar um SaaS para clínicas"* or *"Create a subscription CRM"*), automatically route through the lifecycle (`/saas-start` → `/saas-brainstorm` → `/saas-setup-stack` → `/saas-design-tokens` → `/saas-create-stories` → `/saas-dev-story`).
+  - At the end of every step, display a clear human progress indicator (`[Passo X de 7 concluído ✅]`) and ask directly if you should execute the next step immediately — never leave a non-technical user stranded at a blank prompt.
+- **When `user_profile: "founder"` (Layperson / Non-Technical Creator Mode)**:
+  - **100% Business Language — Zero Tech Jargon in Questions**: NEVER ask a layperson to choose between *"Prisma vs. Drizzle"*, *"Server Actions vs. FastAPI"*, *"RLS policies"*, or *"ADRs"*. Ask purely about their **customers, pricing, team access, and business rules**, always placing the safest option first prefixed with **`(Recomendado)`**.
+  - **Opinionated Golden Stack Default**: Unless the user explicitly requests another stack, recommend and configure the battle-tested SaaS Golden Stack (**Next.js App Router + Tailwind CSS / shadcn/ui + Supabase PostgreSQL & Auth + Prisma + Stripe + Vercel**), explaining each piece in 1 plain-language line (screen, secure customer vault, automatic billing, cloud hosting).
+- **When `user_profile: "developer"` (Technical Mode)**: Expose full architectural trade-offs across Next.js, FastAPI, Go, Drizzle, Cloudflare Workers, AWS, Docker, and granular ADR controls.
+- **Invisible Senior Guardrails (Always Enforced Automatically)**:
+  - Multi-tenant PostgreSQL Row-Level Security (RLS) on every tenant/user table (`(select auth.uid())` / `tenant_id`).
+  - Server-side schema validation (Zod / Pydantic) on every route and Server Action; zero exposed secrets.
+  - Stripe webhook HMAC verification against raw request body (`await req.text()`) + idempotent event ledger.
+  - Built-in LGPD privacy-by-design (`.lgpd/`) and Agentic SEO (`llms.txt`, JSON-LD, RFC 9727) defaults.
 
-> **Note**: Stack-specialist agents exist for Next.js, React, Tailwind/shadcn, Supabase, Prisma/Drizzle, FastAPI, Go, Docker/K8s, AWS, Cloudflare, and Stripe Billing. Use the specialists matching your stack.
+## 2. Studio Hierarchy — 50 Specialized Agents (3 Tiers)
+Role definitions live in `.claude/agents/`:
+- **Tier 1 — Strategic Directors (3)**: `product-director` (ICP, UVP, MVP scope, unit economics), `technical-director` (C4 architecture, ADRs, security boundaries), `delivery-producer` (milestones, sprints, scope governance).
+- **Tier 2 — Department Leads (8)**: `lead-product-manager`, `lead-engineer`, `design-system-director`, `growth-director`, `ux-content-strategist`, `qa-lead`, `release-manager`, `localization-lead`.
+- **Tier 3 — Execution Specialists (39)**: Dedicated specialists across Next.js, React, Tailwind/shadcn, Supabase, Prisma/Drizzle, FastAPI, Python, Go, Stripe Billing, Queue Workers, Auth/RBAC, AppSec, DPO/LGPD (`dpo-privacy-specialist`), Cloudflare, AWS, Docker/K8s, WebSockets, Email, UX/Motion, Accessibility, Perf, SRE, Onboarding, Pricing, and QA.
 
-## Project Structure
+## 3. Complete Catalog — 108 Slash Workflows & Subcommands (`/saas-*`)
+Canonical skills live in `.claude/skills/` (mirrored portably in `.agents/skills/`):
+- **Onboarding & Navigation**: `/saas-start`, `/saas-help`, `/saas-setup-stack`, `/saas-project-stage-detect`, `/saas-adopt`, `/saas-settings`, `/saas-onboard`
+- **Product, UX & Frontend Taste**: `/saas-brainstorm`, `/saas-prototype`, `/saas-design-tokens`, `/saas-frontend-taste`, `/saas-map-features`, `/saas-design-system`, `/saas-quick-design`, `/saas-ux-design`, `/saas-ux-review`, `/saas-design-review`, `/saas-review-all-prds`, `/saas-consistency-check`
+- **Architecture & Delivery**: `/saas-create-architecture`, `/saas-architecture-decision`, `/saas-architecture-review`, `/saas-create-control-manifest`, `/saas-gate-check`, `/saas-create-epics`, `/saas-create-stories`, `/saas-story-readiness`, `/saas-sprint-plan`, `/saas-sprint-status`, `/saas-dev-story`, `/saas-story-done`, `/saas-code-review`, `/saas-hotfix`
+- **Multidisciplinary Teams**: `/saas-team-core-feature`, `/saas-team-auth-access`, `/saas-team-billing`, `/saas-team-ui`, `/saas-team-content`, `/saas-team-growth`, `/saas-team-seo`, `/saas-team-lgpd`, `/saas-team-polish`, `/saas-team-qa`, `/saas-team-release`
+- **LGPD, ANPD & ECA Digital (21 Skills)**: `/saas-lgpd` + 19 specialized compliance subcommands (`audit`, `consent-schema`, `data-mapping`, `legal-basis`, `privacy-policy`, `dsar`, `ropa`, `ripd`, `incident-response`, `eca-digital-minors`, `dpo-encarregado`, `dpa`, `vendor-audit`, `international-transfer`, `retention-erasure`, `anonymization`, `encryption-keys`, `audit-logging`, `legacy-retrofit`)
+- **SEO, GEO & Agent Readiness (12 Skills)**: `/saas-seo` + `audit`, `technical`, `schema`, `geo`, `agentic`, `drift`, `programmatic`, `competitor-pages`, `sxo`, `content`
+- **Quality, AppSec & Launch**: `/saas-test-setup`, `/saas-smoke-check`, `/saas-qa-plan`, `/saas-security-audit`, `/saas-perf-profile`, `/saas-load-test`, `/saas-pricing-audit`, `/saas-release-checklist`, `/saas-launch-checklist`, `/saas-post-launch-monitor`
 
-@.claude/docs/directory-structure.md
+## 4. Collaboration Modes & Durable State
+Respect `modes.automation` from `project.yaml`:
+- `collaborative` (default): Present concise options with `(Recomendado)` first, show a clear summary, and request **one consolidated approval per stage/changeset** before writing project files (exempt: `production/session-state/active.md`, `.claude/agent-memory/`, and designated subagent output files). Subagents execute their assigned brief directly without pausing mid-flight for human prompts.
+- `guided`: Prompt only on architectural choices and `automation_always_ask` categories (`schema_changes`, `billing_changes`, `auth_policies`, `file_deletions`).
+- `autonomous` (or `/goal`): Execute end-to-end, log decisions in `production/session-logs/decision-log.md`, and verify with automated checks.
+- **Canonical Paths**: Config in `project.yaml`; PRDs in `docs/specs/` (fallback `design/prd/`); Architecture/ADRs in `docs/architecture/`; Tokens in `design/tokens/`; Stories in `production/epics/`; Session checkpoint in `production/session-state/active.md`; Domain lessons in `.basinfy/experience/`.
 
-## Technical Preferences
+## 5. Dynamic Bilingual Interface (PT-BR & EN) / English Engine
+- **Portuguese (`locale: pt-BR` or user writes in Portuguese)**: ALL human-facing questions (`AskUserQuestion` / `ask_question`), options, confirmations, and explanations MUST be rendered in **natural Brazilian Portuguese (PT-BR)**. This strictly OVERRIDES any English prompt examples inside skills. NEVER show English questions/options to a Portuguese-speaking user.
+- **English (`locale: en` or user writes in English)**: Render all questions and options in **English**.
+- **English Technical Engine**: Internal reasoning, source code, database identifiers, unit tests, and git commits always execute in **English (EN)** (except Brazilian legal compliance documents under `.lgpd/`).
 
-`project.yaml` at the repo root is the primary config store — stack, specialists, naming, platform, performance budgets, and modes. Skills resolve it dynamically via `resolve_config` (see `.claude/docs/config-resolution.md`).
+<!-- BASINFY:START -->
+## Basinfy Protocol (Smart Code Indexing)
 
-`.claude/docs/technical-preferences.md` is the fallback reference read on demand when a key is absent from `project.yaml`.
+When this workspace has a `.basinfy/` directory, route code discovery through Basinfy first. IDE Grep/Read/rg are the last resort.
 
-## Coordination Rules
+**Default path (MCP live — tools listed and a call succeeds):**
+- Start with one bootstrap: `basinfy_session_start` or `basinfy_brief` (not both). Pass `projectRoot` = active workspace path.
+- Check `projectRoot` / `rootSource`; on mismatch or `unresolved`, retry with `projectRoot`. Always supply `projectRoot` when working under global MCP daemons.
+- **Level 1 — Code Mode First (Default standard):** `basinfy_query_script` (MCP) or CLI `basinfy script <code>` — always execute compound exploration inside the in-memory JS sandbox in 1 turn to achieve maximum token economy (-90%+). NEVER call multiple standalone search/read/orbit/impact tools in separate turns when Code Mode can resolve them in a single batch.
+- **Level 2 — Simple Direct Tools:** Use standalone tools (`basinfy_search`, `basinfy_read`, `basinfy_orbit`, `basinfy_impact`, `basinfy_prepare_edit`, `basinfy_locate`) ONLY for simple, 1-step queries (e.g. checking a single configuration line or editing a known symbol).
+- **Level 3 — Primary Discovery (when not writing script):** `basinfy_discover` with `digest: true` (candidate files + primary exports + instant 12-line code preview in 1 turn). Use FIRST before search.
+- code/symbol edit → `basinfy_prepare_edit` / `basinfy_locate`
+- new file → `basinfy_prepare_create`; ADR/lesson → `basinfy_remember`; end → `basinfy_session_end`
+- **STRICT ANTI-PATTERNS (PROHIBITED):**
+  - ❌ NEVER loop `basinfy_search` + `basinfy_read` across multiple files. Use `basinfy_query_script` or `basinfy_discover({ query, digest: true })`.
+  - ❌ NEVER re-read code already delivered in a discover digest or briefing.
+- **Fallback (No `.basinfy/` directory):** When `.basinfy/` is absent and Basinfy MCP/CLI is inactive, seamlessly use standard IDE tools (`Glob`, `Grep`, `Read`).
 
-@.claude/docs/coordination-rules.md
+**Code Mode (`basinfy_query_script` / `basinfy script`) Recipes:**
+1. Discover & Preview in 1 turn:
+   `return await basinfy.discover("query", { digest: true });`
+2. Compound Topology, Orbit & Impact (Zero Bloat):
+   `const [orbit, impact] = await Promise.all([basinfy.orbit("src/file.ts"), basinfy.impact("src/file.ts")]); return { orbit, impact };`
+3. Multi-file search & targeted reading in 1 turn:
+   `const hits = await basinfy.search("str"); return await Promise.all(hits.slice(0,3).map(x => basinfy.read({ path: x.file, offset: Math.max(1, x.line - 5), limit: 20 })));`
+4. Trace file dependency path:
+   `return await basinfy.path("src/a.ts", "src/b.ts");`
 
-## Collaboration Protocol
+Args (aliases accepted): code mode `{ script }`; discover `{ query, digest: true }`; search `{ query }` (alias `pattern`); read `{ path }` (aliases `filePath`, `file`, `paths[0]`); locate/prepare_edit `{ symbol }`; orbit/gate_edit/impact `{ filePath }` (aliases `path`, `file`); create `{ targetPath }`. Optional `projectRoot` on any tool.
 
-**User-driven collaboration, not autonomous execution.**
-Every task follows: **Question -> Options -> Decision -> Draft -> Approval**
-
-- Agents MUST ask "May I write this to [filepath]?" before using Write/Edit tools
-  (exempt: `active.md` appends, agent memory, a subagent's new file at the path its orchestrating skill named; see `.claude/rules/agent-memory.md`).
-- Agents MUST show drafts or summaries before requesting approval.
-- Multi-file changes require explicit approval for the full changeset.
-- No commits without explicit user instruction.
-- A skipped or dismissed question is not an answer: act on nothing, re-ask in plain text and wait.
-- Started outside this file's folder? Warn first: hooks, deny rules and the ask-first mode load only when Claude Code starts here.
-- **Dynamic Human Interface (Portuguese & English) / English Engine**:
-  - **Dynamic Language Detection & Translation**: The human-facing interface (`AskUserQuestion`, `ask_question`, options, dialogs) adapts dynamically to the developer:
-    - If the user interacts in **Portuguese** (or `project.yaml` defines `locale: pt-BR`): All questions, selectable options, modal dialogs, and confirmations MUST be presented in **Brazilian Portuguese (PT-BR)**.
-    - **CRITICAL OVERRIDE**: This rule strictly OVERRIDES any English question strings or templates found in skills or documentation. Any quoted question or option template in a skill (e.g. `Ask: "Does this rule summary look complete?"`, `Options: Yes...`) is an example and MUST be translated into natural Brazilian Portuguese before asking the user. NEVER display English questions or options to a Portuguese-speaking developer.
-    - If the user interacts in **English** (or `locale: en`): All questions, selectable options, and confirmations appear in **English**.
-  - **Agent Engine in English**: In both cases, internal code synthesis, architecture reasoning, tests, commits, and subagent coordination execute in **English** to guarantee maximum LLM intelligence, benchmark precision, and universal code standards.
-
-See `docs/COLLABORATIVE-DESIGN-PRINCIPLE.md` for full protocol and examples.
-
-> **First session?** If the project has no stack configured and no product concept,
-> run `/saas-start` to begin the guided onboarding flow.
-
-## Coding Standards
-
-@.claude/docs/coding-standards.md
-
-## Smart Code Discovery & Dynamic Basinfy Protocol (Free vs Pro Code Mode)
-
-Whenever agents, specialists, or workflows explore the codebase, discover endpoints, or locate symbols:
-- **Environment Detection**: Check if .basinfy/ exists in the workspace (or if Basinfy MCP tools / asinfy CLI are active).
-- **If Basinfy is Present (.basinfy/ detected)**: Route code discovery through the **Basinfy Smart Indexing Protocol** first. Standard IDE Grep/Read/rg are strictly the last resort fallback:
-  - **Tier Detection (Pro Code Mode vs. Free Standard)**:
-    - **Basinfy Pro / Trial (Code Mode Active)**: Triggered when asinfy_discover or asinfy_query_script are present in MCP tools, or CLI asinfy discover / script are available:
-      - **Multi-File Exploration & Feature Discovery**: ALWAYS use asinfy_discover (with digest: true) or asinfy_query_script with asinfy.discover(query, { digest: true }) (CLI asinfy discover <query> --digest). Delivers AST locate, barrel resolution, confidence scores, and targeted 12-line code previews in ONE turn (90%+ token reduction). NEVER loop multiple asinfy_search + asinfy_read calls across files.
-      - **Compound / Multi-Module Programmatic Analysis**: Use asinfy_query_script (CLI asinfy script <code>) for in-memory JavaScript/TypeScript execution with direct access to the asinfy.* API object (asinfy.discover, asinfy.search, asinfy.read, asinfy.locate, asinfy.orbit, asinfy.impact, asinfy.gateEdit, asinfy.prepareEdit, asinfy.prepareCreate). Executes compound queries and graph traversals in a single turn with zero intermediate token bloat. Inspect types via asinfy_sdk_inspect.
-    - **Basinfy Free (Core Smart Indexing)**:
-      - **Symbols & Code**: asinfy_prepare_edit or asinfy_locate
-      - **Configs, YAML & Literal Search**: asinfy_search then targeted asinfy_read (never loop search+read indefinitely)
-  - **Universal Governance & Lifecycle (Free & Pro)**:
-    - **New Files**: asinfy_prepare_create before generating new components or modules
-    - **Impact & Architecture**: asinfy_impact or asinfy_orbit before modifying shared interfaces
-    - **Document Headings**: asinfy_search to find headings instead of regex grepping ^#
-    - **Session Lifecycle**: One bootstrap at start (asinfy_session_start or asinfy_brief), one update at end (asinfy_session_end or asinfy_update).
-    - **Fallback Ladder**: CLI asinfy search / asinfy read / asinfy discover -> IDE Grep/Read only for binaries or paths outside the index.
-- **Fallback (No .basinfy/ directory)**: When .basinfy/ is not present, gracefully use standard IDE tools (Grep, ripgrep, Glob, Read).
-
-
-## Context Management
-
-Read `.claude/docs/context-management.md` on demand — it is a reference, not session context. Two of its conventions are load-bearing and cited by name elsewhere in the repo:
-
-- **`production/session-state/active.md` is the session checkpoint.** The file is the memory, not the conversation. Read it first after any compaction, crash, or `/clear`.
-- **Helpers in `.claude/scripts/` emit observations, never verdicts.** A script that scores or judges will eventually contradict a mode or override it cannot see. (Cited by `artifact-check.sh` and `adr-dep-graph.sh`.)
-
-## Studio Workflows & Slash Commands (/saas-*)
-
-Basinfy SaaS Studio provides 108 specialized workflows covering the full lifecycle of software development:
-- **First-time Onboarding & Diagnosis**: /saas-start, /saas-help, /saas-setup-stack, /saas-project-stage-detect
-- **Product & Specifications**: /saas-brainstorm, /saas-map-features, /saas-design-system, /saas-create-architecture, /saas-architecture-decision
-- **Sprints & Implementation**: /saas-sprint-plan, /saas-create-epics, /saas-create-stories, /saas-dev-story, /saas-story-done
-- **SEO, GEO & Agent Readiness**: /saas-seo, /saas-team-seo, /saas-seo-audit, /saas-seo-technical, /saas-seo-schema, /saas-seo-geo, /saas-seo-agentic, /saas-seo-drift
-- **Privacy & Security**: /saas-lgpd, /saas-team-lgpd, /saas-security-audit
-- **Quality & Launch**: /saas-code-review, /saas-perf-profile, /saas-gate-check, /saas-release-checklist, /saas-launch-checklist
-
-Run /saas-help at any time to inspect the full workflow catalog and receive recommendations based on the active stage.
+**Escape hatches (fallback ladder):**
+- Transport/discovery only (`Not connected`, namespace error/loading/needsAuth) → CLI-first for this session (`basinfy script`, `basinfy session-start`, `basinfy discover`, `basinfy search`, `basinfy read`, `basinfy prepare-edit`, `basinfy prepare-create`, `basinfy gate-edit`, `basinfy health`, `basinfy drive`, `basinfy resource`).
+- InvalidParams / `-32602` is not MCP-down — retry the same MCP tool once with the schema; then CLI if still failing.
+- Empty search / locate `{found:false}` is a normal miss — try the next Basinfy tool; after repeated misses on the same need, CLI then IDE search.
+- `allowed:false` from gate/prepare is advisory (writes are not blocked) — pass `force:true` when proceeding.
+- IDE Read/Grep/rg while MCP succeeds: only for images, binaries, notebooks, paths outside the index root, or a range beyond a truncated `basinfy_read`.
+<!-- BASINFY:END -->
