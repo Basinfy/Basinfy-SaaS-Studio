@@ -1,10 +1,10 @@
 ---
 name: saas-story-done
-description: "Closes a finished story: verifies each acceptance criterion, checks for design or ADR deviations and updates its status. Use when the user says a story is done, finished or ready to close."
+description: "Verify story acceptance criteria, test evidence, and ADR alignment before marking Complete."
 argument-hint: "[story-file-path] [--review full|lean|solo]"
 user-invocable: true
 disable-model-invocation: true
-allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Agent, Bash(bash "*/.claude/skills/saas-story-done/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/story-facts.sh *), Bash(bash .claude/scripts/story-status.sh*), Bash(bash .claude/scripts/adr-status.sh *), Bash(bash .claude/scripts/md-section.sh *), Bash(bash .claude/scripts/review-receipts.sh check *), Bash(bash .claude/scripts/session-state.sh *), Bash(git status --porcelain*)
+allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Agent, Bash(bash "*/.claude/skills/saas-story-done/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/story-facts.sh *), Bash(bash .claude/scripts/story-status.sh*), Bash(bash .claude/scripts/adr-status.sh *), Bash(bash .claude/scripts/md-section.sh *), Bash(bash .claude/scripts/review-receipts.sh check *), Bash(bash .claude/scripts/session-state.sh *), Bash(git status --porcelain*), mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
@@ -18,10 +18,8 @@ to wait. A skipped or dismissed question is not an answer: ask again in plain te
 
 # Story Done
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 Closes a finished story. Every acceptance criterion is checked against evidence,
 deviations from the PRD, the ADRs and the story's own scope are reported as facts,
@@ -253,7 +251,9 @@ exists yet.
 ### Review
 **Reviewed by**: [value]
 
-### Verdict: [COMPLETE | COMPLETE WITH NOTES | NOT ASSESSED | BLOCKED]
+### > **Basinfy Experience & Index Sync**: When `.basinfy/` is present, record reusable debugging/domain lessons in `.basinfy/experience/` + `basinfy_remember`, and trigger `basinfy_update` (`basinfy_session_end`) once the story closes.
+
+Verdict: [COMPLETE | COMPLETE WITH NOTES | NOT ASSESSED | BLOCKED]
 ```
 
 **Verdicts, the first that matches wins:**

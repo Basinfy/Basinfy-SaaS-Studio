@@ -1,9 +1,9 @@
 ---
 name: saas-create-architecture
-description: "Author the architecture blueprint before code is written. Validates decisions against the pinned engine, flags knowledge gaps."
+description: "Author the master SaaS system architecture blueprint, C4 layers, and DB boundaries."
 argument-hint: "[focus-area: full | layers | data-flow | api-boundaries | adr-audit] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Agent, Bash(bash "*/.claude/skills/saas-create-architecture/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/registry.sh *)
+allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Agent, Bash(bash "*/.claude/skills/saas-create-architecture/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/registry.sh *), mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
@@ -14,10 +14,8 @@ defaults in `.claude/docs/config-resolution.md`.
 
 # Create Architecture
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 This skill produces `docs/architecture/architecture.md` — the master architecture
 document that translates all approved PRDs into a concrete technical blueprint.

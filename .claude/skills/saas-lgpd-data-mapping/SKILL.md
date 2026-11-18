@@ -1,18 +1,16 @@
 ---
 name: saas-lgpd-data-mapping
-description: Build and maintain a data inventory (mapa de dados) of all personal data processing activities in the project. Use when user asks "mapa de dados", "data mapping LGPD", "que dados pessoais coletamos", "inventário de tratamento", or as part of an LGPD audit pipeline. Produces `.lgpd/data-map.md`. Especially important for legacy systems where the inventory is built reverse-engineered from code (Prisma schemas, API endpoints, third-party SDKs, log statements).
+description: "Build a personal data inventory mapping codebase models and flows for LGPD ROPA."
 argument-hint: "[scope or artifact path]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, AskUserQuestion
+allowed-tools: Read, Glob, Grep, AskUserQuestion, mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
 # Data Mapping LGPD
 
-> **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 
 Inventário canônico de **todas** as atividades de tratamento de dados pessoais no projeto. É o pré-requisito para ROPA (Art. 37), RIPD (Art. 38), retenção e DSAR.

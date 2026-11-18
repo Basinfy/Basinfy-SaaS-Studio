@@ -1,9 +1,9 @@
 ---
 name: saas-localize
-description: "Localization pipeline — find hardcoded strings, extract string tables, cultural review, transactional email & messaging, RTL, enforce string freeze."
+description: "Extract hardcoded UI strings, configure i18n tables, check RTL/expansion, and run locale QA."
 argument-hint: "[scan|extract|validate|status|brief|cultural-review|email-messaging|rtl-check|freeze|qa]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-localize/../../hooks/yaml-helper.sh" resolve_config *)
+allowed-tools: Read, Glob, Grep, Write, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-localize/../../hooks/yaml-helper.sh" resolve_config *), mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
@@ -13,10 +13,8 @@ model: sonnet
 
 # Localization Pipeline
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 Localization is not just translation — it is the full process of making a SaaS application
 feel native in every language and region. Poor localization breaks immersion,

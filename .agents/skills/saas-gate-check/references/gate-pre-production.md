@@ -8,7 +8,7 @@
 **Required Artifacts:**
 - [ ] Engine chosen (CLAUDE.md Technology Stack is not `[CHOOSE]`)
 - [ ] Project config populated (`project.yaml` has engine/naming/performance set, or legacy `.claude/docs/technical-preferences.md` populated)
-- [ ] Design tokens exists at `design/art/saas-design-tokens.md` with at least Sections 1–4 (Visual Identity Foundation)
+- [ ] Design tokens exists at `design/tokens/design-tokens.md` with at least Sections 1–4 (Visual Identity Foundation)
 - [ ] At least 3 Architecture Decision Records in `docs/architecture/` covering
       Foundation-layer systems (scene management, event architecture, save/load)
 - [ ] Stack reference docs exist in `docs/engine-reference/[engine]/`

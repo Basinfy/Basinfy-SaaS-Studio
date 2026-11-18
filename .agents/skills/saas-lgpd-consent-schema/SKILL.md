@@ -1,6 +1,6 @@
 ---
 name: saas-lgpd-consent-schema
-description: Design the database schema for a versioned, append-only consent ledger that satisfies LGPD Art. 8 (free, informed, unambiguous consent for a specific purpose) and Art. 9 (information rights). Use when user asks for "consent schema", "consent ledger", "schema de consentimento", "Prisma consentimento", "consent management", or is integrating consent capture with Better Auth, NextAuth, Clerk, or any auth library. Outputs a Prisma schema + integration spec. Also produces the structure needed to support DSAR revocation (Art. 18, IX).
+description: "Design append-only versioned Prisma consent ledgers and auth hooks (LGPD Art. 8 & 9)."
 argument-hint: "[scope or artifact path]"
 user-invocable: true
 ---
@@ -9,14 +9,12 @@ user-invocable: true
 
 ## Running this workflow on this client
 
-Run shell commands from the project root. On Windows, use Git Bash for the `bash` commands if `bash` resolves to an unavailable WSL distribution. Shared studio files are under `.claude/`; run the local Studio installer for this project if those files are missing. Read `.claude/docs/config-resolution.md` and apply its defaults when configuration cannot be resolved. Use this client's tools for reads, edits, and structured questions. If structured questions are unavailable, ask in chat and wait when a decision requires approval. Use the client's delegation feature with the role brief in `.claude/agents/` when available. Otherwise perform the specialist checks in sequence and disclose that they were done in one session. If a workflow requires independent sign-off, report it as pending until an independent reviewer can provide it. Treat `Task*` steps as local workflow tracking using the client's equivalent when available. Report missing tools and unexecuted checks explicitly.
+Run commands from the project root (use Git Bash on Windows if `bash` points to an unavailable WSL distro). Shared studio files live in `.claude/`; follow `.agents/PORTABLE-RUNTIME.md` and `.claude/docs/config-resolution.md` for client tools, delegation, and approval rules.
 
 # Consent Schema (Prisma + Better Auth)
 
-> **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 
 Implementação técnica do consentimento como base legal (Art. 7º, I e Art. 11, I), versionado, auditável e revogável.

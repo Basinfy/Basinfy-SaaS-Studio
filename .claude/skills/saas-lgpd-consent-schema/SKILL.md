@@ -1,18 +1,16 @@
 ---
 name: saas-lgpd-consent-schema
-description: Design the database schema for a versioned, append-only consent ledger that satisfies LGPD Art. 8 (free, informed, unambiguous consent for a specific purpose) and Art. 9 (information rights). Use when user asks for "consent schema", "consent ledger", "schema de consentimento", "Prisma consentimento", "consent management", or is integrating consent capture with Better Auth, NextAuth, Clerk, or any auth library. Outputs a Prisma schema + integration spec. Also produces the structure needed to support DSAR revocation (Art. 18, IX).
+description: "Design append-only versioned Prisma consent ledgers and auth hooks (LGPD Art. 8 & 9)."
 argument-hint: "[scope or artifact path]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, AskUserQuestion
+allowed-tools: Read, Glob, Grep, AskUserQuestion, mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
 # Consent Schema (Prisma + Better Auth)
 
-> **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 
 Implementação técnica do consentimento como base legal (Art. 7º, I e Art. 11, I), versionado, auditável e revogável.

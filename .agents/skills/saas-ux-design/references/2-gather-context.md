@@ -90,7 +90,7 @@ so you can reference them rather than reinvent them.
 
 ### 2f: Design Tokens
 
-Check for `design/art/saas-design-tokens.md`. If found, read the visual direction
+Check for `design/tokens/design-tokens.md`. If found, read the visual direction
 section. UX layout must align with the aesthetic commitments already made.
 
 ### 2g: Accessibility Requirements

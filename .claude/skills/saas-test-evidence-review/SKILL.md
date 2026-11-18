@@ -1,9 +1,9 @@
 ---
 name: saas-test-evidence-review
-description: "Quality review of test files and evidence — goes beyond existence, evaluates assertion coverage. ADEQUATE/INCOMPLETE/MISSING/NOT ASSESSED per story."
+description: "Review test files and QA evidence for real assertion quality (ADEQUATE / INCOMPLETE / MISSING)."
 argument-hint: "[story-path | sprint | system-name]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Bash(bash "*/.claude/skills/saas-test-evidence-review/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/review-receipts.sh check *)
+allowed-tools: Read, Glob, Grep, Write, Bash(bash "*/.claude/skills/saas-test-evidence-review/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/review-receipts.sh check *), mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
@@ -33,10 +33,8 @@ item here is one that would stop `/saas-story-done`:
 
 # Test Evidence Review
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 `/saas-smoke-check` verifies that test files **exist** and **pass**. This skill
 goes further — it reviews the **quality** of those tests and evidence documents.

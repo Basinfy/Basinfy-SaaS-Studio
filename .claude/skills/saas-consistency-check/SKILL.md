@@ -1,9 +1,9 @@
 ---
 name: saas-consistency-check
-description: "Scan PRDs against the entity registry for cross-document conflicts. Index-first approach (Basinfy when .basinfy/ exists, else Grep) targets conflicting sections."
+description: "Scan PRDs and registries for cross-document conflicts using Basinfy or local search."
 argument-hint: "[full | since-last-review | entity:<name> | item:<name>]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Bash(bash "*/.claude/skills/saas-consistency-check/../../hooks/yaml-helper.sh" resolve_config *), Bash(git log *), Bash(bash .claude/scripts/registry.sh validate*)
+allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Bash(bash "*/.claude/skills/saas-consistency-check/../../hooks/yaml-helper.sh" resolve_config *), Bash(git log *), Bash(bash .claude/scripts/registry.sh validate*), mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
@@ -13,10 +13,8 @@ model: sonnet
 
 # Consistency Check
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 Detects cross-document inconsistencies by comparing all PRDs against the
 entity registry (`design/registry/entities.yaml`). Uses an index-first approach (Basinfy smart indexing when `.basinfy/` exists, Grep fallback):
@@ -132,7 +130,7 @@ every section compared). Grep each such PRD once for `^## ` to get its headings
 and line numbers, and file every name hit under the nearest heading above it:
 only hits under Problem Statement, Requirements Pool / Detailed Design, Formulas, Edge
 Cases, Dependencies, Data Models, Security or Acceptance Criteria are compared — plus Configuration Parameters when
-`project.yaml` sets `workflow_overrides.configuration_parameters: true` (or `workflow_overrides.tuning_knobs: true`).
+`project.yaml` sets `workflow_overrides.configuration_parameters: true` (or `workflow_overrides.rate_limits: true`).
 Any other hit (Configuration Parameters without the flag, User Personas, any other section) raises no finding and is not logged;
 list each one that states a value (name, PRD, section) on the report's
 `Not checked at this tier` line.

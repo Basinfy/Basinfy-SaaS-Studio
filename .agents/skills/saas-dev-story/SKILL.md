@@ -1,6 +1,6 @@
 ---
 name: saas-dev-story
-description: "Implements one story in code with tests, following its ADRs. Use when the user says to build, implement or start working on a story. Not for checking readiness beforehand or closing the story after."
+description: "Implement a user story in code with tests, ADR compliance, and Basinfy edit safety."
 argument-hint: "[story-path]"
 user-invocable: true
 disable-model-invocation: true
@@ -10,7 +10,7 @@ disable-model-invocation: true
 
 ## Running this workflow on this client
 
-Run shell commands from the project root. On Windows, use Git Bash for the `bash` commands if `bash` resolves to an unavailable WSL distribution. Shared studio files are under `.claude/`; run the local Studio installer for this project if those files are missing. Read `.claude/docs/config-resolution.md` and apply its defaults when configuration cannot be resolved. Use this client's tools for reads, edits, and structured questions. If structured questions are unavailable, ask in chat and wait when a decision requires approval. Use the client's delegation feature with the role brief in `.claude/agents/` when available. Otherwise perform the specialist checks in sequence and disclose that they were done in one session. If a workflow requires independent sign-off, report it as pending until an independent reviewer can provide it. Treat `Task*` steps as local workflow tracking using the client's equivalent when available. Report missing tools and unexecuted checks explicitly.
+Run commands from the project root (use Git Bash on Windows if `bash` points to an unavailable WSL distro). Shared studio files live in `.claude/`; follow `.agents/PORTABLE-RUNTIME.md` and `.claude/docs/config-resolution.md` for client tools, delegation, and approval rules.
 
 Start this workflow only when the user explicitly asks for it. Otherwise, describe what it would do and wait for that request.
 
@@ -24,10 +24,8 @@ to wait. A skipped or dismissed question is not an answer: ask again in plain te
 
 # Dev Story
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 Implements one story: checks it can start, marks it In Progress, hands the code to
 the right programmer agent with a brief built from the story, then checks the
@@ -159,6 +157,8 @@ touches schemas or migrations and `ui` for a UI story; `primary` (the generic en
 specialist) when `code` is `unset`. Name no specialist from memory: the line is the project's
 choice. Every value `unset` and no `primary`: say "No stack specialist configured"
 and go on without one.
+
+> **Basinfy Pre-Edit Gate**: When `.basinfy/` is present, run `basinfy_prepare_edit` on target symbols and `basinfy_prepare_create` on planned new files before spawning the programmer subagent, and include the 12-line digest + `impact` summary in the subagent brief.
 
 ## Phase 5: Hand out the work
 

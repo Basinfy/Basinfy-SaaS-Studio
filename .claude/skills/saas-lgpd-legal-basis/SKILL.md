@@ -1,18 +1,16 @@
 ---
 name: saas-lgpd-legal-basis
-description: Choose and document the lawful basis (base legal) for each personal data processing activity under LGPD Art. 7 (common data) or Art. 11 (sensitive data). Use when the user is designing a new feature that processes personal data, reviewing an existing activity, asking "qual base legal usar", "consentimento ou legítimo interesse", "podemos coletar isso", or running an LGPD audit step. Produces `.lgpd/legal-basis.md` with one entry per activity. Always cite the article. Use whenever someone is about to write code that touches personal data.
+description: "Assign and document LGPD Art. 7 & Art. 11 legal bases per processing activity."
 argument-hint: "[scope or artifact path]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, AskUserQuestion
+allowed-tools: Read, Glob, Grep, AskUserQuestion, mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
 # Base Legal LGPD
 
-> **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 
 Decida e documente a base legal de **cada atividade de tratamento** antes de qualquer outra coisa. Sem base legal válida, o tratamento é ilícito (Art. 7º e Art. 11 LGPD).

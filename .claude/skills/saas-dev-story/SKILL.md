@@ -1,10 +1,10 @@
 ---
 name: saas-dev-story
-description: "Implements one story in code with tests, following its ADRs. Use when the user says to build, implement or start working on a story. Not for checking readiness beforehand or closing the story after."
+description: "Implement a user story in code with tests, ADR compliance, and Basinfy edit safety."
 argument-hint: "[story-path]"
 user-invocable: true
 disable-model-invocation: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-dev-story/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/story-facts.sh *), Bash(bash .claude/scripts/adr-status.sh *), Bash(bash .claude/scripts/md-section.sh *), Bash(bash .claude/scripts/session-state.sh *), Bash(bash .claude/scripts/review-receipts.sh hash *), Bash(nextjs *), Bash(mkdir -p production/qa/evidence/*)
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-dev-story/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/story-facts.sh *), Bash(bash .claude/scripts/adr-status.sh *), Bash(bash .claude/scripts/md-section.sh *), Bash(bash .claude/scripts/session-state.sh *), Bash(bash .claude/scripts/review-receipts.sh hash *), Bash(npx next *), Bash(npm run *), Bash(mkdir -p production/qa/evidence/*), mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
@@ -18,10 +18,8 @@ to wait. A skipped or dismissed question is not an answer: ask again in plain te
 
 # Dev Story
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 Implements one story: checks it can start, marks it In Progress, hands the code to
 the right programmer agent with a brief built from the story, then checks the
@@ -153,6 +151,8 @@ touches schemas or migrations and `ui` for a UI story; `primary` (the generic en
 specialist) when `code` is `unset`. Name no specialist from memory: the line is the project's
 choice. Every value `unset` and no `primary`: say "No stack specialist configured"
 and go on without one.
+
+> **Basinfy Pre-Edit Gate**: When `.basinfy/` is present, run `basinfy_prepare_edit` on target symbols and `basinfy_prepare_create` on planned new files before spawning the programmer subagent, and include the 12-line digest + `impact` summary in the subagent brief.
 
 ## Phase 5: Hand out the work
 

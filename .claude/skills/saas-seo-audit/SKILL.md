@@ -1,9 +1,9 @@
 ---
 name: saas-seo-audit
-description: "Run a full SaaS platform SEO audit — technical crawlability, Next.js SPA rendering, Core Web Vitals, Schema.org rich results, AI search readiness (GEO), Agentic Browsing, and SXO conversion alignment."
+description: "Run full-site SaaS SEO audit across crawlability, metadata, schema, CWV, and E-E-A-T."
 argument-hint: "[url]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-seo-audit/../../hooks/yaml-helper.sh" resolve_config *)
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-seo-audit/../../hooks/yaml-helper.sh" resolve_config *), mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
@@ -13,10 +13,8 @@ Resolved above — use as-is; `--review` overrides `review_mode` for this run.
 
 # SaaS Platform Full SEO Audit
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 Conducts an end-to-end, multi-vector SEO audit of a SaaS web application or staging server (`http://localhost:3000`).
 

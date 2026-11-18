@@ -1,9 +1,9 @@
 ---
 name: saas-lgpd
-description: "Direct entrypoint for LGPD privacy compliance — audit, greenfield setup, legacy retrofit, incident response, DSAR, consent ledger, ROPA, and RIPD. Use for 'auditar lgpd', 'como estamos de lgpd', 'lgpd audit', or 'compliance lgpd'."
+description: "LGPD & ECA Digital compliance command center — audit, consent, DSAR, ROPA, RIPD, incidents."
 argument-hint: "[audit | greenfield | legacy | incident | dsar | ropa | ripd | consent | status]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-lgpd/../../hooks/yaml-helper.sh" resolve_config *)
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-lgpd/../../hooks/yaml-helper.sh" resolve_config *), mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
@@ -11,10 +11,8 @@ model: sonnet
 
 # LGPD Command Center
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 Primary command interface for data protection and privacy compliance under Lei nº 13.709/2018 (LGPD), ANPD resolutions, and Lei nº 15.211/2025 (ECA Digital).
 

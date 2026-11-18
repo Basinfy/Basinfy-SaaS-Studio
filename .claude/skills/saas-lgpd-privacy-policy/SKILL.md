@@ -1,18 +1,16 @@
 ---
 name: saas-lgpd-privacy-policy
-description: Draft, version, and publish a privacy policy compliant with LGPD Art. 9 (seven mandatory elements) and ECA Digital if minors are present. Use when user asks "política de privacidade", "privacy policy", "termos de uso", "aviso de privacidade", or as part of an audit pipeline. Versions every published change. Output goes to `.lgpd/policies/privacy-policy-v{N}.md`. CHECKPOINT skill — never publish without legal review.
+description: "Draft clear, versioned LGPD Art. 9 privacy notices matched to real codebase data flows."
 argument-hint: "[scope or artifact path]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, AskUserQuestion
+allowed-tools: Read, Glob, Grep, AskUserQuestion, mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
 # Política de Privacidade (Art. 9 LGPD)
 
-> **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 
 Documento público que cumpre o dever de informação (Art. 6º, VI — transparência + Art. 9º — direito do titular ao acesso).

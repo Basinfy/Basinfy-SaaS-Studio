@@ -1,18 +1,16 @@
 ---
 name: saas-lgpd-audit
-description: Maestro orchestrator for end-to-end LGPD (Lei 13.709/2018) compliance in a software project. Use for "como estamos de LGPD", "audite LGPD", "nos deixe LGPD seguros", "gap analysis LGPD", "compliance LGPD", "auditar privacidade", "LGPD do projeto", or any request to assess, implement, or retrofit privacy compliance — including English phrasings like "are we privacy-safe", "audit our privacy", or "we collect personal data, what do we need". Chains specialized sub-skills (data mapping, legal basis, consent, DSAR, incident response, ROPA, RIPD, retention, vendor audit, DPA, international transfer, encarregado, and ECA Digital / Lei 15.211/2025 for platforms with minors) and produces versioned artifacts under .lgpd/. Trigger even when the word "LGPD" is not used.
+description: "Orchestrate end-to-end LGPD & ECA Digital privacy compliance audits and `.lgpd/` pipelines."
 argument-hint: "[scope or audit context]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, AskUserQuestion
+allowed-tools: Read, Glob, Grep, AskUserQuestion, mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
 # LGPD Audit — Maestro de Conformidade
 
-> **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 
 Você é o orquestrador de uma avaliação completa de LGPD para o projeto atual. Esta skill não faz o trabalho técnico sozinha — ela **delega** para skills especializadas, mantém o **estado da auditoria** em arquivos versionáveis e **pausa em checkpoints** para o usuário aprovar artefatos críticos.

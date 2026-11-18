@@ -1,9 +1,9 @@
 ---
 name: saas-security-audit
-description: "Application security (AppSec) audit — adversarial vulnerability discovery, tenant isolation, auth & RBAC, AI/LLM boundaries, OWASP Top 10, webhook signatures, rate limiting, and dependency CVEs. Before release."
+description: "Adversarial AppSec audit — RLS tenant isolation, auth/RBAC, OWASP, webhooks, and AI sinks."
 argument-hint: "[full | auth | tenant | api | quick]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Agent, Bash(bash "*/.claude/skills/saas-security-audit/../../hooks/yaml-helper.sh" resolve_config *), Bash(node *)
+allowed-tools: Read, Glob, Grep, Write, Agent, Bash(bash "*/.claude/skills/saas-security-audit/../../hooks/yaml-helper.sh" resolve_config *), Bash(node *), mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
@@ -21,10 +21,8 @@ does not. The audit itself runs the same at every tier.
 
 # Application Security (AppSec) Audit & Vulnerability Harness
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 Security is mandatory for production SaaS platforms. Multi-tenant SaaS architectures face tenant data cross-contamination risks, broken object-level authorization (BOLA/IDOR), session fixation, webhook forgery, AI/LLM context injection, and resource exhaustion.
 

@@ -1,9 +1,9 @@
 ---
 name: saas-propagate-design-change
-description: "Finds architecture decisions (ADRs) made stale by a changed PRD and walks through resolving each. Use when the user changed a number or rule in a PRD and asks which ADRs or architecture decisions are now out of date."
+description: "Trace PRD changes across ADRs, stories, and code modules to resolve downstream impact."
 argument-hint: "[path/to/changed-prd.md] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-propagate-design-change/../../hooks/yaml-helper.sh" resolve_config *), Bash(git diff *), Bash(git log *), Bash(bash .claude/scripts/adr-status.sh*), Bash(bash .claude/scripts/md-section.sh *)
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-propagate-design-change/../../hooks/yaml-helper.sh" resolve_config *), Bash(git diff *), Bash(git log *), Bash(bash .claude/scripts/adr-status.sh*), Bash(bash .claude/scripts/md-section.sh *), mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
@@ -17,10 +17,8 @@ to wait. A skipped or dismissed question is not an answer: ask again in plain te
 
 # Propagate Design Change
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 When a PRD changes, the architecture decisions written against it may no longer
 hold. This skill finds every ADR the change touches, compares what the ADR assumed
@@ -45,6 +43,8 @@ The text typed after the skill name, with any `--review <mode>` pair removed, is
 changed PRD. It is required. Missing: "Usage: `/saas-propagate-design-change
 design/prd/[system].md` — give the path to the PRD that changed." Not a file:
 "[path] not found. Check the path and try again."
+
+> **Basinfy Blast-Radius Graph**: When `.basinfy/` is present, run `basinfy_query_script` (`basinfy.discover` + `basinfy.impact`) to trace real AST module dependents in 1 turn before falling back to text search.
 
 ## Phase 2: What changed
 

@@ -1,6 +1,6 @@
 ---
 name: saas-lgpd-audit-logging
-description: Design and implement immutable, hash-chained audit logging for accountability (LGPD Art. 6, X) and incident registration (Res. 15/2024 Art. 10, 5-year retention). Use when user asks 'audit log', 'log de auditoria', 'logging LGPD', 'accountability log', or as part of audit pipeline. Outputs schema + middleware patterns for Next.js.
+description: "Implement immutable, hash-chained accountability audit logs (LGPD Art. 6 X & Res. 15/2024)."
 argument-hint: "[scope or artifact path]"
 user-invocable: true
 ---
@@ -9,14 +9,12 @@ user-invocable: true
 
 ## Running this workflow on this client
 
-Run shell commands from the project root. On Windows, use Git Bash for the `bash` commands if `bash` resolves to an unavailable WSL distribution. Shared studio files are under `.claude/`; run the local Studio installer for this project if those files are missing. Read `.claude/docs/config-resolution.md` and apply its defaults when configuration cannot be resolved. Use this client's tools for reads, edits, and structured questions. If structured questions are unavailable, ask in chat and wait when a decision requires approval. Use the client's delegation feature with the role brief in `.claude/agents/` when available. Otherwise perform the specialist checks in sequence and disclose that they were done in one session. If a workflow requires independent sign-off, report it as pending until an independent reviewer can provide it. Treat `Task*` steps as local workflow tracking using the client's equivalent when available. Report missing tools and unexecuted checks explicitly.
+Run commands from the project root (use Git Bash on Windows if `bash` points to an unavailable WSL distro). Shared studio files live in `.claude/`; follow `.agents/PORTABLE-RUNTIME.md` and `.claude/docs/config-resolution.md` for client tools, delegation, and approval rules.
 
 # Audit Logging
 
-> **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 
 Log imutável encadeado para prova de conformidade (Art. 6º, X — responsabilização) e registro de incidentes (Art. 10 Res. 15/2024 — 5 anos).

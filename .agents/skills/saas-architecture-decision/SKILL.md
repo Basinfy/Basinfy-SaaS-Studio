@@ -1,6 +1,6 @@
 ---
 name: saas-architecture-decision
-description: "Create an ADR documenting a technical decision: context, alternatives considered, consequences."
+description: "Create, accept, or retrofit an Architecture Decision Record (ADR) with trade-offs."
 argument-hint: "[title | retrofit <path> | accept <ADR-id>] [--review full|lean|solo]"
 user-invocable: true
 ---
@@ -9,7 +9,7 @@ user-invocable: true
 
 ## Running this workflow on this client
 
-Run shell commands from the project root. On Windows, use Git Bash for the `bash` commands if `bash` resolves to an unavailable WSL distribution. Shared studio files are under `.claude/`; run the local Studio installer for this project if those files are missing. Read `.claude/docs/config-resolution.md` and apply its defaults when configuration cannot be resolved. Use this client's tools for reads, edits, and structured questions. If structured questions are unavailable, ask in chat and wait when a decision requires approval. Use the client's delegation feature with the role brief in `.claude/agents/` when available. Otherwise perform the specialist checks in sequence and disclose that they were done in one session. If a workflow requires independent sign-off, report it as pending until an independent reviewer can provide it. Treat `Task*` steps as local workflow tracking using the client's equivalent when available. Report missing tools and unexecuted checks explicitly.
+Run commands from the project root (use Git Bash on Windows if `bash` points to an unavailable WSL distro). Shared studio files live in `.claude/`; follow `.agents/PORTABLE-RUNTIME.md` and `.claude/docs/config-resolution.md` for client tools, delegation, and approval rules.
 
 Run `bash .claude/hooks/yaml-helper.sh resolve_config --keys locale,review_mode,automation,workflow,docs.density,team.size` and use its output below.
 
@@ -18,10 +18,8 @@ defaults in `.claude/docs/config-resolution.md`.
 
 # Architecture Decision
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 When this skill is invoked:
 
@@ -96,6 +94,8 @@ Scan `docs/architecture/` for existing ADRs to find the next number.
 **Read `references/5-generate.md` now and follow it** — this phase's steps are in that file, not here. Read it again if the conversation was compacted or resumed during this phase.
 
 ## 6. Closing Next Steps
+
+> **Basinfy Architectural Memory**: When `.basinfy/` is present and an ADR is accepted, persist its summary and constraints via `basinfy_remember` so future sessions recall the decision automatically.
 
 After the ADR is written (and registry optionally updated), close with `AskUserQuestion`.
 

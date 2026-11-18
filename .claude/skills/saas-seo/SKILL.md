@@ -1,9 +1,9 @@
 ---
 name: saas-seo
-description: "Master SaaS SEO command center — audits, technical crawlability, Next.js App Router metadata, Schema.org JSON-LD, GEO (AI Overviews, ChatGPT, Perplexity), Agentic Browsing (llms.txt, WebMCP), and SQLite drift monitoring."
+description: "SaaS SEO, GEO & Agentic Readiness hub — technical, schema, AI search, llms.txt, and drift."
 argument-hint: "[command] [url|args]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-seo/../../hooks/yaml-helper.sh" resolve_config *)
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-seo/../../hooks/yaml-helper.sh" resolve_config *), mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
@@ -13,10 +13,8 @@ Resolved above — use as-is; `--review` overrides `review_mode` for this run.
 
 # SaaS SEO Command Center
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 Master command hub for SaaS search optimization, generative AI search visibility (GEO), autonomous agent readiness, and on-page technical integrity.
 

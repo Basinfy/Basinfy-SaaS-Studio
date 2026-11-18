@@ -1,18 +1,16 @@
 ---
 name: saas-lgpd-incident-response
-description: Execute the LGPD security incident response runbook (Art. 48 LGPD + Resolução CD/ANPD nº 15/2024). Use when user says "tivemos um incidente", "vazamento de dados", "data breach", "preciso comunicar a ANPD", "incident response LGPD", or as part of an audit pipeline preparing the runbook in advance. Encodes the 3-business-day deadline to notify ANPD and data subjects, the 12 mandatory items for ANPD notification, the 7 items for subject notification, and the 5-year retention requirement for ALL incident records (notified or not). Cite Resolution 15/2024 explicitly in outputs.
+description: "Execute ANPD Res. 15/2024 3-business-day breach assessment, notices, and 5-year incident logs."
 argument-hint: "[scope or artifact path]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, AskUserQuestion
+allowed-tools: Read, Glob, Grep, AskUserQuestion, mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
 # Incident Response LGPD
 
-> **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 
 Runbook aderente à **Resolução CD/ANPD nº 15/2024 (RCIS)** + Art. 48 LGPD.

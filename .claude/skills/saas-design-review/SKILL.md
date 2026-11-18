@@ -1,9 +1,9 @@
 ---
 name: saas-design-review
-description: "Reviews one design document for completeness, internal consistency, implementability, and design standards. Before handing to programmers."
+description: "Review a PRD or design spec for completeness, consistency, and implementability."
 argument-hint: "[path-to-design-doc] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-design-review/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/review-receipts.sh check *), Bash(bash .claude/scripts/review-receipts.sh hash *), Bash(bash .claude/scripts/prd-structure-check.sh *), Bash(grep -E '^  - name:' design/registry/entities.yaml), Bash(grep -n -i -E *)
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-design-review/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/review-receipts.sh check *), Bash(bash .claude/scripts/review-receipts.sh hash *), Bash(bash .claude/scripts/prd-structure-check.sh *), Bash(grep -E '^  - name:' design/registry/entities.yaml), Bash(grep -n -i -E *), mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
@@ -17,10 +17,8 @@ wins and `--depth` is ignored — say so. No block → defaults in
 
 # Design Review
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 
 ## Phase 0: Parse Arguments
@@ -166,7 +164,7 @@ spot-read any section the verdict actually turns on.
 - [ ] Has Business Rules & Formulas section (all math, pricing, or quota rules defined) — REQUIRED at `full`; at `standard` REQUIRED whenever the system defines numeric rules (rates, quotas, thresholds, tier costs), else ADVISORY.
 - [ ] Has Edge Cases section (unusual situations handled) — REQUIRED at `full`/`standard`
 - [ ] Has Dependencies section (other systems and external APIs listed) — REQUIRED at `full`/`standard`
-- [ ] Has Configuration & Parameters section (configurable values, feature flags identified) — REQUIRED at `full`; ADVISORY at `standard` unless `workflow_overrides.tuning_knobs` or `configuration_parameters`
+- [ ] Has Configuration & Parameters section (configurable values, feature flags identified) — REQUIRED at `full`; ADVISORY at `standard` unless `workflow_overrides.rate_limits` or `configuration_parameters`
 - [ ] Has Acceptance Criteria section (testable success conditions) — REQUIRED at `full`/`standard`
 
 ---

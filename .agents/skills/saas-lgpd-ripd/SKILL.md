@@ -1,6 +1,6 @@
 ---
 name: saas-lgpd-ripd
-description: Produce a Relatório de Impacto à Proteção de Dados (RIPD / DPIA) under LGPD Art. 38 for high-risk processing activities. Use when user asks "RIPD", "DPIA", "relatório de impacto", "avaliação de impacto LGPD", or when saas-lgpd-data-mapping flagged an activity as high-risk under Resolução ANPD nº 2/2022 Art. 4 (large scale, profiling, sensitive data, minors/elderly, emerging tech, public surveillance, automated decisions). Produces `.lgpd/RIPD/ripd-{slug}.md`. Always cite the assessment methodology.
+description: "Author Data Protection Impact Assessments (RIPD / DPIA) for high-risk flows (LGPD Art. 38)."
 argument-hint: "[scope or artifact path]"
 user-invocable: true
 ---
@@ -9,14 +9,12 @@ user-invocable: true
 
 ## Running this workflow on this client
 
-Run shell commands from the project root. On Windows, use Git Bash for the `bash` commands if `bash` resolves to an unavailable WSL distribution. Shared studio files are under `.claude/`; run the local Studio installer for this project if those files are missing. Read `.claude/docs/config-resolution.md` and apply its defaults when configuration cannot be resolved. Use this client's tools for reads, edits, and structured questions. If structured questions are unavailable, ask in chat and wait when a decision requires approval. Use the client's delegation feature with the role brief in `.claude/agents/` when available. Otherwise perform the specialist checks in sequence and disclose that they were done in one session. If a workflow requires independent sign-off, report it as pending until an independent reviewer can provide it. Treat `Task*` steps as local workflow tracking using the client's equivalent when available. Report missing tools and unexecuted checks explicitly.
+Run commands from the project root (use Git Bash on Windows if `bash` points to an unavailable WSL distro). Shared studio files live in `.claude/`; follow `.agents/PORTABLE-RUNTIME.md` and `.claude/docs/config-resolution.md` for client tools, delegation, and approval rules.
 
 # RIPD — Relatório de Impacto à Proteção de Dados
 
-> **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 
 Art. 38 LGPD: o controlador deve elaborar relatório contendo a descrição dos tipos de dados, metodologia de tratamento e segurança, e análise das salvaguardas.

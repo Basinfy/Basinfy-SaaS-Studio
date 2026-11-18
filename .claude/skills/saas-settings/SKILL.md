@@ -1,18 +1,16 @@
 ---
 name: saas-settings
-description: "View or change project config — effective merged values, or set locally in project.local.yaml."
+description: "Inspect or update `project.yaml` and personal `project.local.yaml` Studio settings."
 argument-hint: "[key | key=value | --local key=value]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Bash(bash "*/.claude/skills/saas-settings/../../hooks/yaml-helper.sh" resolve_setting *), Bash(bash "*/.claude/skills/saas-settings/../../hooks/yaml-helper.sh" get_yaml_key *), Bash(bash "*/.claude/skills/saas-settings/../../hooks/yaml-helper.sh" validate_yaml_enum *), Bash(bash "*/.claude/skills/saas-settings/../../hooks/yaml-helper.sh" validate_enum_value *), Bash(bash "*/.claude/skills/saas-settings/../../hooks/yaml-helper.sh" is_locally_overridable *), Bash(bash .claude/scripts/config-set.sh *), Bash(grep -B14 '^> ### RESERVED' .claude/docs/effects-map.md), Bash(grep -E '^## ')
+allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Bash(bash "*/.claude/skills/saas-settings/../../hooks/yaml-helper.sh" resolve_setting *), Bash(bash "*/.claude/skills/saas-settings/../../hooks/yaml-helper.sh" get_yaml_key *), Bash(bash "*/.claude/skills/saas-settings/../../hooks/yaml-helper.sh" validate_yaml_enum *), Bash(bash "*/.claude/skills/saas-settings/../../hooks/yaml-helper.sh" validate_enum_value *), Bash(bash "*/.claude/skills/saas-settings/../../hooks/yaml-helper.sh" is_locally_overridable *), Bash(bash .claude/scripts/config-set.sh *), Bash(grep -B14 '^> ### RESERVED' .claude/docs/effects-map.md), Bash(grep -E '^## '), mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
 # /saas-settings — view or change project config
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 Manages `project.yaml` (team-wide config, committed) and `project.local.yaml`
 (per-developer overrides, gitignored). Use this skill to inspect current

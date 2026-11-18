@@ -1,6 +1,6 @@
 ---
 name: saas-propagate-design-change
-description: "Finds architecture decisions (ADRs) made stale by a changed PRD and walks through resolving each. Use when the user changed a number or rule in a PRD and asks which ADRs or architecture decisions are now out of date."
+description: "Trace PRD changes across ADRs, stories, and code modules to resolve downstream impact."
 argument-hint: "[path/to/changed-prd.md] [--review full|lean|solo]"
 user-invocable: true
 ---
@@ -9,7 +9,7 @@ user-invocable: true
 
 ## Running this workflow on this client
 
-Run shell commands from the project root. On Windows, use Git Bash for the `bash` commands if `bash` resolves to an unavailable WSL distribution. Shared studio files are under `.claude/`; run the local Studio installer for this project if those files are missing. Read `.claude/docs/config-resolution.md` and apply its defaults when configuration cannot be resolved. Use this client's tools for reads, edits, and structured questions. If structured questions are unavailable, ask in chat and wait when a decision requires approval. Use the client's delegation feature with the role brief in `.claude/agents/` when available. Otherwise perform the specialist checks in sequence and disclose that they were done in one session. If a workflow requires independent sign-off, report it as pending until an independent reviewer can provide it. Treat `Task*` steps as local workflow tracking using the client's equivalent when available. Report missing tools and unexecuted checks explicitly.
+Run commands from the project root (use Git Bash on Windows if `bash` points to an unavailable WSL distro). Shared studio files live in `.claude/`; follow `.agents/PORTABLE-RUNTIME.md` and `.claude/docs/config-resolution.md` for client tools, delegation, and approval rules.
 
 Run `bash .claude/hooks/yaml-helper.sh resolve_config --keys locale,review_mode,review_gate,automation,automation_always_ask,workflow,system_overrides` and use its output below.
 
@@ -21,10 +21,8 @@ to wait. A skipped or dismissed question is not an answer: ask again in plain te
 
 # Propagate Design Change
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 When a PRD changes, the architecture decisions written against it may no longer
 hold. This skill finds every ADR the change touches, compares what the ADR assumed
@@ -49,6 +47,8 @@ The text typed after the skill name, with any `--review <mode>` pair removed, is
 changed PRD. It is required. Missing: "Usage: `/saas-propagate-design-change
 design/prd/[system].md` — give the path to the PRD that changed." Not a file:
 "[path] not found. Check the path and try again."
+
+> **Basinfy Blast-Radius Graph**: When `.basinfy/` is present, run `basinfy_query_script` (`basinfy.discover` + `basinfy.impact`) to trace real AST module dependents in 1 turn before falling back to text search.
 
 ## Phase 2: What changed
 

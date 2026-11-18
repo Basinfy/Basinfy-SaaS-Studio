@@ -1,22 +1,18 @@
 ---
 name: saas-start
-description: "Guides a first-time user through onboarding and picks the right workflow. Use when the user is new, just cloned or installed the studio, has no idea or engine yet, asks where to begin, or wants to bring in an existing product."
+description: "Guided first-time onboarding for layperson founders and developers starting or importing a SaaS."
 argument-hint: "[no arguments]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, AskUserQuestion, Bash(bash .claude/scripts/project-state.sh*), Bash(bash .claude/scripts/set-stage.sh *), Bash(bash .claude/scripts/config-set.sh *)
+allowed-tools: Read, Glob, Grep, AskUserQuestion, Bash(bash .claude/scripts/project-state.sh*), Bash(bash .claude/scripts/set-stage.sh *), Bash(bash .claude/scripts/config-set.sh *), mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
 # Guided Onboarding
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
 
-The entry point for a new user. It assumes no product idea, no tech stack and no prior setup: it reads
-the project, asks where the user is starting from, shows what it assumes about the project, and
-names the one next step. It never runs that step itself.
+
+The entry point for a new user — built especially to welcome **non-technical founders and laypeople (`user_profile: founder`)** as well as experienced developers (`user_profile: developer`). It assumes no product idea, no tech stack and no prior setup: it reads the project, asks where the user is starting from in plain jargon-free language, shows what it assumes about the project, and names (or guides into) the next step. When invoked explicitly as `/saas-start`, Phase 7 hands off cleanly with the exact command; when guiding a layperson in natural-language conversation, explain every step in plain business terms without technical acronyms.
 
 It writes these settings to `project.yaml`, all through helpers, and only after an explicit yes:
 `project.stage` (with its legacy mirror `production/stage.txt`), `modes.rigor` and
@@ -45,7 +41,7 @@ the user's answer in Phase 2.
 | `concept` | `design/prd/product-concept.md` or `design/product-brief.md` exists |
 | `prd_files`, `adr` | Design documents and architecture decisions on disk (they set the stage in Phase 4) |
 | `prototype`, `sprint`, `milestone`, `story` | Other existing work |
-| `origin_url` | Contains `saas-studio-template`, matched case-insensitively: the clone still points at the template repo, so a push or pull request would go there. A fork under another owner is the user's own |
+| `origin_url` | Contains `Basinfy-SaaS-Studio`, matched case-insensitively: the clone still points at the template repo, so a push or pull request would go there. A fork under another owner is the user's own |
 | `stage` | The stage already recorded, if any |
 
 Ignore `phase_inferred`: it guesses from file counts, and a project with code but no design

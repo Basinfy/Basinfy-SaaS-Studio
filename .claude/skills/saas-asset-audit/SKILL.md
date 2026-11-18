@@ -1,18 +1,16 @@
 ---
 name: saas-asset-audit
-description: "Audit assets against naming conventions, file size budgets, format standards. Finds orphaned assets, missing references."
+description: "Audit UI assets, SVGs, and bundles for naming, budget, and orphan compliance."
 argument-hint: "[category|all]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Bash(stat *), Bash(file *), Bash(od *), Bash(wc *), Bash(du *)
+allowed-tools: Read, Glob, Grep, Bash(stat *), Bash(file *), Bash(od *), Bash(wc *), Bash(du *), mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 # Read-only diagnostic skill — no specialist agent delegation needed
 ---
 # Asset Audit
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 ## Measuring file sizes and formats requires Bash
 
@@ -62,7 +60,7 @@ the two happened — a reader cannot tell from a green result.
 
 ## Phase 1: Read Standards
 
-Read the design tokens / asset spec's Asset Standards section (`design/art/saas-design-tokens.md`) and any
+Read the design tokens / asset spec's Asset Standards section (`design/tokens/design-tokens.md`) and any
 asset standards in the relevant design docs — size budgets and format rules come
 from there. The naming patterns are the ones in Phase 3 below, unless the design
 tokens spec states its own. Read the design tokens / asset spec by section: find the heading with

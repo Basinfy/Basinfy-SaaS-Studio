@@ -1,9 +1,9 @@
 ---
 name: saas-test-helpers
-description: "Generate stack-specific test helper libraries — assertion utilities, mock session factories, API test clients in tests/helpers/. Reduces test boilerplate."
+description: "Scaffold stack-specific test helpers, auth mocks, and tenant-isolated DB fixtures."
 argument-hint: "[module-slug or 'base' or 'all']"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Agent, Bash(bash "*/.claude/skills/saas-test-helpers/../../hooks/yaml-helper.sh" resolve_config *)
+allowed-tools: Read, Glob, Grep, Write, Agent, Bash(bash "*/.claude/skills/saas-test-helpers/../../hooks/yaml-helper.sh" resolve_config *), mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
@@ -11,10 +11,8 @@ model: sonnet
 
 # SaaS Test Helpers
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 Generates reusable test utilities, mock tenant factories, authenticated request clients,
 and custom test assertions in `tests/helpers/` to reduce boilerplate across unit,

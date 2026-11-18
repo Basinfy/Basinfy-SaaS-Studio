@@ -1,9 +1,9 @@
 ---
 name: saas-seo-technical
-description: "Audit technical SEO for SaaS across 9 categories — crawlability, indexability, Next.js SSR/SSG rendering, robots.txt AI bot policies, 2MB Googlebot cap, Core Web Vitals, security headers, and IndexNow."
+description: "Audit 9-category technical SaaS SEO — SSR/ISR, robots.txt AI bots, canonicals, and sitemaps."
 argument-hint: "[url]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-seo-technical/../../hooks/yaml-helper.sh" resolve_config *)
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-seo-technical/../../hooks/yaml-helper.sh" resolve_config *), mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
@@ -13,10 +13,8 @@ Resolved above — use as-is; `--review` overrides `review_mode` for this run.
 
 # Technical SEO Audit for SaaS
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 Audits technical SEO fundamentals for modern cloud applications, single-page apps (SPAs), and Next.js 14+ App Router architectures.
 

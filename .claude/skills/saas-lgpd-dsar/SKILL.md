@@ -1,18 +1,16 @@
 ---
 name: saas-lgpd-dsar
-description: Implement endpoints and workflow for data subject access requests (direitos do titular) under LGPD Art. 18. Use when user asks for "DSAR", "direitos do titular", "exportar dados do usuário", "portabilidade LGPD", "exclusão de conta LGPD", "right to be forgotten", or as part of audit pipeline. Covers all 9 rights (confirmação, acesso, correção, anonimização, portabilidade, eliminação, info compartilhamento, info não-consentir, revogação). The 15-day deadline (Art. 19, II) is non-negotiable — encoded in this skill. Outputs `.lgpd/dsar/workflow.md` + endpoint specs.
+description: "Implement Data Subject Access Request (DSAR) endpoints for erasure, access, and portability."
 argument-hint: "[scope or artifact path]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, AskUserQuestion
+allowed-tools: Read, Glob, Grep, AskUserQuestion, mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
 # DSAR — Direitos do Titular (Art. 18 LGPD)
 
-> **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 
 Implementação dos 9 direitos do titular com SLA de **15 dias corridos** (Art. 19, II) para resposta completa. Para ATPP, **30 dias** (Res. 2/2022, Art. 14).

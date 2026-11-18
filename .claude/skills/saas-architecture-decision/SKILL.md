@@ -1,9 +1,9 @@
 ---
 name: saas-architecture-decision
-description: "Create an ADR documenting a technical decision: context, alternatives considered, consequences."
+description: "Create, accept, or retrofit an Architecture Decision Record (ADR) with trade-offs."
 argument-hint: "[title | retrofit <path> | accept <ADR-id>] [--review full|lean|solo]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(wc -c *), Bash(bash "*/.claude/skills/saas-architecture-decision/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/registry.sh *)
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(wc -c *), Bash(bash "*/.claude/skills/saas-architecture-decision/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/registry.sh *), mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
@@ -14,10 +14,8 @@ defaults in `.claude/docs/config-resolution.md`.
 
 # Architecture Decision
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 When this skill is invoked:
 
@@ -92,6 +90,8 @@ Scan `docs/architecture/` for existing ADRs to find the next number.
 **Read `references/5-generate.md` now and follow it** — this phase's steps are in that file, not here. Read it again if the conversation was compacted or resumed during this phase.
 
 ## 6. Closing Next Steps
+
+> **Basinfy Architectural Memory**: When `.basinfy/` is present and an ADR is accepted, persist its summary and constraints via `basinfy_remember` so future sessions recall the decision automatically.
 
 After the ADR is written (and registry optionally updated), close with `AskUserQuestion`.
 

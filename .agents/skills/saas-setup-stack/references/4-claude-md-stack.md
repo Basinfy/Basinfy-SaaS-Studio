@@ -1,84 +1,25 @@
-# /saas-setup-stack — Section 4: Update CLAUDE.md Technology Stack
+# /saas-setup-stack — Section 4: Update Stack Configuration & Reference Docs
 
-> Part of `/saas-setup-stack`. `SKILL.md` names when to read this file; the settings it
-> resolved and the rules under its later headings still apply here.
+> Part of `/saas-setup-stack`. Follow `locale` and `user_profile` (`founder` vs `developer`) from `project.yaml`.
 
-## 4. Update CLAUDE.md Technology Stack
+## 4.1 Founder / Layperson Golden Stack Shortcut (`user_profile: founder`)
 
-### Language Selection (Next.js only)
+When `project.user_profile` is `founder` (or the user states they are non-technical / unsure which technologies to pick), DO NOT overwhelm them with raw framework or ORM jargon. Present the **1-Click Recommended SaaS Golden Stack** in plain business terms:
 
-If Next.js was chosen, ask the user which language configuration to use **before** showing the proposed Technology Stack:
+- **`(Recommended) Complete SaaS Golden Stack`**:
+  - **Screens & App (`Next.js + Tailwind/shadcn`)**: Fast, modern web & mobile-ready interface.
+  - **Customer Vault & Login (`Supabase PostgreSQL + Prisma`)**: Secure database with automatic company/customer isolation.
+  - **Automatic Billing (`Stripe`)**: Monthly/annual card subscriptions, checkout, and customer cancellation portal.
+  - **Cloud Hosting (`Vercel`)**: Instant deployment with generous free tier.
+- **`Choose technologies manually (Developer Mode)`**: Full selection across Next.js, FastAPI (Python), Go, Cloudflare Workers, Drizzle, Clerk, and AWS.
 
-> "Next.js supports two primary options:
->
->   **A) TypeScript (Recommended)** — Full static type-safety, autocompletion, best integration with App Router and server components.
->   **B) JavaScript** — Dynamic, zero build-step typing. Best for rapid scripts and prototypes.
->
-> Which will this project primarily use?"
+## 4.2 Language Selection (Developer Mode — Next.js)
 
-Record the choice (default: TypeScript). It determines the CLAUDE.md template, naming conventions, specialist routing, and which agent is spawned for code files throughout the project.
+When in `developer` mode with Next.js:
+- **A) `(Recommended) TypeScript`** — Static type-safety, autocompletion, and end-to-end schema validation.
+- **B) `JavaScript`** — Dynamic scripting for lightweight prototypes.
 
-### Backend Language (FastAPI & Cloudflare)
+## 4.3 Record Stack in `CLAUDE.md` (When Applicable) and `docs/engine-reference/`
 
-- **FastAPI**: Python 3.11+ (async, Pydantic v2).
-- **Cloudflare Workers**: TypeScript (Wrangler + Hono) or Go. Default to TypeScript.
-
----
-
-Read `CLAUDE.md` and show the user the proposed Technology Stack changes.
-Ask: "May I write these stack settings to `CLAUDE.md`?"
-
-Wait for confirmation before making any edits.
-
-Update the Technology Stack section, replacing the `[CHOOSE]` placeholders with the actual values:
-
-**For Next.js** — use the template matching the language chosen above. See `references/saas-stack-config.md` (**A1**):
-```markdown
-- **Frontend**: Next.js 15+ (App Router), React 19, TypeScript
-- **Styling**: Tailwind CSS + shadcn/ui (Radix UI)
-- **Backend**: Next.js Server Actions & Route Handlers
-- **Database & ORM**: PostgreSQL (Supabase / Neon) + Prisma / Drizzle ORM
-- **Authentication**: Supabase Auth / Clerk / NextAuth (Auth.js)
-- **Payments & Billing**: Stripe Checkout, Customer Portal & Webhooks
-- **Testing**: Vitest (Unit/Integration) + Playwright (E2E)
-- **Deployment**: Vercel / Cloudflare Pages
-```
-
-**For FastAPI:**
-```markdown
-- **Frontend**: Next.js / React (Vite), TypeScript, Tailwind CSS
-- **Backend**: FastAPI (Python 3.11+), Pydantic v2, Uvicorn
-- **Database & ORM**: PostgreSQL + SQLAlchemy 2.0 / Alembic migrations
-- **Authentication**: OAuth2 JWT Bearer tokens / Supabase Auth
-- **Payments & Billing**: Stripe Webhooks & Subscription billing
-- **Testing**: Pytest (Backend) + Vitest / Playwright (Frontend)
-- **Deployment**: Docker container on AWS ECS / Fly.io / GCP Cloud Run
-```
-
-**For Cloudflare Workers:**
-```markdown
-- **Frontend**: Next.js / React / Cloudflare Pages, TypeScript, Tailwind CSS
-- **Backend**: Cloudflare Workers (TypeScript / Hono)
-- **Database & Storage**: Cloudflare D1 (SQL) / KV / R2
-- **Authentication**: JWT session tokens / Clerk / WorkOS
-- **Payments & Billing**: Stripe API SDK & Webhook handlers
-- **Testing**: Vitest + Miniflare
-- **Deployment**: Cloudflare Workers via Wrangler CLI
-```
-
-### Stack reference import
-
-In the same CLAUDE.md write, set the **Engine Version Reference** import to the
-chosen engine. Find the line marked `ENGINE-REFERENCE-IMPORT` (an
-`@docs/engine-reference/<engine>/VERSION.md` line under its comment) and Edit it
-to point at the configured engine:
-- Next.js → `@docs/engine-reference/nextjs/VERSION.md`
-- FastAPI → `@docs/engine-reference/fastapi/VERSION.md`
-- Cloudflare → `@docs/engine-reference/cloudflare/VERSION.md`
-
-This keeps a FastAPI or Cloudflare project from loading the Next.js reference in every
-session. It is idempotent — re-running `/saas-setup-stack` for a different
-engine rewrites the same line. (The target `docs/engine-reference/<engine>/`
-directory is created in Section 7, Populate Engine Reference Docs, if it does not yet exist.)
-
----
+Show the selected stack summary clearly and ask: `"May I write these stack settings to CLAUDE.md and project.yaml?"` (translated to PT-BR when `locale: pt-BR`).
+- If `CLAUDE.md` contains a `## Technology Stack` section or `ENGINE-REFERENCE-IMPORT` marker, update it in place; if `CLAUDE.md` uses the compact Master Constitution (where `project.yaml` is the single source of truth), keep `CLAUDE.md` intact and record the version reference under `docs/engine-reference/<stack>/VERSION.md` (or `docs/stack-reference/<stack>/VERSION.md`).

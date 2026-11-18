@@ -1,18 +1,16 @@
 ---
 name: saas-lgpd-dpa
-description: Draft and review Data Processing Agreements (DPA) with operadores under LGPD Art. 39. Use when user mentions 'DPA', 'contrato com operador', 'cláusulas LGPD', 'data processing agreement', or onboarding a new third-party service (analytics, cloud, payment, email, SMS, observability). Outputs DPA template + per-vendor sheets in `.lgpd/vendors/`.
+description: "Draft and review Data Processing Agreements (DPAs) with third-party operators (LGPD Art. 39)."
 argument-hint: "[scope or artifact path]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, AskUserQuestion
+allowed-tools: Read, Glob, Grep, AskUserQuestion, mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
 # DPA — Data Processing Agreement (Art. 39 LGPD)
 
-> **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 
 Contrato entre controlador e operador. Sem cláusulas adequadas, controlador responde pelo operador (Art. 42).

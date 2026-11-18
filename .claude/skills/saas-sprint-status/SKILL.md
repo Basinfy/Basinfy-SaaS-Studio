@@ -1,9 +1,9 @@
 ---
 name: saas-sprint-status
-description: "Fast, concise sprint snapshot — burndown and emerging risks for situational awareness. 'How is the sprint going?'"
+description: "Report concise sprint progress, burndown status, and emerging delivery blockers."
 argument-hint: "[sprint-number or blank for current]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Bash(bash "*/.claude/skills/saas-sprint-status/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash "*/.claude/skills/saas-sprint-status/../../scripts/story-status.sh"), Bash(bash .claude/scripts/story-status.sh*)
+allowed-tools: Read, Glob, Grep, Bash(bash "*/.claude/skills/saas-sprint-status/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash "*/.claude/skills/saas-sprint-status/../../scripts/story-status.sh"), Bash(bash .claude/scripts/story-status.sh*), mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: haiku
 ---
 
@@ -13,10 +13,8 @@ model: haiku
 
 # Sprint Status
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 This is a fast situational awareness check, not a sprint review. It reads the
 current sprint plan and story files, scans for status markers, and produces a

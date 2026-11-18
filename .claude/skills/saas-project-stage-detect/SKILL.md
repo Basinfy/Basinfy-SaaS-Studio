@@ -1,18 +1,16 @@
 ---
 name: saas-project-stage-detect
-description: "Analyze project state, detect stage, identify gaps, recommend next steps. 'Where are we in development?'"
+description: "Detect current SaaS development stage, artifact completeness, and recommended next steps."
 argument-hint: "[optional: role filter like 'programmer' or 'designer']"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Bash(bash "*/.claude/skills/saas-project-stage-detect/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/artifact-check.sh), Bash(bash ".claude/scripts/artifact-check.sh"), Bash(bash ./.claude/scripts/artifact-check.sh), Bash(bash .claude/scripts/artifact-check.sh *), Bash(bash ".claude/scripts/artifact-check.sh" *), Bash(bash ./.claude/scripts/artifact-check.sh *)
+allowed-tools: Read, Glob, Grep, Write, Bash(bash "*/.claude/skills/saas-project-stage-detect/../../hooks/yaml-helper.sh" resolve_config *), Bash(bash .claude/scripts/artifact-check.sh), Bash(bash ".claude/scripts/artifact-check.sh"), Bash(bash ./.claude/scripts/artifact-check.sh), Bash(bash .claude/scripts/artifact-check.sh *), Bash(bash ".claude/scripts/artifact-check.sh" *), Bash(bash ./.claude/scripts/artifact-check.sh *), mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: haiku
 # Read-only diagnostic skill — no specialist agent delegation needed
 ---
 # Project Stage Detection
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 This skill scans your project to determine its current development stage, completeness
 of artifacts, and gaps that need attention. It's especially useful when:
@@ -82,7 +80,7 @@ track, and the judgement calls.
 - Count content & copy docs in `design/content/`
 - Count UX specs in `design/ux/`
 
-**Source Code** (the code root — `src/` Next.js, `Assets/` FastAPI, `Source/` Cloudflare; resolve per `.claude/docs/code-root-resolution.md`):
+**Source Code** (the code root — `src/` Next.js, `app/` FastAPI, `src/` Cloudflare; resolve per `.claude/docs/code-root-resolution.md`):
 - Count source files (language-agnostic)
 - Identify major systems (directories with 5+ files)
 - Check for core/, core business workflow/, ai/, networking/, ui/ directories

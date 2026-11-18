@@ -1,18 +1,16 @@
 ---
 name: saas-lgpd-legacy-retrofit
-description: Run a gap analysis and retrofit plan for an existing system that wasn't built with LGPD in mind. Use when user asks 'auditar projeto legado LGPD', 'gap analysis LGPD', 'sistema antigo LGPD', 'temos LGPD?', 'estamos em compliance?', or when invoking saas-lgpd-audit on a legacy codebase. Produces prioritized remediation plan in `.lgpd/gaps.md`. Entry point for Pipeline B.
+description: "Audit and retrofit production legacy systems for LGPD compliance without breaking uptime."
 argument-hint: "[scope or artifact path]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, AskUserQuestion
+allowed-tools: Read, Glob, Grep, AskUserQuestion, mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
 # Legacy Retrofit — LGPD Gap Analysis
 
-> **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 
 Skill de entrada para auditar e remediar sistemas legados. Não tenta resolver tudo de uma vez — produz **plano priorizado**.

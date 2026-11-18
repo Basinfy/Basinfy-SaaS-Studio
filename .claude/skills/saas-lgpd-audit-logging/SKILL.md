@@ -1,18 +1,16 @@
 ---
 name: saas-lgpd-audit-logging
-description: Design and implement immutable, hash-chained audit logging for accountability (LGPD Art. 6, X) and incident registration (Res. 15/2024 Art. 10, 5-year retention). Use when user asks 'audit log', 'log de auditoria', 'logging LGPD', 'accountability log', or as part of audit pipeline. Outputs schema + middleware patterns for Next.js.
+description: "Implement immutable, hash-chained accountability audit logs (LGPD Art. 6 X & Res. 15/2024)."
 argument-hint: "[scope or artifact path]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, AskUserQuestion
+allowed-tools: Read, Glob, Grep, AskUserQuestion, mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
 # Audit Logging
 
-> **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 
 Log imutável encadeado para prova de conformidade (Art. 6º, X — responsabilização) e registro de incidentes (Art. 10 Res. 15/2024 — 5 anos).

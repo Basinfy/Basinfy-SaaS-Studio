@@ -1,9 +1,9 @@
 ---
 name: saas-seo-agentic
-description: "Audit and implement AI Agent readiness (IsItAgentReady Level 0-5 + Lighthouse Agentic Browsing X/N) — llms.txt, Markdown negotiation, Link headers, DNS-AID, WebMCP, MCP/A2A/Agent-Skills discovery, Web Bot Auth, OAuth/Auth.md, Poppy, and agentic commerce (x402, MPP, ACP, UCP)."
+description: "Audit & implement IsItAgentReady Level 0-5 standards (RFC 9727, llms.txt, MCP cards, JWKS)."
 argument-hint: "[audit|fix|lighthouse] [url]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-seo-agentic/../../hooks/yaml-helper.sh" resolve_config *)
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, Bash(bash "*/.claude/skills/saas-seo-agentic/../../hooks/yaml-helper.sh" resolve_config *), mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
@@ -13,10 +13,8 @@ Resolved above — use as-is; `--review` overrides `review_mode` for this run.
 
 # Agentic Browsing & Agent-Native Readiness for SaaS
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 Audits and engineers SaaS platforms across **25 agent-readiness standards** (5 categories + IsItAgentReady Level 0–5 maturity scale) and Google Lighthouse **Agentic Browsing** ($X/N$).
 

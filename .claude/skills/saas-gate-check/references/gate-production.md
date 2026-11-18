@@ -8,7 +8,7 @@
 **Required Artifacts:**
 - [ ] Vertical slice exists in `prototypes/` with a REPORT.md (run `/saas-vertical-slice`) — **recommended, not blocking**; if absent, surface as CONCERNS
 - [ ] First sprint plan exists in `production/sprints/`
-- [ ] Design tokens specification is complete and DS-DESIGN-TOKENS sign-off verdict is recorded in `design/art/saas-design-tokens.md` — where `review_mode` skips that gate (`lean`, `solo`), a `SKIPPED` sign-off line `/saas-design-tokens` records stands in for it, and a header still reading `[Not yet reviewed]` on such a project reads "sign-off skipped — [mode] mode", never missing
+- [ ] Design tokens specification is complete and DS-DESIGN-TOKENS sign-off verdict is recorded in `design/tokens/design-tokens.md` — where `review_mode` skips that gate (`lean`, `solo`), a `SKIPPED` sign-off line `/saas-design-tokens` records stands in for it, and a header still reading `[Not yet reviewed]` on such a project reads "sign-off skipped — [mode] mode", never missing
 - [ ] Entity inventory exists at `design/assets/entity-inventory.md` (recommended — run `/saas-asset-spec` with no arguments to generate collaboratively from PRDs + design tokens)
 - [ ] All MVP-tier PRDs from systems index are complete
 - [ ] Master architecture document exists at `docs/architecture/architecture.md`

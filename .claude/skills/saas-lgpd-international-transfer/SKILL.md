@@ -1,18 +1,16 @@
 ---
 name: saas-lgpd-international-transfer
-description: Set up international data transfers per LGPD Arts. 33-36 and Resolução CD/ANPD nº 19/2024 (Cláusulas-Padrão Contratuais brasileiras). Use when user asks 'transferência internacional', 'AWS US LGPD', 'cláusulas-padrão', 'SCCs Brasil', 'data residency', or onboarding any operator outside Brazil. Outputs per-vendor transfer assessment in `.lgpd/transfers/`.
+description: "Audit cross-border data transfers and Standard Contractual Clauses (ANPD Res. 19/2024)."
 argument-hint: "[scope or artifact path]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, AskUserQuestion
+allowed-tools: Read, Glob, Grep, AskUserQuestion, mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
 # Transferência Internacional de Dados
 
-> **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 
 Arts. 33-36 LGPD + **Resolução CD/ANPD nº 19/2024** (Cláusulas-Padrão Contratuais brasileiras).

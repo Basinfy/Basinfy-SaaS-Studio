@@ -1,18 +1,16 @@
 ---
 name: saas-lgpd-eca-digital-minors
-description: Implement obligations under Lei nº 15.211/2025 (ECA Digital), in force since 17 March 2026, for platforms accessed by minors or 'likely to be accessed' by them. Use when user mentions 'ECA Digital', 'menores', 'crianças e adolescentes', 'verificação de idade', 'controle parental', or when the project may have users under 18 (community, social media, education, content streaming). Covers age verification, parental linking, profiling ban, random rewards ban, transparency reports.
+description: "Enforce Lei 15.211/2025 (ECA Digital) age gating, parental consent, and minor protections."
 argument-hint: "[scope or artifact path]"
 user-invocable: true
-allowed-tools: Read, Glob, Grep, AskUserQuestion
+allowed-tools: Read, Glob, Grep, AskUserQuestion, mcp__basinfy__basinfy_query_script, mcp__basinfy__basinfy_discover, mcp__basinfy__basinfy_prepare_edit, mcp__basinfy__basinfy_prepare_create, mcp__basinfy__basinfy_impact, mcp__basinfy__basinfy_remember, mcp__basinfy__basinfy_recall, Bash(basinfy *)
 model: sonnet
 ---
 
 # ECA Digital — Lei nº 15.211/2025
 
-> **Interaction Localization Rule**:
-> When locale: pt-BR (or user speaks Portuguese), ALL questions (AskUserQuestion / ask_question), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and technical documentation MUST remain in English (except Brazilian statutory compliance documents under .lgpd/).
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 
 Em vigor desde **17 de março de 2026**. Fiscalizada pela ANPD (Decreto 12.622/2025). Aplicável a fornecedores direcionados a menores **OU de acesso provável** por eles — captura plataformas generalistas (Discord, redes sociais, jogos, lojas, sistemas operacionais).

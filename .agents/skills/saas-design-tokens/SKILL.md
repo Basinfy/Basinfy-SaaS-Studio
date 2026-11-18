@@ -1,6 +1,6 @@
 ---
 name: saas-design-tokens
-description: "Author the Design Tokens & Semantic UI Spec — visual identity, color scales, typography, and component styling gating UI production. Run before /saas-map-features."
+description: "Author semantic UI design tokens, color scales, typography, and component primitives."
 argument-hint: "[--review full|lean|solo]"
 user-invocable: true
 ---
@@ -9,7 +9,7 @@ user-invocable: true
 
 ## Running this workflow on this client
 
-Run shell commands from the project root. On Windows, use Git Bash for the `bash` commands if `bash` resolves to an unavailable WSL distribution. Shared studio files are under `.claude/`; run the local Studio installer for this project if those files are missing. Read `.claude/docs/config-resolution.md` and apply its defaults when configuration cannot be resolved. Use this client's tools for reads, edits, and structured questions. If structured questions are unavailable, ask in chat and wait when a decision requires approval. Use the client's delegation feature with the role brief in `.claude/agents/` when available. Otherwise perform the specialist checks in sequence and disclose that they were done in one session. If a workflow requires independent sign-off, report it as pending until an independent reviewer can provide it. Treat `Task*` steps as local workflow tracking using the client's equivalent when available. Report missing tools and unexecuted checks explicitly.
+Run commands from the project root (use Git Bash on Windows if `bash` points to an unavailable WSL distro). Shared studio files live in `.claude/`; follow `.agents/PORTABLE-RUNTIME.md` and `.claude/docs/config-resolution.md` for client tools, delegation, and approval rules.
 
 Run `bash .claude/hooks/yaml-helper.sh resolve_config --keys locale,review_mode,automation,workflow,docs.density` and use its output below.
 
@@ -18,10 +18,8 @@ defaults in `.claude/docs/config-resolution.md`.
 
 # Design Tokens & Semantic UI Spec
 
-> **Interaction Localization Rule**:
-> When `locale: pt-BR` (or user speaks Portuguese), ALL questions (`AskUserQuestion` / `ask_question`), confirmation prompts, and selectable options MUST be translated and presented in **Brazilian Portuguese (PT-BR)**.
-> Any English question text or options in this skill are illustrative examples — NEVER display English questions or options to a Portuguese developer.
-> Internal reasoning, code synthesis, tests, and documentation files MUST remain in English.
+> **Locale & User Profile**: Match `locale` (`pt-BR` → natural Brazilian Portuguese questions/options, overriding English examples; `en` → English) and `user_profile` (`founder` → plain business language with `(Recomendado)` first, zero tech jargon; `developer` → technical). Keep code/tests in English.
+
 
 The **Design Tokens & Semantic UI Spec** establishes the foundational design language,
 semantic color system, typography scale, spacing tokens, and component styling for the entire
@@ -148,7 +146,7 @@ Specify visual standards for core UI building blocks:
 
 ## Phase 4: Save & Export
 
-Write the completed specification to `design/ui/design-tokens.md` (and generate `src/styles/tokens.css` or Tailwind theme values if source directory exists).
+Write the completed specification to `design/tokens/design-tokens.md` (and generate `src/styles/tokens.css` or Tailwind theme values if source directory exists).
 
 ---
 
