@@ -120,13 +120,14 @@ phases:
 
       - id: design-tokens
         name: "Design System & Tokens"
-        command: /saas-design-system
+        command: /saas-design-tokens
         required: true
         artifact:
           any_of:
+            - glob: "design/tokens/design-tokens.md"
             - glob: "design/tokens/tokens.json"
             - glob: "design/tokens/saas-design-system-tokens.md"
-            - glob: "design/art/saas-design-tokens.md"
+            - glob: "design/ui/design-tokens.md"
         description: "Author the visual design system specification, color palettes, typography, and UI tokens"
 
       - id: frontend-taste
@@ -493,6 +494,18 @@ phases:
           glob: ".lgpd/STATUS.md"
         description: "Verify privacy-by-design, legal bases, ROPA, consent ledgers, DSAR endpoints, and incident runbook"
 
+      - id: seo-agentic-audit
+        name: "SEO, GEO & Agentic Readiness"
+        command: /saas-seo
+        required: false
+        description: "Audit technical SEO, JSON-LD schema, GEO visibility, llms.txt, and IsItAgentReady Level 0-5 standards"
+
+      - id: team-content
+        name: "Product Copy & Transactional Content"
+        command: /saas-team-content
+        required: false
+        description: "Polish microcopy, empty/error states, transactional email flows, and user documentation"
+
       - id: localize-qa
         name: "Localization QA"
         command: /saas-localize
@@ -533,3 +546,15 @@ phases:
         command: /saas-team-release
         required: false
         description: "Release candidate deployment, production smoke check, and Go/No-Go sign-off across release leads"
+
+      - id: post-launch-monitor
+        name: "Post-Launch Telemetry & SLA Monitor"
+        command: /saas-post-launch-monitor
+        required: false
+        description: "Monitor live production error rates, latency budgets, conversion funnels, and Stripe webhooks"
+
+      - id: contributor-onboard
+        name: "Team & Agent Onboarding Doc"
+        command: /saas-onboard
+        required: false
+        description: "Generate role-tailored onboarding guide for new developers or AI sessions"

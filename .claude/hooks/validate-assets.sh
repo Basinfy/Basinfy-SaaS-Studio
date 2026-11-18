@@ -32,7 +32,7 @@ fi
 
 # Claude Code PostToolUse hook: Validates asset files after Write/Edit
 # Checks JSON validity of data files and, in Next.js's assets/, naming conventions.
-# Asset roots per engine: Next.js assets/, FastAPI Assets/, Cloudflare Content/.
+# Asset roots per engine: public/, design/tokens/, src/assets/.
 #
 # Exit behavior:
 #   exit 0 = success or advisory warnings only
@@ -86,7 +86,7 @@ shopt -u nocasematch
 
 # Only check files under an asset root.
 case "$REL_PATH" in
-    assets/*|Assets/*|Content/*) ;;
+    public/*|design/tokens/*|assets/*) ;;
     *) exit 0 ;;
 esac
 
@@ -109,7 +109,7 @@ esac
 # BLOCKING: Check JSON validity for data files, in any engine's data folder --
 # the same set validate-commit.sh blocks on.
 # Invalid JSON will break runtime loading -- this is a build-breaking error
-if echo "$REL_PATH" | grep -qE '^(assets|Assets|Content)/(.*/)?[Dd]ata/.*\.[Jj][Ss][Oo][Nn]$'; then
+if echo "$REL_PATH" | grep -qE '^(public|design/tokens|assets)/(.*/)?[Dd]ata/.*\.[Jj][Ss][Oo][Nn]$'; then
     FILE_PATH="$REL_PATH"
     if [ -f "$FILE_PATH" ]; then
         # Find a working Python command

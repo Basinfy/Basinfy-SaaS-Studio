@@ -89,9 +89,9 @@ shopt -u nocasematch
 _vw_go=0
 case "$INPUT" in *'"agent_type"'*) _vw_go=1 ;; esac
 case "$_VW_P" in
-  *EPIC.md*|*project.nextjs*|*helpers*|*tech-debt-register*|*engine-reference*) _vw_go=1 ;;
+  *EPIC.md*|*next.config.mjs*|*helpers*|*tech-debt-register*|*engine-reference*) _vw_go=1 ;;
   *project.yaml*|*project.local.yaml*|*review-mode.txt*|*prototypes*|*strings*) _vw_go=1 ;;
-  *tests*|*.github*|*production*|*Assets*|*Source*) _vw_go=1 ;;
+  *tests*|*.github*|*production*|*src*|*app*) _vw_go=1 ;;
 esac
 case "$_VW_REST" in *prototypes*) _vw_go=1 ;; esac
 [ "$_vw_go" = 1 ] || exit 0

@@ -47,7 +47,7 @@ FRESH_PROJECT=true
 if [ -f "project.yaml" ] && [ -f ".claude/hooks/yaml-helper.sh" ]; then
   source .claude/hooks/yaml-helper.sh
   ENGINE_NAME=$(get_yaml_key project.yaml stack.frontend 2>/dev/null)
-  [ -z "$ENGINE_NAME" ] && ENGINE_NAME=$(get_yaml_key project.yaml stack.frontend 2>/dev/null)
+  [ -z "$ENGINE_NAME" ] && ENGINE_NAME=$(get_yaml_key project.yaml stack.backend 2>/dev/null)
   [ -z "$ENGINE_NAME" ] && ENGINE_NAME=$(get_yaml_key project.yaml framework.name 2>/dev/null)
   if [ -n "$ENGINE_NAME" ]; then
     FRESH_PROJECT=false
@@ -66,7 +66,7 @@ if [ -f "docs/specs/product-concept.md" ] || [ -f "docs/specs/product-brief.md" 
 fi
 
 # Check if source code exists across common roots
-for _root in src app pages server api lib Assets Source; do
+for _root in src app pages server api lib backend cmd; do
   [ -d "$_root" ] || continue
   SRC_CHECK=$(find "$_root" -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.py" -o -name "*.go" -o -name "*.rs" -o -name "*.sql" -o -name "*.prisma" -o -name "*.ts" -o -name "*.cs" \) 2>/dev/null | head -1)
   if [ -n "$SRC_CHECK" ]; then
@@ -146,7 +146,7 @@ fi
 #
 # Checks 1, 3 and 4 were all hardcoded to `src/`, which .claude/docs/directory-
 # structure.md defines as the Next.js/standard row of the code-root table -- FastAPI uses
-# `Assets/`, Cloudflare `Source/`. On those two engines every directory test below
+# `app/`, Cloudflare `src/`. On those two engines every directory test below
 # failed, the source-file count came back 0, and NONE of the three checks ran.
 # A project with 200 undocumented FastAPI systems produced the same empty output
 # as a fully documented one.

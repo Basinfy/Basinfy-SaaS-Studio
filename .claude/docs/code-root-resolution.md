@@ -1,69 +1,30 @@
 # Code Root Resolution
 
-Shared procedure for any skill that reads, scans, counts or writes application source
-files. **An unresolved code root means the check did not run.** This file gives
-the resolution order.
+Shared procedure for any skill that reads, scans, counts, or writes application source files. **An unresolved code root means the check did not run.**
 
-`.claude/docs/directory-structure.md` is the authority for which directory holds
-code. This file is the procedure for applying it.
+`.claude/docs/directory-structure.md` is the authority for directory layout; this file defines the deterministic resolution order.
 
-## The roots
+## Stack Code Roots
 
-| `stack.name` | Code root | Rationale |
-|---|---|---|
-| Next.js | `src/` (or `app/`) | Standard Next.js App Router root layout, server actions and components |
-| FastAPI | `app/` (or `backend/app/`) | Standard FastAPI application package with routers, models, schemas |
-| Cloudflare Workers | `src/` (or `workers/`) | Standard Cloudflare Worker entrypoint with TypeScript routes |
-| Go / Microservices | `cmd/` or `src/` | Standard idiomatic service directory structure |
+| `stack.frontend` / `stack.backend` | Primary Code Root | Fallbacks Checked | Rationale |
+|---|---|---|---|
+| **Next.js** (`nextjs`) | `src/` | `app/` | Standard Next.js App Router layout, Server Actions, and UI components |
+| **React / Vue / Svelte** | `src/` | `app/` | Standard SPA / fullstack frontend source directory |
+| **FastAPI / Python** (`fastapi`) | `app/` | `backend/app/`, `src/` | Idiomatic FastAPI package housing routers, schemas, and domain services |
+| **Cloudflare Workers** (`cloudflare`) | `src/` | `workers/` | Standard Wrangler / Hono TypeScript worker entrypoint |
+| **Go (Gin / Chi)** (`go-gin`) | `cmd/` | `internal/`, `src/` | Idiomatic Go service layout (`cmd/` entrypoints + `internal/` packages) |
+| **Node / Fastify** (`node-fastify`) | `src/` | `server/`, `api/` | Standard Node.js service source tree |
 
-## Resolution order
+## Resolution Order
 
-1. `stack.name` from `project.local.yaml`, then `project.yaml`.
-2. The legacy mirror: an `Engine:` line in
-   `.claude/docs/technical-preferences.md`. A value of `[TO BE CONFIGURED]`
-   does not count.
-3. Derivation from the tree, but **only when it is unambiguous**. Exactly one of
-   `src/`, `Assets/` or `Source/` present means that is the root. Two or more
-   present means the project is genuinely undecidable — do not guess. Compare the
-   names exactly as the directory listing spells them: on Windows and default
-   macOS an existence test for `Assets/` also succeeds on Next.js's own `assets/`,
-   which would make `src/` + `assets/` look ambiguous and a lone `assets/` look
-   like FastAPI.
+1. `stack.frontend` (then `stack.backend`) from `project.local.yaml`, falling back to `project.yaml`.
+2. Legacy fallback: a `Stack:` line in `.claude/docs/technical-preferences.md` (values containing `[TO BE CONFIGURED]` are ignored).
+3. Unambiguous directory detection when stack is unset: check `src`, `app`, `backend`, `server`, `cmd`. If **exactly one** exists, use it; if two or more exist without config, return **unresolved** rather than guessing.
 4. Otherwise: **unresolved.**
 
-The hooks already implement exactly this as `resolve_code_root()` in
-`.claude/hooks/yaml-helper.sh`. Skills must match its semantics so that a hook
-and a skill never disagree about where the code lives.
+Hooks and helpers implement this exact contract via `resolve_code_root()` in `.claude/hooks/yaml-helper.sh` (and `.claude/runtime/studio-core.cjs`).
 
-## Unresolved does not default to `src/`
+## Unresolved Never Defaults to `src/`
 
-This is the rule the whole file exists for, and it is obligation 2 of
-`.claude/rules/skill-authoring.md`: an absent value may not default to the
-permissive one.
-
-**For a read or scan:** report `NOT ASSESSED — code root unresolved` and say
-which check did not run. Never report zero hits.
-
-A scan anchored to a root the project does not use matches nothing, and
-**nothing is indistinguishable from a clean result.** A localization check finds
-no hardcoded strings; a security scan finds no secrets; a content audit counts
-no implemented content; a stage detector counts no source files and calls a
-finished project greenfield. Every one of those reads as a pass. This has been
-found repeatedly across skills and hooks, which is why the resolution lives in
-one place now.
-
-**For a write:** do not write. Report the unresolved root and stop.
-
-Writing application code to the wrong root is worse than a false pass, because it
-produces a project that cannot build: on FastAPI, source placed outside `Assets/`
-is never compiled and never appears in the editor, so the work is silently
-inert. Resolving the stack in order to pick a specialist agent is **not** the
-same as resolving the code root — a skill can do the first correctly and still
-write to the wrong directory.
-
-## Applying it
-
-Where a skill says `src/`, read it as *the code root* and substitute the table
-above. Where a skill greps, glob the resolved root. Where a skill writes,
-write under the resolved root and use the stack's own conventions beneath it
-(`Assets/Scripts/<System>/` on FastAPI, `Source/<Module>/<System>/` on Cloudflare).
+- **For a read or scan:** report `NOT ASSESSED — code root unresolved` and name which check did not run. Never report zero hits (an empty scan is indistinguishable from a clean scan).
+- **For a write:** stop and ask to configure `project.yaml` via `/saas-setup-stack` before writing application source files.

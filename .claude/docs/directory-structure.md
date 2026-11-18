@@ -6,7 +6,7 @@
 ├── project.yaml                 # Machine-readable project config — stack, modes, stage (source of truth)
 ├── project.local.yaml.example   # Developer local overrides template (gitignored)
 ├── .claude/                     # Multi-tier agents, skills, hooks, rules, director gates, docs
-│   ├── agents/                  # 49 specialized agents across 3 tiers
+│   ├── agents/                  # 50 specialized agents across 3 tiers
 │   ├── director-gates/          # 28 formal phase gate acceptance criteria
 │   ├── docs/                    # Workflow catalog, effect maps, config resolution, templates
 │   ├── hooks/                   # Lifecycle, pre-commit validation, and deep-merge scripts

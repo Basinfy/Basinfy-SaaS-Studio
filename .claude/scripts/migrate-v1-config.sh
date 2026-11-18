@@ -352,11 +352,11 @@ TOUCH=$(tp_get "Input & Platform" "Touch Support")
 N_CLASSES=$(tp_get "Naming Conventions" "Classes")
 N_VARS=$(tp_get "Naming Conventions" "Variables")
 N_CONST=$(tp_get "Naming Conventions" "Constants")
-# The v1.0 template names these two keys `Signals/Events` and `Scenes/Prefabs`;
+# The v1.0 template names these two keys `Signals/Events` and `Scenes/Components`;
 # a hand-trimmed file may carry the short form. The key is a regex, so accept both.
 N_SIG=$(tp_get "Naming Conventions" "Signals(/Events)?")
 N_FILES=$(tp_get "Naming Conventions" "Files")
-N_SCENES=$(tp_get "Naming Conventions" "Scenes(/Prefabs)?")
+N_SCENES=$(tp_get "Naming Conventions" "Scenes(/Components)?")
 
 P_FPS=$(num "$(tp_get "Performance Budgets" "Target Framerate")")
 P_BUDGET=$(num "$(tp_get "Performance Budgets" "Frame Budget")")

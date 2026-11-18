@@ -721,7 +721,7 @@ No documents are auto-deleted, auto-generated, or blocked. The setting only affe
 > `modes:`.
 
 **Priority chain:** the three `workflow_overrides` **boolean flags**
-(`edge_cases`, `tuning_knobs`, `design_tokens_strict`) are *additive* on top of the
+(`edge_cases`, `rate_limits`, `design_tokens_strict`) are *additive* on top of the
 chosen `workflow` level — they make things stricter, never looser. None of them
 has a value that opts out of a requirement the workflow level imposes.
 
@@ -1300,7 +1300,7 @@ closing, or produces a warning and lets work continue — per test type
 
 > **Different axis from `workflow`.** `workflow` controls *what docs are required.*
 > `team.size` controls *which agents exist to make them.* A solo dev on
-> `workflow: full` still doesn't need all 49 agents — they need the same coverage
+> `workflow: full` still doesn't need all 50 agents — they need the same coverage
 > from a smaller active set.
 
 ---
@@ -1311,7 +1311,7 @@ closing, or produces a warning and lets work continue — per test type
 |-------|-----------|-------|
 | `individual` | Core 8: `delivery-producer`, `lead-product-manager`, `backend-engineer`, stack-specialist (stack-driven), `ui-motion-designer`, `pricing-economist`, `qa-manual-tester`, `technical-writer`. **Default.** | Directors and lead-* run only on explicit invocation (e.g. via `/saas-architecture-decision`). Specialists outside the core 8 routed through their nearest core agent. Each `team-*` skill names its own set per value, which can sit outside the core 8 (`team-release` runs `release-manager`); each skill's own `team.size` list is authoritative, and the Affected skills table below mirrors it. |
 | `small` | Core 15: directors (PD, TD, DP) + leads (LPM, LE, QL, UXC) + lead-product-manager + database-architect + stack-specialist + ui-motion-designer + pricing-economist + qa-manual-tester + ux-designer + technical-writer | `team-*` skills add their `small` set (below); most reach their full pipeline only at `studio`. |
-| `studio` | All 49 agents available. Stack sub-specialists (e.g. `python-backend-specialist` separate from `fastapi-specialist`) routed when relevant. The adversarial review pass in `team-core-feature`, `team-ui` and `team-polish`. | Enterprise apps, full org chart orchestration, large teams with parallel work. |
+| `studio` | All 50 agents available. Stack sub-specialists (e.g. `python-backend-specialist` separate from `fastapi-specialist`) routed when relevant. The adversarial review pass in `team-core-feature`, `team-ui` and `team-polish`. | Enterprise apps, full org chart orchestration, large teams with parallel work. |
 
 ---
 
@@ -1352,9 +1352,9 @@ which specialists are routed and which architecture sections are required
 
 **Priority chain:** `platform.collaboration` in `project.yaml` → unset (`platform.*` is locked to `project.yaml`, so `project.local.yaml` cannot set it). Nothing writes it except `/saas-settings`, so on most projects it is unset: `/saas-security-audit` and `/saas-team-release` ask whether the application has real-time collaborative / multi-tenant features rather than reading unset as `false`.
 
-> **Distinct from `platform.online`.** `collaboration` is *real-time collaboration / multi-user
+> **Distinct from `compliance.multi_tenant`.** `collaboration` is *real-time collaboration / multi-user
 > specifically* (realtime specialist, websocket architecture, sync protocols).
-> `platform.online` covers everything else online (APIs, auth, webhooks,
+> `compliance.multi_tenant` covers everything else online (APIs, auth, webhooks,
 > telemetry). See next section.
 
 > **This is a project attribute, not a mode.** It describes what the application is,
@@ -1384,7 +1384,7 @@ decide concurrency scope from the story, PRD or architecture in front of them.
 
 ---
 
-## platform.online
+## compliance.multi_tenant
 
 **Controls:** Whether the project has any online features (databases, auth, telemetry, billing, APIs)
 **Values:** `true` | `false`
@@ -1392,7 +1392,7 @@ decide concurrency scope from the story, PRD or architecture in front of them.
 **Set by:** `/saas-settings`
 **Read by:** `security-audit`, `team-release` (and the `appsec-engineer` agent)
 
-**Priority chain:** `platform.online` in `project.yaml` → unset (`platform.*` is locked to `project.yaml`, so `project.local.yaml` cannot set it). Nothing writes it except `/saas-settings`: `/saas-security-audit` and `/saas-team-release` ask rather than reading unset as `false`.
+**Priority chain:** `compliance.multi_tenant` in `project.yaml` → unset (`platform.*` is locked to `project.yaml`, so `project.local.yaml` cannot set it). Nothing writes it except `/saas-settings`: `/saas-security-audit` and `/saas-team-release` ask rather than reading unset as `false`.
 
 > **Independent of `platform.collaboration`.** A single-tenant web app with cloud
 > storage and analytics is `online: true, collaboration: false`. The two settings
@@ -1919,7 +1919,7 @@ conventions into a brief, manifest or spec. **NOT by `/saas-code-review` and NOT
 | `scenes` / `prefabs` | `snake_case` \| `PascalCase` | snake_case | PascalCase | PascalCase |
 
 > **`signals` vs `events`:** Next.js uses signals natively; FastAPI uses C# events
-> or UnityEvents; Cloudflare uses delegates and dynamic multicast. The field stays
+> or FastAPIEvents; Cloudflare uses delegates and dynamic multicast. The field stays
 > named `signals` in project.yaml for consistency across stacks — interpret as
 > "event-like callbacks" regardless of stack.
 

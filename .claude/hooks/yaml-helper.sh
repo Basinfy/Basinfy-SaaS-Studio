@@ -557,20 +557,23 @@ team.size::individual|small|studio
 performance.enforce::warn|block|off
 compliance.cert_tier::none|gdpr-lgpd|pci-dss|soc2|hipaa
 accessibility.target::none|standard|aaa
-stack.frontend::Next.js|FastAPI|Cloudflare|nextjs|react-vite|vue-nuxt|sveltekit|fastapi
+stack.frontend::Next.js|FastAPI|Cloudflare|nextjs|react-vite|vue-nuxt|sveltekit|fastapi|none
 project.locale::pt-BR|en|pt-br|EN|PT-BR
+project.user_profile::founder|developer
 project.stage::Concept|Systems Design|Technical Setup|Pre-Production|Production|Polish|Release|concept|systems-design|technical-setup|pre-production|production|polish|release
+testing.strict.unit::true|false
 testing.strict.logic::true|false
 testing.strict.integration::true|false
+testing.strict.e2e::true|false
+testing.strict.security::true|false
 testing.strict.visual::true|false
 testing.strict.ui::true|false
 testing.strict.config::true|false
 features.session_state::on|off
 features.read_guard::on|off|true|false
-platform.online::true|false
 workflow_overrides.edge_cases::true|false
-workflow_overrides.tuning_knobs::true|false
-workflow_overrides.art_bible_strict::true|false
+workflow_overrides.rate_limits::true|false
+workflow_overrides.design_tokens_strict::true|false
 updates.check::true|false"
 # The boolean keys above are enumerated for the same reason the string keys are:
 # `resolve_setting` validates every hop and DROPS a value that fails, so a key
@@ -611,8 +614,11 @@ modes.review_mode
 modes.automation
 modes.automation_always_ask
 team.size
+testing.strict.unit
 testing.strict.logic
 testing.strict.integration
+testing.strict.e2e
+testing.strict.security
 testing.strict.visual
 testing.strict.ui
 testing.strict.config
@@ -622,7 +628,8 @@ features.token_budget_warn_at
 features.read_guard
 features.read_guard_kb
 updates.check
-project.locale"
+project.locale
+project.user_profile"
 
 is_locally_overridable() {
   local path="$1"
@@ -1250,7 +1257,8 @@ _yaml_helper_defaults="\
 modes.automation::collaborative
 modes.rigor::minimal
 performance.enforce::warn
-project.locale::pt-BR"
+project.locale::pt-BR
+project.user_profile::founder"
 
 # Rigor expansion — one asked-at-/saas-start knob that supplies four.
 #
@@ -1431,58 +1439,35 @@ resolve_setting() {
   printf '%s\t%s' "$val" "$src"
 }
 
-# Resolve the ENGINE-SPECIFIC code root.
-#   prints: "<dir>\t<source>"
-#   source: stack.frontend | <legacy path> | detected | unset
+# Resolve the stack-specific SaaS code root.
+#   prints: "<dir>	<source>"
+#   source: project.local.yaml | project.yaml | <legacy path> | detected | unset
 #   exit:   always 0
-#
-# WHY THIS EXISTS. `.claude/docs/directory-structure.md` is explicit that the
-# code root is not a style preference but a hard toolchain constraint: FastAPI
-# compiles only `Assets/` and `Packages/`, and UnrealBuildTool discovers modules
-# under `src/` or `app/`. `src/` is the standard code-root, not a universal path.
-#
-# Every hook that filtered staged or on-disk files with a literal `^src/`
-# therefore matched NOTHING on a FastAPI or Cloudflare project — and matching nothing
-# is indistinguishable from scanning cleanly. That is the exact row
-# `.claude/rules/skill-authoring.md` records for `/saas-security-audit`
-# ("Next.js-only greps returned zero hits on FastAPI/Cloudflare, and zero hits read as
-# clean"), reproduced in four more places.
-#
-# UNSET DOES NOT DEFAULT TO `src`. Obligation 2 of skill-authoring.md: an absent
-# value may not default to the permissive one. Defaulting here would re-create
-# the Next.js bias this function exists to remove, and would do it invisibly. An
-# unresolvable root returns empty, and the CALLER must announce that its check
-# did not run — see the `_no_code_root` reporting in validate-commit.sh.
-#
-# Step 3 (detect) is derivation, not enumeration (obligation 5): it believes the
-# tree over the absence of config, but only when the tree is UNAMBIGUOUS. Two
-# roots present means a genuinely undecidable project, and guessing there would
-# scan half of it and report a pass.
 resolve_code_root() {
   _yaml_helper_set_root
   local ename="" src="" root="" legacy="" found="" d n=0
 
-  # 1. The configured engine or stack, through the normal chain.
+  # 1. Configured stack (frontend first, then backend; ignore 'none'/'null'/'~')
   if [ -f "$_YH_ROOT/project.local.yaml" ]; then
     ename=$(get_yaml_key "$_YH_ROOT/project.local.yaml" stack.frontend 2>/dev/null)
-    [ -z "$ename" ] && ename=$(get_yaml_key "$_YH_ROOT/project.local.yaml" stack.frontend 2>/dev/null)
+    case "$(printf '%s' "$ename" | tr '[:upper:]' '[:lower:]')" in ""|none|null|"~") ename="" ;; esac
+    [ -z "$ename" ] && ename=$(get_yaml_key "$_YH_ROOT/project.local.yaml" stack.backend 2>/dev/null)
+    case "$(printf '%s' "$ename" | tr '[:upper:]' '[:lower:]')" in ""|none|null|"~") ename="" ;; esac
     [ -n "$ename" ] && src="project.local.yaml"
   fi
   if [ -z "$ename" ] && [ -f "$_YH_ROOT/project.yaml" ]; then
     ename=$(get_yaml_key "$_YH_ROOT/project.yaml" stack.frontend 2>/dev/null)
-    [ -z "$ename" ] && ename=$(get_yaml_key "$_YH_ROOT/project.yaml" stack.frontend 2>/dev/null)
-    [ -z "$ename" ] && ename=$(get_yaml_key "$_YH_ROOT/project.yaml" framework.name 2>/dev/null)
+    case "$(printf '%s' "$ename" | tr '[:upper:]' '[:lower:]')" in ""|none|null|"~") ename="" ;; esac
+    [ -z "$ename" ] && ename=$(get_yaml_key "$_YH_ROOT/project.yaml" stack.backend 2>/dev/null)
+    case "$(printf '%s' "$ename" | tr '[:upper:]' '[:lower:]')" in ""|none|null|"~") ename="" ;; esac
     [ -n "$ename" ] && src="project.yaml"
   fi
 
-  # 2. The legacy mirror. `/saas-setup-stack` wrote an `Engine:` line here before
-  #    project.yaml existed, and workflow-catalog's `engine-setup` step still
-  #    accepts it as an `any_of` alternative — so a v1.0 project that never
-  #    migrated resolves rather than falling through to "unset".
+  # 2. Legacy fallback in technical-preferences.md
   legacy="$_YH_ROOT/.claude/docs/technical-preferences.md"
   if [ -z "$ename" ] && [ -f "$legacy" ]; then
     ename=$(grep -iE '^[[:space:]]*[-*]?[[:space:]]*\*{0,2}(Engine|Stack)\*{0,2}[[:space:]]*:' "$legacy" 2>/dev/null \
-            | head -1 | sed 's/.*://' | tr -d '\r' \
+            | head -1 | sed 's/.*://' | tr -d '' \
             | sed 's/^[[:space:]]*//; s/[[:space:]].*$//; s/\*//g')
     case "$ename" in
       *"[TO BE CONFIGURED]"*|"["*) ename="" ;;
@@ -1491,28 +1476,49 @@ resolve_code_root() {
   fi
 
   case "$(printf '%s' "$ename" | tr '[:upper:]' '[:lower:]')" in
-    nextjs)   root="src" ;;
-    fastapi)   root="Assets" ;;
-    cloudflare*) root="Source" ;;
-    nextjs*|react*|vue*|svelte*|node*|fastapi*|go*|python*|claude-code-saas*)
-      for d in src app pages server api lib; do
+    nextjs*|react*|vue*|svelte*)
+      for d in src app pages; do
         if [ -d "$_YH_ROOT/$d" ]; then root="$d"; break; fi
       done
       [ -z "$root" ] && root="src"
       ;;
-    *)       root="" ;;
+    fastapi*|python*|django*)
+      for d in app backend/app src; do
+        if [ -d "$_YH_ROOT/$d" ]; then root="$d"; break; fi
+      done
+      [ -z "$root" ] && root="app"
+      ;;
+    cloudflare*)
+      for d in src workers; do
+        if [ -d "$_YH_ROOT/$d" ]; then root="$d"; break; fi
+      done
+      [ -z "$root" ] && root="src"
+      ;;
+    go*)
+      for d in cmd internal src; do
+        if [ -d "$_YH_ROOT/$d" ]; then root="$d"; break; fi
+      done
+      [ -z "$root" ] && root="cmd"
+      ;;
+    node*)
+      for d in src server api; do
+        if [ -d "$_YH_ROOT/$d" ]; then root="$d"; break; fi
+      done
+      [ -z "$root" ] && root="src"
+      ;;
+    *) root="" ;;
   esac
 
-  # 3. No usable engine value — believe the tree, but only if it is unambiguous.
+  # 3. Unconfigured stack — accept tree detection ONLY when unambiguous (n == 1)
   if [ -z "$root" ]; then
-    for d in src app pages server api lib Assets Source; do
+    for d in src app backend server api cmd; do
       if [ -d "$_YH_ROOT/$d" ]; then found="$d"; n=$((n + 1)); fi
     done
-    if [ "$n" -ge 1 ]; then root="$found"; src="detected"; else root=""; src=""; fi
+    if [ "$n" -eq 1 ]; then root="$found"; src="detected"; else root=""; src=""; fi
   fi
 
   [ -z "$src" ] && src="unset"
-  printf '%s\t%s' "$root" "$src"
+  printf '%s	%s' "$root" "$src"
 }
 
 # List the child key names of a mapping node (one per line). get_yaml_key
@@ -1616,7 +1622,7 @@ PYEOF
 # docs.density, story_granularity, qa.level, team.size, project.stage,
 # automation_always_ask, engine, testing.strict, system_overrides; and, only when
 # named, the derived lines gate_level, engine_values, specialists, review_gate,
-# input_methods, perf_budgets.
+# auth_methods, perf_budgets.
 resolve_config() {
   _yaml_helper_set_root
   local want=""
@@ -1706,6 +1712,7 @@ EOF
               qa.level:qa.level \
               team.size:team.size \
               project.locale:locale \
+              project.user_profile:user_profile \
               project.stage:project.stage; do
     _rc_want "${pair##*:}" || continue
     v=$(resolve_setting "${pair%%:*}")
@@ -1901,7 +1908,7 @@ EOF
   if _rc_named gate_level; then
     gl_all=$(get_yaml_key "$_YH_ROOT/project.yaml" testing.strict 2>/dev/null)
     if [ -n "$gl_all" ] && ! validate_enum_value testing.strict.logic "$gl_all" 2>/dev/null; then gl_all=""; fi
-    for gk in logic integration visual ui config; do
+    for gk in unit integration e2e security logic visual ui config; do
       gv=""; gsrc=""
       if [ -f "$_YH_ROOT/project.local.yaml" ]; then
         gv=$(get_yaml_key "$_YH_ROOT/project.local.yaml" "testing.strict.$gk" 2>/dev/null)
@@ -1936,7 +1943,7 @@ EOF
   if _rc_named engine_values || _rc_named specialists; then
     ev_name=$(_rc_yaml "$_YH_ROOT/project.yaml" stack.frontend); ev_ns="project.yaml"
     ev_ver=$(_rc_yaml "$_YH_ROOT/project.yaml" stack.version); ev_vs="project.yaml"
-    ev_lang=$(_rc_yaml "$_YH_ROOT/project.yaml" engine.language); ev_ls="project.yaml"
+    ev_lang=$(_rc_yaml "$_YH_ROOT/project.yaml" stack.language); [ -z "$ev_lang" ] && ev_lang=$(_rc_yaml "$_YH_ROOT/project.yaml" engine.language); ev_ls="project.yaml"
     if [ -z "$ev_name" ] || [ -z "$ev_ver" ]; then
       ev_line=$(_rc_tp Engine)
       if [ -n "$ev_line" ]; then
@@ -2005,7 +2012,7 @@ EOF
     echo "review_gate: skill-gates=$rg_skill phase-gates=$rg_phase (review_mode ${rg:-solo}, $rgs; a --review flag overrides)"
   fi
 
-  # input_methods: the set of supported input methods, derived from project.yaml's
+  # auth_methods: the set of supported input methods, derived from project.yaml's
   # platform block: keyboard/mouse when Web or Desktop is a target, touch
   # when support is Full or Partial (Full | Partial | None, in any case:
   # `full` is how every other value in the file is written), plus the primary
@@ -2014,7 +2021,7 @@ EOF
   # case. Without a platform block, technical-preferences.md's explicit Input
   # Methods line. Locked keys, so project.local.yaml is not read.
   local im_set="" im_t im_g im_to im_p im_pl
-  if _rc_named input_methods; then
+  if _rc_named auth_methods; then
     if [ -n "$(get_yaml_child_keys "$_YH_ROOT/project.yaml" platform 2>/dev/null)" ]; then
       im_t=$(get_yaml_array "$_YH_ROOT/project.yaml" platform.targets 2>/dev/null | tr '[:upper:]' '[:lower:]')
       im_g=$(_rc_yaml "$_YH_ROOT/project.yaml" platform.gamepad_support)
@@ -2032,13 +2039,13 @@ EOF
       if [ -n "$im_pl" ]; then
         case ", $im_set," in *", $im_pl,"*) ;; *) im_set="${im_set:+$im_set, }$im_pl" ;; esac
       fi
-      echo "input_methods: ${im_set:-none} (project.yaml platform; primary: ${im_p:-unset})"
+      echo "auth_methods: ${im_set:-none} (project.yaml platform; primary: ${im_p:-unset})"
     else
       im_set=$(_rc_tp "Input Methods"); im_p=$(_rc_tp "Primary Input")
       if [ -n "$im_set" ]; then
-        echo "input_methods: $im_set ($tp_src; primary: ${im_p:-unset})"
+        echo "auth_methods: $im_set ($tp_src; primary: ${im_p:-unset})"
       else
-        echo "input_methods: unset (no platform block in project.yaml, no Input Methods line)"
+        echo "auth_methods: unset (no platform block in project.yaml, no Input Methods line)"
       fi
     fi
   fi

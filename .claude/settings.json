@@ -214,12 +214,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/validate-assets.sh\"",
-            "timeout": 10
-          },
-          {
-            "type": "command",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/validate-skill-change.sh\"",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/runtime/studio-core.cjs\" hook post-write",
             "timeout": 5
           }
         ]
@@ -229,7 +224,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/classify-error.sh\"",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/runtime/studio-core.cjs\" hook classify-error",
             "timeout": 5
           }
         ]

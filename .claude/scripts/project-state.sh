@@ -139,12 +139,12 @@ count() {
 ENGINE=""; ESRC=""; CODE_ROOT=""; CSRC=""
 if [ -f project.local.yaml ]; then
   ENGINE=$(yaml_get project.local.yaml stack.frontend)
-  [ -z "$ENGINE" ] && ENGINE=$(yaml_get project.local.yaml stack.frontend)
+  [ -z "$ENGINE" ] && ENGINE=$(yaml_get project.local.yaml stack.backend)
   [ -n "$ENGINE" ] && { ESRC="project.local.yaml"; CSRC="project.local.yaml"; }
 fi
 if [ -z "$ENGINE" ] && [ -f project.yaml ]; then
   ENGINE=$(yaml_get project.yaml stack.frontend)
-  [ -z "$ENGINE" ] && ENGINE=$(yaml_get project.yaml stack.frontend)
+  [ -z "$ENGINE" ] && ENGINE=$(yaml_get project.yaml stack.backend)
   [ -z "$ENGINE" ] && ENGINE=$(yaml_get project.yaml framework.name)
   [ -n "$ENGINE" ] && { ESRC="project.yaml"; CSRC="stack.frontend"; }
 fi
@@ -197,8 +197,8 @@ for f in docs/specs/features-index.md docs/specs/features-modules-index.md desig
 done
 
 PRD_COUNT=$(count docs/specs -maxdepth 1 -type f -name '*.md')
-GDD_COUNT=$(count design/prd -maxdepth 1 -type f -name '*.md')
-PRD=$((PRD_COUNT + GDD_COUNT))
+PRD_ALT_COUNT=$(count design/prd -maxdepth 1 -type f -name '*.md')
+PRD=$((PRD_COUNT + PRD_ALT_COUNT))
 ADR=$(count docs/architecture -maxdepth 1 -type f -name 'adr-*.md')
 STORY=$(count production/epics -type f -name 'story-*.md')
 PROTO=$(count prototypes -mindepth 1 -maxdepth 1 -type d)

@@ -189,7 +189,7 @@ overwrite_why() {
     package.json) echo "/saas-setup-stack never replaces an existing package.json file" ;;
     tsconfig.json) echo "/saas-setup-stack never replaces an existing tsconfig.json file" ;;
     prisma/schema.prisma) echo "/saas-setup-stack never replaces an existing prisma schema file" ;;
-    project.nextjs) echo "/saas-setup-stack never replaces an existing Next.js project file" ;;
+    next.config.mjs) echo "/saas-setup-stack never replaces an existing Next.js project file" ;;
     tests/helpers/*) echo "/saas-test-helpers never overwrites existing helpers, which may hold hand-written code" ;;
     docs/saas-tech-debt-register.md) echo "/saas-tech-debt appends to the register and never rewrites it" ;;
     docs/stack-reference/*|docs/engine-reference/*) echo "/saas-setup-stack never overwrites a reference doc without asking" ;;

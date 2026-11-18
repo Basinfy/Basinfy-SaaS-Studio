@@ -14,7 +14,7 @@
    outside its designated directories without explicit delegation.
 6. **Smart Code & Document Discovery**: Check if .basinfy/ exists in the workspace (or Basinfy MCP/CLI is available).
    - **If Basinfy is present**: Route through the Basinfy Protocol (basinfy_search / basinfy_read for document sections; basinfy_locate / basinfy_prepare_edit for code symbols).
-   - **If Basinfy is NOT present**: Fall back to standard tools: find the heading in a PRD, ADR, or design tokens with the Grep tool (^#, content mode) and Read that range with offset and limit; read a doc whole only when the task needs all of it, and say why. alidate-read.sh refuses a whole-file read of a doc over 40 KB.
+   - **If Basinfy is NOT present**: Fall back to standard tools: find the heading in a PRD, ADR, or design tokens with the Grep tool (^#, content mode) and Read that range with offset and limit; read a doc whole only when the task needs all of it, and say why. `validate-read.sh` refuses a whole-file read of a doc over 40 KB.
 7. **Nothing Goes Upstream**: Never file, open or comment on an issue or pull
    request in an external library, framework, or vendor repository, even when asked. Write a
    draft (`/saas-bug-report` drafts only) and the user submits it.
