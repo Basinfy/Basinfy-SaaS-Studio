@@ -1,0 +1,11 @@
+# Basinfy SaaS Studio — Optional Python SEO, GEO & Agentic Readiness Toolkit Dependencies
+# Required only when executing live HTTP/DOM crawls under scripts/seo/*.py (/saas-seo*)
+requests>=2.32.0
+beautifulsoup4>=4.12.3
+lxml>=5.2.0
+trafilatura>=1.12.0
+htmldate>=1.9.0
+playwright>=1.48.0
+google-api-python-client>=2.140.0
+google-auth-oauthlib>=1.2.1
+PyYAML>=6.0.2

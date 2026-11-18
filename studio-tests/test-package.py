@@ -39,12 +39,15 @@ def main():
                 raise RuntimeError(f'{name} lost its manual invocation frontmatter')
             if 'allow_implicit_invocation: false' not in (skill / 'agents/openai.yaml').read_text(encoding='utf-8'):
                 raise RuntimeError(f'{name} lost its Codex invocation policy')
-        for resource in ('project.yaml', '.claude/hooks/yaml-helper.sh', '.claude/docs/workflow-catalog.yaml',
-                         '.codex/studio-hook.cjs', 'studio-tests/catalog.yaml', 'templates/seo/api-catalog-route.ts'):
+        for resource in ('project.yaml', '.claude/hooks/yaml-helper.sh', '.claude/runtime/studio-core.cjs',
+                         '.claude/docs/workflow-catalog.yaml', '.codex/studio-hook.cjs', 'studio-tests/catalog.yaml',
+                         'templates/seo/api-catalog-route.ts', '.basinfy/experience/README.md', '.mcp.json'):
             if not (project / resource).is_file():
                 raise RuntimeError(f'Installed package missing {resource}')
         if (project / '.github/workflows/studio-integrity.yml').exists():
             raise RuntimeError('Studio CI workflow was copied into the consumer project')
+        if (project / 'studio-tests/verify-integrity.py').exists():
+            raise RuntimeError('Studio internal test suite was copied into the consumer project')
         print(f'[PASS] npm tarball installs {len(expected)} workflows and their shared resources')
 
 

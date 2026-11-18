@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "basinfy": {
+      "command": "npx",
+      "args": ["-y", "@basinfy/mcp-server"]
+    }
+  }
+}

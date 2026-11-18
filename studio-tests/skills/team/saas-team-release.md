@@ -62,7 +62,7 @@ Fixture defaults.
 - Resolved config block: `review_mode: full`, `team.size: studio`, `automation: collaborative`
 - `project.stage` in `project.yaml` is `Release` (`/saas-gate-check release` has passed)
 - Milestone acceptance criteria are all met (delivery-producer can confirm)
-- `project.yaml` sets `platform.online: false` and `platform.realtime: false`; the product collects no sensitive user data
+- `project.yaml` sets `compliance.multi_tenant: false` and `platform.realtime: false`; the product collects no sensitive user data
 - No freeze or platform certification is planned for this release
 - All CI builds are clean on `main`
 - No open S1/S2 bugs; all strings translated
@@ -73,7 +73,7 @@ Fixture defaults.
 1. The stage check passes (`project.stage: Release`); before any spawn, one line announces the active set for `team.size: studio`
 2. Phase 1: Spawns `delivery-producer` via Agent; confirms all milestone acceptance criteria met; identifies any deferred scope; writes `production/releases/release-plan-v1.0.0.md`; AskUserQuestion: user approves before Phase 2
 3. Phase 2: Spawns `release-manager` via Agent; bumps version numbers on `main`, and that commit is the release candidate; finds no release checklist from Polish, so invokes `/saas-release-checklist` (`production/releases/release-checklist-v1.0.0.md`); cuts no `release/*` branch, since nothing needs stabilising; AskUserQuestion: user approves before Phase 3
-4. Phase 3 (parallel): Issues Agent calls simultaneously for `qa-lead` (regression suite, critical path sign-off, `production/releases/qa-gate-v1.0.0.md`) and `devops-engineer` (build artifacts, CI verification, `production/releases/build-v1.0.0.md`); appsec-engineer is NOT spawned (`platform.online: false`, no sensitive user data) and api-integrations-specialist is NOT spawned (`platform.realtime: false`), and the Phase 3 output names each skip with its reason
+4. Phase 3 (parallel): Issues Agent calls simultaneously for `qa-lead` (regression suite, critical path sign-off, `production/releases/qa-gate-v1.0.0.md`) and `devops-engineer` (build artifacts, CI verification, `production/releases/build-v1.0.0.md`); appsec-engineer is NOT spawned (`compliance.multi_tenant: false`, no sensitive user data) and api-integrations-specialist is NOT spawned (`platform.realtime: false`), and the Phase 3 output names each skip with its reason
 5. Phase 4: localization-lead verifies all strings are translated (`production/releases/localization-signoff-v1.0.0.md`); web-perf-analyst benchmarks the release build (`performance-signoff-v1.0.0.md`); `data-telemetry-engineer` verifies telemetry fires correctly on the release build (`analytics-signoff-v1.0.0.md`) — each agent writes its own file
 6. Phase 5: Spawns `delivery-producer` via Agent; collects sign-offs from qa-lead, release-manager, devops-engineer and technical-director; no open blocking issues; delivery-producer declares GO (`production/releases/go-no-go-v1.0.0.md`)
 7. Phase 6: `AskUserQuestion` "Delivery-producer verdict is GO. Execute Phase 6 — tag, deploy to staging, deploy to production?" with [A] Yes, deploy / [B] Staging only — hold production / [C] Stop here; user selects [A]
@@ -86,7 +86,7 @@ Fixture defaults.
 - [ ] Active-set line naming `team.size: studio` appears before the first agent is spawned
 - [ ] Phase 2 cuts no `release/*` branch: the release candidate is the version-bump commit on `main`
 - [ ] Phase 3 qa-lead and devops-engineer Agent calls are issued simultaneously, not sequentially
-- [ ] appsec-engineer is NOT spawned when `platform.online` and `platform.realtime` are false and there is no sensitive user data, and the Phase 3 output says so by name (e.g. `appsec-engineer: not spawned — platform.online: false, platform.realtime: false, no user data`) — the skip is never silent
+- [ ] appsec-engineer is NOT spawned when `compliance.multi_tenant` and `platform.realtime` are false and there is no sensitive user data, and the Phase 3 output says so by name (e.g. `appsec-engineer: not spawned — compliance.multi_tenant: false, platform.realtime: false, no user data`) — the skip is never silent
 - [ ] Each agent is told its own named output file — parallel Phase 3 and Phase 4 agents never share one — and the orchestrator confirms the file exists before treating the phase as done
 - [ ] Phase 5 delivery-producer collects sign-offs from qa-lead, release-manager, devops-engineer and technical-director before declaring GO
 - [ ] Phase 6 deployment only begins after the user picks [A] in the Phase 6 `AskUserQuestion`
@@ -143,7 +143,7 @@ Fixture defaults.
 
 **Expected behavior:**
 1. Phases 1–2 complete normally
-2. Phase 3 (parallel): Orchestrator reads `platform.realtime: true` and `platform.online: true` from `project.yaml` and notes the stored user data; issues Agent calls simultaneously for `qa-lead`, `devops-engineer`, `appsec-engineer` and `api-integrations-specialist`
+2. Phase 3 (parallel): Orchestrator reads `platform.realtime: true` and `compliance.multi_tenant: true` from `project.yaml` and notes the stored user data; issues Agent calls simultaneously for `qa-lead`, `devops-engineer`, `appsec-engineer` and `api-integrations-specialist`
 3. appsec-engineer conducts pre-release security audit: reviews authentication flows, WAF & rate-limiting configuration, tenant isolation, and data privacy compliance; returns sign-off
 4. api-integrations-specialist verifies webhook reliability, reconnect handling, and latency under load; returns sign-off
 5. All four Phase 3 agents complete; their results are collected before Phase 4 begins
@@ -165,7 +165,7 @@ Fixture defaults.
 
 **Fixture:**
 - Resolved config block: `team.size: studio`, `automation: collaborative`, `project.stage: Release`
-- `project.yaml` sets `platform.online: false` and `platform.realtime: false`; no user data
+- `project.yaml` sets `compliance.multi_tenant: false` and `platform.realtime: false`; no user data
 - Release candidate exists for v1.2.0
 - Phase 3 (qa-lead, devops-engineer) complete with clean sign-offs
 - Phase 4: localization-lead finds 47 untranslated strings in the French locale (a supported language) and returns it as a BLOCKED/CONCERNS item
@@ -263,7 +263,7 @@ In both variants `project.stage` is `Release`.
 - [ ] At the default `team.size: individual`, the run opens with `Active set (team.size: individual): release-manager.` and a `Not spawned this run:` line naming every other agent the pipeline names, consulted through release-manager — before any agent is spawned
 - [ ] In `collaborative` mode, `AskUserQuestion` used at each phase transition gate (post-Phase 1, post-Phase 2, post-Phase 3, post-Phase 4, post-Phase 5 go/no-go)
 - [ ] Phase 3 agents in the active set are always issued as parallel Agent calls — qa-lead and devops-engineer are never sequential
-- [ ] appsec-engineer is conditionally spawned from `platform.online` / `platform.realtime` and user data — never silently skipped: an absent key is asked about, and a skip is named in the Phase 3 output
+- [ ] appsec-engineer is conditionally spawned from `compliance.multi_tenant` / `platform.realtime` and user data — never silently skipped: an absent key is asked about, and a skip is named in the Phase 3 output
 - [ ] At `review_mode: lean` or `solo`, technical-director is not spawned for the Phase 5 sign-off, and the go/no-go record says `technical-director sign-off: not run (review_mode: <mode>)` rather than listing it as given
 - [ ] A technical-director `NOT ASSESSED [missing input]` answer is recorded as such in the go/no-go record and never counted as a sign-off
 - [ ] When a `release/*` branch is cut to stabilise a release, it takes bug fixes only and every fix also lands on `main`

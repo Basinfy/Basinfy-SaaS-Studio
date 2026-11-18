@@ -4,8 +4,7 @@
 
 `/saas-setup-stack` pins the project's stack, version and language. It accepts
 `[stack]`, `[stack] [version]`, `refresh`, `upgrade [old] [new]`, or no
-argument for guided selection. For Next.js it asks which language (TypeScript, C#
-or Both) before showing the Technology Stack. It then:
+argument for guided selection. For Next.js it asks which language (TypeScript or JavaScript) before showing the Technology Stack. It then:
 
 - writes the Technology Stack and the `ENGINE-REFERENCE-IMPORT` line to
   `CLAUDE.md` after "May I write these stack settings to `CLAUDE.md`?"

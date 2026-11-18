@@ -65,6 +65,7 @@ ${c.bold}COMMANDS:${c.reset}
 
 ${c.bold}OPTIONS:${c.reset}
   ${c.green}-g, --global${c.reset}      Target global user home directory (~/.claude, ~/.gemini, etc.)
+                      Windows / WSL / Linux / macOS are detected automatically
   ${c.green}-t, --target <dir>${c.reset} Set custom target directory (default: current directory .)
   ${c.green}-m, --mode <mode>${c.reset}  Installation mode:
                       ${c.bold}scaffold${c.reset} (default) — Full new SaaS studio architecture
@@ -105,6 +106,77 @@ ${c.bold}EXAMPLES:${c.reset}
   npx github:Basinfy/Basinfy-SaaS-Studio uninstall --global --dry-run
 `);
 }
+
+const PORTABLE_GUIDANCE = `<!-- Generated from .claude/skills by scripts/sync-agent-skills.py. -->
+
+## Running this workflow on this client
+
+Run commands from the project root (use Git Bash on Windows if \`bash\` points to an unavailable WSL distro). Shared studio files live in \`.claude/\`; follow \`.agents/PORTABLE-RUNTIME.md\` and \`.claude/docs/config-resolution.md\` for client tools, delegation, and approval rules.
+`;
+
+const MANUAL_CODEX_POLICY = 'policy:\n  allow_implicit_invocation: false\n';
+
+function isManualOnlyFrontmatter(frontmatter) {
+  return /^disable-model-invocation:[ \t]*true[ \t]*$/m.test(frontmatter);
+}
+
+function buildPortableSkillBuffer(sourceBuf) {
+  const text = sourceBuf.toString('utf8').replace(/\r\n/g, '\n');
+  const sepIdx = text.indexOf('\n---\n');
+  if (sepIdx === -1) return Buffer.from(text, 'utf8');
+  let frontmatter = text.slice(0, sepIdx);
+  let body = text.slice(sepIdx + 5);
+  frontmatter = frontmatter.replace(/^(?:model|allowed-tools|context|agent):[^\n]*\n?/gm, '');
+  body = body
+    .split('"${CLAUDE_SKILL_DIR}/../../hooks/yaml-helper.sh"').join('.claude/hooks/yaml-helper.sh')
+    .split('"${CLAUDE_SKILL_DIR}/../../scripts/story-status.sh"').join('.claude/scripts/story-status.sh')
+    .replace(/^!`([^\n]+)`$/gm, 'Run `$1` and use its output below.');
+  const manual = isManualOnlyFrontmatter(frontmatter)
+    ? 'Start this workflow only when the user explicitly asks for it. Otherwise, describe what it would do and wait for that request.\n\n'
+    : '';
+  const out = frontmatter.replace(/\s+$/, '') + '\n---\n\n' + PORTABLE_GUIDANCE + '\n' + manual + body.replace(/^\n+/, '');
+  return Buffer.from(out, 'utf8');
+}
+
+function ensurePortableSkills(rootDir) {
+  const claudeSkills = path.join(rootDir, '.claude', 'skills');
+  const agentsSkills = path.join(rootDir, '.agents', 'skills');
+  if (!fs.existsSync(claudeSkills)) return;
+  // Fast-path when portable skills already exist on disk (e.g., git checkout)
+  if (fs.existsSync(path.join(agentsSkills, 'saas-start', 'SKILL.md'))) return;
+  try {
+    fs.mkdirSync(agentsSkills, { recursive: true });
+    for (const entry of fs.readdirSync(claudeSkills)) {
+      if (!entry.startsWith('saas-')) continue;
+      const srcSkill = path.join(claudeSkills, entry);
+      if (!fs.statSync(srcSkill).isDirectory()) continue;
+      const dstSkill = path.join(agentsSkills, entry);
+      const walk = (sDir, dDir) => {
+        fs.mkdirSync(dDir, { recursive: true });
+        for (const item of fs.readdirSync(sDir)) {
+          const sp = path.join(sDir, item);
+          const dp = path.join(dDir, item);
+          if (fs.statSync(sp).isDirectory()) {
+            walk(sp, dp);
+          } else if (sDir === srcSkill && item === 'SKILL.md') {
+            fs.writeFileSync(dp, buildPortableSkillBuffer(fs.readFileSync(sp)));
+          } else {
+            fs.copyFileSync(sp, dp);
+          }
+        }
+      };
+      walk(srcSkill, dstSkill);
+      const fm = fs.readFileSync(path.join(srcSkill, 'SKILL.md'), 'utf8').split(/\r?\n---\r?\n/, 1)[0];
+      if (isManualOnlyFrontmatter(fm)) {
+        const policyPath = path.join(dstSkill, 'agents', 'openai.yaml');
+        fs.mkdirSync(path.dirname(policyPath), { recursive: true });
+        fs.writeFileSync(policyPath, MANUAL_CODEX_POLICY, 'utf8');
+      }
+    }
+  } catch (_) {}
+}
+
+ensurePortableSkills(PKG_ROOT);
 
 // Recursive copy helper
 function copyRecursive(src, dest, force = false, filter = null, onCopy = null) {
@@ -193,6 +265,7 @@ function installGlobal(targets, force) {
   const gPaths = getGlobalPaths();
   let totalFiles = 0;
   const root = os.homedir();
+  console.log(`  Global installation directory: ${root}\n`);
   const copied = {};
   const installCopy = (source, destination, overwrite) =>
     copyRecursive(source, destination, overwrite, null, file => {
@@ -336,7 +409,7 @@ function installLocal(targetDir, targets, mode, force) {
   const claudeDestination = path.join(dest, '.claude');
   for (const entry of fs.readdirSync(claudeSource)) {
     if (entry === 'framework-version.json') continue;
-    if (!claudeTarget && !['agents', 'director-gates', 'docs', 'hooks', 'rules', 'scripts', 'skills'].includes(entry)) continue;
+    if (!claudeTarget && !['agents', 'director-gates', 'docs', 'hooks', 'rules', 'runtime', 'scripts', 'skills'].includes(entry)) continue;
     totalFiles += installCopy(path.join(claudeSource, entry), path.join(claudeDestination, entry), force);
   }
   for (const filename of ['project.yaml', 'project.local.yaml.example']) {
@@ -351,9 +424,10 @@ function installLocal(targetDir, targets, mode, force) {
 
   // 1. Claude Code
   if (targets.claude || targets.all) {
-    process.stdout.write(`  ${c.cyan}•${c.reset} Configuring Claude Code (.claude/, CLAUDE.md, project.yaml)... `);
+    process.stdout.write(`  ${c.cyan}•${c.reset} Configuring Claude Code (.claude/, CLAUDE.md, .mcp.json, project.yaml)... `);
     let count = 0;
     count += installCopy(path.join(PKG_ROOT, 'CLAUDE.md'), path.join(dest, 'CLAUDE.md'), force);
+    count += installCopy(path.join(PKG_ROOT, '.mcp.json'), path.join(dest, '.mcp.json'), force);
     totalFiles += count;
     console.log(`${c.green}✔ Done (${count} files)${c.reset}`);
   }
@@ -450,19 +524,29 @@ function installLocal(targetDir, targets, mode, force) {
 
   totalFiles += installCopy(path.join(PKG_ROOT, 'templates'), path.join(dest, 'templates'), force);
   totalFiles += installCopy(path.join(PKG_ROOT, 'scripts', 'seo'), path.join(dest, 'scripts', 'seo'), force);
-  totalFiles += installCopy(path.join(PKG_ROOT, 'scripts', 'sync-agent-skills.py'), path.join(dest, 'scripts', 'sync-agent-skills.py'), force);
-  totalFiles += installCopy(path.join(PKG_ROOT, 'studio-tests'), path.join(dest, 'studio-tests'), force);
+  totalFiles += installCopy(path.join(PKG_ROOT, 'studio-tests', 'catalog.yaml'), path.join(dest, 'studio-tests', 'catalog.yaml'), force);
+  totalFiles += installCopy(path.join(PKG_ROOT, '.basinfy', 'experience'), path.join(dest, '.basinfy', 'experience'), force);
 
-  // 11. Scaffold Mode specifics (docs, design, production dirs)
+  // 11. Scaffold Mode specifics (docs, design, production dirs — never copy Studio marketing README/banners or internal logs)
   if (mode === 'scaffold') {
     process.stdout.write(`  ${c.cyan}•${c.reset} Scaffolding SaaS product directories (design/, docs/, production/)... `);
     let count = 0;
     count += installCopy(path.join(PKG_ROOT, 'design'), path.join(dest, 'design'), force);
-    count += installCopy(path.join(PKG_ROOT, 'docs'), path.join(dest, 'docs'), force);
-    count += installCopy(path.join(PKG_ROOT, 'production'), path.join(dest, 'production'), force);
+    count += installCopy(path.join(PKG_ROOT, 'docs'), path.join(dest, 'docs'), force, entry => entry !== 'assets');
+    count += installCopy(
+      path.join(PKG_ROOT, 'production'),
+      path.join(dest, 'production'),
+      force,
+      entry => entry !== 'session-state' && entry !== 'session-logs'
+    );
     count += installCopy(path.join(PKG_ROOT, '.gitignore'), path.join(dest, '.gitignore'), force);
-    count += installCopy(path.join(PKG_ROOT, 'README.md'), path.join(dest, 'README.md'), force);
-    count += installCopy(path.join(PKG_ROOT, 'README.en.md'), path.join(dest, 'README.en.md'), force);
+    const readmeDest = path.join(dest, 'README.md');
+    if (!fs.existsSync(readmeDest)) {
+      const starterReadme = `# My SaaS Application\n\nBuilt with **Basinfy SaaS Studio**.\n\n## Getting Started\n\n1. Open this folder in your AI IDE or CLI (Claude Code, Antigravity, Cursor, Codex, VS Code).\n2. Describe your SaaS idea in plain language or run \`/saas-start\` to begin guided onboarding.\n3. Run \`/saas-help\` anytime to see your progress and next recommended step.\n`;
+      fs.writeFileSync(readmeDest, starterReadme, 'utf8');
+      copied['README.md'] = fileHash(readmeDest);
+      count++;
+    }
     totalFiles += count;
     console.log(`${c.green}✔ Done (${count} files)${c.reset}`);
   }
@@ -703,6 +787,7 @@ function writeStudioStamp(stamp, metadata) {
 }
 
 function updateWorkspace(sourceRoot, targetDir, isGlobal = false) {
+  ensurePortableSkills(sourceRoot);
   const stamp = path.join(targetDir, isGlobal ? '.agents' : '.claude', 'framework-version.json');
   const previous = readStudioStamp(stamp).files || {};
   const files = { ...previous };
@@ -765,10 +850,10 @@ function updateWorkspace(sourceRoot, targetDir, isGlobal = false) {
     return { count, files, skipped, stamp };
   }
 
-  for (const item of ['agents', 'director-gates', 'docs', 'hooks', 'rules', 'scripts', 'skills']) copy(path.join('.claude', item));
-  for (const item of ['templates', 'scripts/seo', 'scripts/sync-agent-skills.py', 'studio-tests']) copy(item);
+  for (const item of ['agents', 'director-gates', 'docs', 'hooks', 'rules', 'runtime', 'scripts', 'skills']) copy(path.join('.claude', item));
+  for (const item of ['templates', 'scripts/seo', 'studio-tests/catalog.yaml', '.basinfy/experience']) copy(item);
   for (const item of ['.agents', '.cursor', '.windsurf/rules', '.codex', '.vscode', '.github/prompts',
-    '.github/copilot-instructions.md', '.continue', '.devin', '.zed', 'CLAUDE.md', 'AGENTS.md', 'GEMINI.md',
+    '.github/copilot-instructions.md', '.continue', '.devin', '.zed', 'CLAUDE.md', '.mcp.json', 'AGENTS.md', 'GEMINI.md',
     'CODEX.md', '.cursorrules', '.windsurfrules', '.clinerules', 'CONVENTIONS.md', '.aider.conf.yml',
     '.aiderignore', '.roomodes', 'bin/cli.js', '.claude/settings.json', '.claude/statusline.sh']) {
     if (fs.existsSync(path.join(targetDir, item))) copy(item);
@@ -1013,7 +1098,7 @@ function uninstallLocal(targetDir, targets, dryRun = false, cleanAll = false, ke
     throw new Error('Cannot uninstall from the Studio source repository.');
   }
   const integrations = {
-    claude: ['CLAUDE.md', '.claude/settings.json', '.claude/statusline.sh'],
+    claude: ['CLAUDE.md', '.mcp.json', '.claude/settings.json', '.claude/statusline.sh'],
     cursor: ['.cursor', '.cursorrules'],
     antigravity: ['GEMINI.md'],
     codex: ['CODEX.md', '.codex'],
@@ -1028,8 +1113,8 @@ function uninstallLocal(targetDir, targets, dryRun = false, cleanAll = false, ke
   };
   const files = new Set(Object.entries(integrations).flatMap(([client, items]) => targets.all || targets[client] ? items : []));
   if (targets.all) {
-    for (const item of ['.claude', '.agents', 'AGENTS.md', 'CONVENTIONS.md', 'project.local.yaml.example',
-      'templates', 'scripts/seo', 'scripts/sync-agent-skills.py', 'studio-tests']) files.add(item);
+    for (const item of ['.claude', '.agents', '.basinfy/experience', 'AGENTS.md', 'CONVENTIONS.md', 'project.local.yaml.example',
+      'templates', 'scripts/seo', 'studio-tests']) files.add(item);
     if (!keepConfig) files.add('project.yaml');
   }
   if (cleanAll) {
@@ -1186,6 +1271,16 @@ function main() {
     return;
   }
 
+  const wslEnvironment = Boolean(process.env.WSL_DISTRO_NAME || process.env.WSL_INTEROP);
+  if (process.platform === 'win32' && wslEnvironment) {
+    console.error('Windows Node.js detected inside a WSL environment. Install and use Linux Node.js/npm in your WSL terminal, then run this command again. No files were changed.');
+    process.exitCode = 1;
+    return;
+  }
+  const isWsl = process.platform === 'linux' && (wslEnvironment || /microsoft/i.test(os.release()));
+  const environment = isWsl ? 'WSL (Linux)' : ({ win32: 'Windows', darwin: 'macOS', linux: 'Linux' }[process.platform] || process.platform);
+  console.log(`Environment detected: ${environment}. User home: ${os.homedir()}`);
+
   if (opts.command === 'update') {
     if (opts.dryRun) {
       console.log(`Dry-run: would check for a Studio update ${opts.global ? 'globally' : `in ${path.resolve(opts.target)}`}.`);
@@ -1214,7 +1309,7 @@ function main() {
 
   if (opts.dryRun) {
     const selected = Object.keys(opts.targets).filter(target => opts.targets[target]);
-    console.log(`Dry-run: would install ${selected.join(', ')} ${opts.global ? 'globally' : `in ${path.resolve(opts.target)} (${opts.mode})`}.`);
+    console.log(`Dry-run: would install ${selected.join(', ')} ${opts.global ? `globally in ${os.homedir()}` : `in ${path.resolve(opts.target)} (${opts.mode})`}.`);
     return;
   }
 

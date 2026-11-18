@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "basinfy": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@basinfy/mcp-server"]
+    }
+  }
+}

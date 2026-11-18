@@ -6,6 +6,7 @@ import json
 import subprocess
 import glob
 import re
+from concurrent.futures import ThreadPoolExecutor
 from hashlib import sha256
 from pathlib import Path
 from shutil import copyfile
@@ -346,14 +347,25 @@ require('./bin/cli.js');
           and (global_home / ".codex/instructions.md").read_text(encoding="utf-8") == "new global instructions"
           and not (global_home / ".claude").exists(),
           "Global update refreshes installed integrations without installing other clients", updated_global.stdout + updated_global.stderr)
-    for platform in ("claude", "codex", "antigravity", "cursor", "copilot", "windsurf", "cline", "continue", "aider", "devin", "zed", "agents", "all"):
+    platforms = ("claude", "codex", "antigravity", "cursor", "copilot", "windsurf", "cline", "continue", "aider", "devin", "zed", "agents", "all")
+
+    def _install_platform(platform):
         project = Path(fixture, platform)
         install = subprocess.run(cli + [platform, "--inject", "--target", str(project)], capture_output=True)
+        return platform, project, install
+
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        install_results = list(pool.map(_install_platform, platforms))
+
+    for platform, project, install in install_results:
         skill_dir = project / (".claude/skills" if platform == "claude" else ".agents/skills")
         skill_entries = list(skill_dir.glob("saas-*/SKILL.md"))
         support_files = ["project.yaml", ".claude/agents/frontend-engineer.md", ".claude/hooks/yaml-helper.sh",
-                         ".claude/docs/workflow-catalog.yaml", "studio-tests/catalog.yaml", "templates/seo/api-catalog-route.ts"]
+                         ".claude/runtime/studio-core.cjs", ".claude/docs/workflow-catalog.yaml",
+                         "studio-tests/catalog.yaml", "templates/seo/api-catalog-route.ts", ".basinfy/experience/README.md"]
         missing = [name for name in support_files if not (project / name).is_file()]
+        if (project / "studio-tests/verify-integrity.py").exists():
+            missing.append("polluted:studio-tests/verify-integrity.py")
         stamp = json.loads((project / ".claude/framework-version.json").read_text(encoding="utf-8"))
         helper = ".claude/hooks/yaml-helper.sh"
         if stamp.get("files", {}).get(helper) != sha256((project / helper).read_bytes()).hexdigest():
@@ -680,6 +692,52 @@ multi_llm_files = [
 
 missing_llm_files = [f for f in multi_llm_files if not os.path.exists(f)]
 check(len(missing_llm_files) == 0, "All multi-LLM configuration files exist", f"Missing: {missing_llm_files}")
+
+cfg_sync = subprocess.run(
+    ["node", "scripts/build-client-configs.mjs", "--check"],
+    capture_output=True, text=True, encoding="utf-8", errors="replace",
+)
+check(cfg_sync.returncode == 0, "Multi-LLM constitutions are synchronized, protocolSync-immune, and include Founder Autopilot", (cfg_sync.stdout + cfg_sync.stderr).strip())
+
+# Verify zero ASCII control character corruption across all text files in repository
+ctrl_corrupted = []
+for p in Path(".").rglob("*"):
+    if any(part in p.parts for part in (".git", ".basinfy", "node_modules")) and p.as_posix() not in {
+        ".basinfy/experience/README.md",
+        ".basinfy/experience/api/EXPERIENCE.md",
+        ".basinfy/experience/auth/EXPERIENCE.md",
+        ".basinfy/experience/billing/EXPERIENCE.md",
+        ".basinfy/experience/database/EXPERIENCE.md",
+    }:
+        continue
+    if p.is_file() and p.suffix.lower() in {".md", ".mdc", ".py", ".js", ".mjs", ".cjs", ".sh", ".yaml", ".yml", ".json", ".ts", ".tsx"}:
+        txt = p.read_text(encoding="utf-8", errors="replace")
+        if re.search(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", txt):
+            ctrl_corrupted.append(p.as_posix())
+check(len(ctrl_corrupted) == 0, "Zero ASCII control character corruption across all text files", f"Corrupted: {ctrl_corrupted}")
+
+# Verify all 50 agents have rich domain invariants and zero agent-check NOTE warnings
+stub_agents = [
+    p.name for p in Path(agents_dir).glob("*.md")
+    if "Type safety with TypeScript / Pydantic, zero exposed private secrets." in p.read_text(encoding="utf-8")
+    or "Basinfy Code Mode First" not in p.read_text(encoding="utf-8")
+]
+check(len(stub_agents) == 0, "All 50 agents carry rich domain invariants (zero generic stubs)", f"Stubs: {stub_agents}")
+
+rc_ag, out_ag, err_ag = run_bash([".claude/scripts/agent-check.sh"])
+ag_notes = [line.strip() for line in out_ag.splitlines() if line.strip().startswith("NOTE:")]
+check(rc_ag == 0 and len(ag_notes) == 0, "Zero agent-check.sh NOTE warnings across all 50 agents", f"Notes: {ag_notes[:5]}")
+
+# Verify studio-core.cjs Node runtime & code-root resolution for FastAPI / Cloudflare / Next.js
+core_syntax = subprocess.run(["node", "--check", ".claude/runtime/studio-core.cjs"], capture_output=True, text=True)
+check(core_syntax.returncode == 0, ".claude/runtime/studio-core.cjs parses cleanly", core_syntax.stderr.strip())
+with TemporaryDirectory(prefix="studio-coreroot-") as cr_tmp:
+    for stack_val, expected_root in (("nextjs", "src"), ("fastapi", "app"), ("cloudflare", "src"), ("go-gin", "cmd")):
+        sp = Path(cr_tmp, stack_val)
+        sp.mkdir()
+        (sp / "project.yaml").write_text(f'stack:\n  frontend: "{stack_val}"\n', encoding="utf-8")
+        r_core = subprocess.run(["node", os.path.abspath(".claude/runtime/studio-core.cjs"), "resolve-code-root", "--root", str(sp)], capture_output=True, text=True)
+        check(r_core.stdout.startswith(f"{expected_root}\t"), f"studio-core.cjs resolves {stack_val} -> {expected_root}", f"Got: {r_core.stdout!r}")
 
 parity = subprocess.run(
     [sys.executable, "scripts/sync-agent-skills.py", "--verify"],
