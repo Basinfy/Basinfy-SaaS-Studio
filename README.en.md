@@ -9,8 +9,8 @@
 # Basinfy SaaS Studio
 
 <p align="center">
-  <strong>Autonomous SaaS & Online Software Engineering Studio for Claude Code</strong><br>
-  <em>Turn your Claude Code session into a coordinated 50-agent software development agency with 108 workflows and 28 governance gates.</em>
+  <strong>SaaS engineering workflows for Claude Code, Codex, Cursor, Antigravity, and other AI clients</strong><br>
+  <em>50 specialist roles, 108 workflows, and 28 governance gates.</em>
 </p>
 
 <p align="center">
@@ -23,24 +23,23 @@
   <img src="https://img.shields.io/badge/Stacks-FastAPI_•_Next.js_•_Django_•_Postgres_•_Docker-8b5cf6.svg" alt="Stacks" />
 </p>
 
+[Installation](#-quick-install-via-npx-universal-multi-llm) · [First steps](#verify-the-installation) · [Commands](#-the-108-slash-commands-saas-) · [Troubleshooting](#troubleshooting)
+
 ---
 
 ## 🚀 Quick Install via NPX (Universal Multi-LLM)
 
-Install **Basinfy SaaS Studio** with Node.js. Claude Code uses `.claude/skills/`. Codex, Antigravity, Gemini CLI, Cursor, and GitHub Copilot can discover workflows in `.agents/skills/`. On other clients, use the client's skill loader when available, or ask it to open the workflow's `SKILL.md`. Delegation and hooks depend on the client. Helpers use Bash, and the integrity suite uses Python with PyYAML.
+### Prerequisites
+
+- **Installation** — Node.js 18 or later with npm/NPX, Git, and access to GitHub. CI uses Node.js 22. Check with `node --version`, `npx --version`, and `git --version`.
+- **Usage** — Open your project in a supported AI client. The shell and configuration helpers use Bash and Python 3. On Windows, use Git Bash for the Bash helpers or run the client and helpers inside WSL.
+- **Studio tests** — Use a clone of this repository, Bash, and Python with PyYAML. See [contributing and testing](#contributing-and-testing).
 
 Run a local installation in each project to add the configuration, scripts, and catalog used by workflows. A global installation makes the skill entry points available in clients that support user-level discovery.
 
-To verify a distribution, run `npm run test:package`. For native Codex discovery, run `npm run test:client -- codex`. To run a read-only model case in a disposable project, sign in to the client and run `npm run test:client -- codex --model`, `npm run test:client -- claude --model`, or `npm run test:client -- antigravity --model`. The client must be on `PATH`, or pass `--executable` with its CLI path. The model check uses the client's current permissions and may consume account quota.
+### 1. Global installation
 
-Use `--client-model <model-id>` with `--model` to select a model available in the client account. For Antigravity, `agy models` lists those identifiers. Increase `--timeout <seconds>` when the provider takes longer to complete the read-only case.
-
-The Antigravity smoke test supplies temporary session permissions for reading its disposable project and running the artifact and configuration query helpers. Existing deny and ask rules still apply. Codex model tests launch the standalone CLI without the desktop application's runtime IPC variables.
-
-For existing projects with `performance.target_fid_ms`, set an explicit `performance.target_inp_ms` budget in `project.yaml` or `project.local.yaml`. The current starter uses 200 ms. FID and INP are different measurements, so the profiler does not reuse an old FID budget for INP.
-
-### 1. Global Installation (Recommended)
-Make all **50 agents** and **108 `/saas-*` commands** globally available in **any project or folder on your computer**:
+Install user-level skills and settings for clients that support global discovery:
 
 ```bash
 # Install globally for ALL AI coding tools installed on your machine:
@@ -55,13 +54,13 @@ npx github:Basinfy/Basinfy-SaaS-Studio windsurf --global
 ```
 
 ### 2. Local Project Installation & Scaffolding
-Create a fresh SaaS studio or inject into an existing codebase:
+Use `scaffold` (the default) in a new directory to set up documentation, design, and delivery folders. The workflows that follow guide application development. Use `inject` from an existing project's root to add Studio files and client integrations:
 
 ```bash
 # Interactive guided setup (asks questions and configures your environment):
 npx github:Basinfy/Basinfy-SaaS-Studio
 
-# Scaffold a brand-new production SaaS project:
+# Set up the Studio structure in a new directory:
 npx github:Basinfy/Basinfy-SaaS-Studio all --target ./my-saas-app
 
 # Inject AI Studio into an existing Next.js / FastAPI project without overwriting app files:
@@ -72,6 +71,17 @@ npx github:Basinfy/Basinfy-SaaS-Studio vscode
 npx github:Basinfy/Basinfy-SaaS-Studio cursor
 npx github:Basinfy/Basinfy-SaaS-Studio codex
 ```
+
+### Verify the installation
+
+1. Open the destination folder in your AI client and start a new session.
+2. Check for `project.yaml` and `.claude/skills/saas-help/SKILL.md`. Portable installations also include `.agents/skills/`.
+3. Run `/saas-help` in chat. It should report the project stage and suggest a next step. If the client does not show slash commands, ask it to load the `saas-help` skill or read its `SKILL.md`.
+4. For a new project, run `/saas-start` or describe your idea in plain language. For an existing project, run `/saas-project-stage-detect` with the code folder open.
+
+In an existing repository, use `npx github:Basinfy/Basinfy-SaaS-Studio all --mode inject --dry-run` to preview the target and mode. After installation, review the added files with `git status --short`.
+
+On WSL, use Linux Node.js and npm inside the distribution. Windows and WSL have separate global installations. See the [WSL setup instructions](README.md#3-instalação-no-wsl-windows-subsystem-for-linux).
 
 ### Supported Platforms Matrix:
 
@@ -92,20 +102,21 @@ npx github:Basinfy/Basinfy-SaaS-Studio codex
 
 ## 📑 Table of Contents
 
-1. [Quick Install via NPX (Universal Multi-LLM)](#-quick-install-via-npx-universal-multi-llm)
+1. [Quick Install via NPX (Universal Multi-LLM)](#-quick-install-via-npx-universal-multi-llm) · [Update](#-built-in-auto-updater-github-sync) · [Uninstall](#-framework-uninstallation-safe-uninstall)
 2. [Executive Overview](#-executive-overview)
 3. [Studio Architecture](#-studio-architecture)
 4. [Deterministic Autonomous Software Engineering SOPs](#-deterministic-autonomous-software-engineering-sops)
 5. [The 50-Agent Hierarchy](#-the-50-agent-hierarchy)
 6. [The 7-Phase Software Pipeline](#-the-7-phase-software-pipeline)
-7. [The 108 Slash Commands (`/saas-*`)](#-the-95-slash-commands-saas-)
+7. [The 108 Slash Commands (`/saas-*`)](#-the-108-slash-commands-saas-) · [Terminal commands](#terminal-commands)
 8. [Director Gates & Quality Assurance](#-director-gates--quality-assurance)
 9. [Enterprise Security & Defensive Perimeter](#-enterprise-security--defensive-perimeter)
 10. [End-to-End Cloud Deployment & Publication](#-end-to-end-cloud-deployment--publication)
-11. [Configuration & Dual-Resolution (`project.yaml`)](#-configuration--dual-resolution)
-12. [Quickstart Guide & First Session Workflows](#-quickstart-guide)
+11. [Configuration & Dual-Resolution (`project.yaml`)](#-configuration--dual-resolution) · [File map](#file-map)
+12. [Quickstart Guide & Practical Tutorials](#-quickstart-guide--practical-tutorials)
 13. [Smart Code Discovery & Dynamic Basinfy Protocol](#-smart-code-discovery--dynamic-basinfy-protocol)
 14. [Automated Verification & Self-Improvement](#-automated-verification--self-improvement)
+15. [Troubleshooting](#troubleshooting) · [Contributing and testing](#contributing-and-testing)
 
 ---
 
@@ -189,7 +200,7 @@ flowchart TD
     end
 
     subgraph ExecutionLayer["5. Deterministic Execution & Self-Test"]
-        SK["96 Unique Skills (/saas-*)<br/>(Dynamic Shell Injection)"]
+        SK["108 Unique Skills (/saas-*)<br/>(Dynamic Shell Injection)"]
         SC["35 Deterministic Scripts<br/>(ts-parse-check, prd-structure-check...)"]
         TESTS["studio-tests/<br/>(Continuous Self-Improvement & Audit)"]
     end
@@ -353,10 +364,10 @@ Every SaaS project advances through a structured 7-stage lifecycle machine defin
 
 ## 🛠 The 108 Slash Commands (`/saas-*`)
 
-All slash commands reside in [`.claude/skills/`](.claude/skills/) and feature dynamic configuration injection:
+Run these workflows in your AI client's chat. Clients that load the portable [`basinfy-saas-studio` skill](.agents/skills/basinfy-saas-studio/SKILL.md) can also invoke it with a command or topic. The canonical definitions live in [`.claude/skills/`](.claude/skills/).
 
 ```text
-Phase 1: Concept & Foundation (9)
+Concept & Foundation (9)
   /saas-start                 Guided onboarding wizard for new or brownfield SaaS projects.
   /saas-help                  Workflow catalog navigator reporting current status and next actions.
   /saas-project-stage-detect  Diagnostic analyzer determining current pipeline maturity.
@@ -367,14 +378,15 @@ Phase 1: Concept & Foundation (9)
   /saas-design-tokens         Design tokens catalog (Tailwind, color palettes, spacing, typography).
   /saas-map-features          Functional feature decomposition and dependency graph mapping.
 
-Phase 2: Systems Design & Specs (5)
+Systems Design & Specs (6)
   /saas-design-system         Author comprehensive PRDs with schemas, metrics, and user stories.
+  /saas-frontend-taste        Design, refine, and verify responsive SaaS screens and concise UI copy.
   /saas-quick-design          Lightweight specification for small tweaks, column additions, or rules.
   /saas-review-all-prds       Cross-PRD review auditing business logic inconsistencies.
   /saas-consistency-check     Automated scanning between PRDs, DB schemas, and API routes.
   /saas-propagate-design-change Impact analysis of PRD changes across ADRs, stories, and code.
 
-Phase 3: Technical Setup & Architecture (10)
+Technical Setup & Architecture (10)
   /saas-create-architecture   Author the master architecture blueprint (C4 models, APIs, DB layer).
   /saas-architecture-decision Create formal Architecture Decision Records (ADRs) with trade-offs.
   /saas-architecture-review   Compliance audit verifying traceability between PRDs and ADRs.
@@ -386,7 +398,7 @@ Phase 3: Technical Setup & Architecture (10)
   /saas-asset-spec            Visual component specifications and icon library requirements.
   /saas-gate-check            Phase transition engine evaluating criteria against Director Gates.
 
-Phase 4: Pre-Production & Planning (10)
+Pre-Production & Planning (10)
   /saas-prototype             Build isolated spikes to validate critical technical assumptions.
   /saas-vertical-slice        Implement end-to-end core flow (Signup -> Onboard -> Core -> Checkout).
   /saas-create-epics          Decompose architecture and PRDs into cohesive architectural epics.
@@ -398,7 +410,7 @@ Phase 4: Pre-Production & Planning (10)
   /saas-milestone-review      Executive review evaluating milestone readiness (MVP, Beta, GA).
   /saas-asset-audit           Audit UI components, bundle sizes, and static assets in public/.
 
-Phase 5: Production & Development (11)
+Production & Development (11)
   /saas-dev-story             Implement a user story with test-driven validation.
   /saas-code-review           Architectural review of changes (SOLID, security, SQL efficiency).
   /saas-story-done            Validate acceptance criteria, verify tests, and log evidence.
@@ -411,7 +423,7 @@ Phase 5: Production & Development (11)
   /saas-scope-check           Detect scope creep by comparing code against original PRDs.
   /saas-content-audit         Completeness audit comparing planned features against delivered routes.
 
-Phase 6: Multi-Disciplinary Team Orchestration (9)
+Multi-Disciplinary Team Orchestration (10)
   /saas-team-growth           Growth team: Landing page, SEO, tracking, and onboarding tour.
   /saas-team-core-feature     Core engine team: Primary business value workflow implementation.
   /saas-team-auth-access      Security team: Authentication, RBAC, tenant isolation, and sessions.
@@ -421,8 +433,9 @@ Phase 6: Multi-Disciplinary Team Orchestration (9)
   /saas-team-qa               QA team: Automated test suites, Playwright E2E, and regression runs.
   /saas-team-release          Release team: Deployment pipeline, smoke checks, and rollback prep.
   /saas-team-ui               UI team: Design token alignment, accessible forms, and dark mode.
+  /saas-team-seo              Coordinate growth, frontend, content, docs, and QA for SEO and agent readiness.
 
-Phase 7: Hardening, Release & Operations (20)
+Hardening, Release & Operations (20)
   /saas-perf-profile          Profile Core Web Vitals (LCP, INP, CLS) and API p95 latencies.
   /saas-pricing-audit         Audit pricing tiers, unit economics, infrastructure margins, quotas.
   /saas-usability-test        Structured usability test logging with user feedback synthesis.
@@ -444,7 +457,7 @@ Phase 7: Hardening, Release & Operations (20)
   /saas-skill-test            Automated testing framework verifying all studio skills and agents.
   /saas-skill-improve         Self-improvement loop (test-fix-retest) refining studio prompts.
 
-Phase 8: Privacy, LGPD & Regulatory Compliance (21)
+Privacy, LGPD & Regulatory Compliance (21)
   /saas-lgpd                  Central compliance control plane: LGPD & GDPR program management.
   /saas-team-lgpd             Privacy squad orchestration (DPO, AppSec, Backend, DB, Legal).
   /saas-lgpd-audit            Full data protection readiness audit, risk mapping, and gap analysis.
@@ -466,7 +479,65 @@ Phase 8: Privacy, LGPD & Regulatory Compliance (21)
   /saas-lgpd-retention-erasure Automated data retention policies and scheduled database purge jobs.
   /saas-lgpd-eca-digital-minors Enhanced safeguards and parental verification for minors (ECA Digital).
   /saas-lgpd-legacy-retrofit  Remediation roadmap to retrofit legacy databases and schemas into compliance.
+
+SEO, GEO & Agent Readiness (11)
+  /saas-seo                   Choose workflows for SEO, AI search visibility, and agent readiness.
+  /saas-seo-audit             Audit crawlability, metadata, structured data, Core Web Vitals, and content quality.
+  /saas-seo-technical         Check indexing, robots.txt, sitemaps, redirects, and other technical fundamentals.
+  /saas-seo-schema            Validate and generate JSON-LD structured data.
+  /saas-seo-geo               Evaluate content visibility in AI-powered search and answer engines.
+  /saas-seo-agentic           Audit and implement agent discovery and access features such as llms.txt and MCP cards.
+  /saas-seo-drift             Compare SEO snapshots to detect regressions over time.
+  /saas-seo-programmatic      Plan pages generated from data and reusable templates.
+  /saas-seo-competitor-pages  Plan pages comparing competitors and alternatives.
+  /saas-seo-sxo               Evaluate the experience from search results through on-site conversion.
+  /saas-seo-content           Review content for clarity, credibility, and editorial quality.
 ```
+
+## Terminal commands
+
+Use `npx github:Basinfy/Basinfy-SaaS-Studio [command] [options]` or, from a cloned repository, `node bin/cli.js [command] [options]`.
+
+| Command | Purpose |
+| --- | --- |
+| No arguments or `init` | Opens the installation wizard in an interactive terminal. In non-interactive use, applies the installation defaults. |
+| `all` | Installs Studio for all supported platforms. |
+| `claude`, `cursor`, `windsurf`, `continue`, `aider`, `devin`, `zed` | Installs Studio for the named client. |
+| `antigravity` / `gemini` | Installs for Antigravity and Gemini CLI. |
+| `codex` / `chatgpt` | Installs for OpenAI Codex. |
+| `vscode`, `copilot` | Selects the integration for VS Code with GitHub Copilot or for GitHub Copilot alone, respectively. |
+| `cline` / `roo` | Installs for Cline and Roo Code. |
+| `agents` / `opencode` | Installs portable agent and skill files. |
+| `update` / `--update` / `upgrade` | Checks for and applies Studio updates. |
+| `uninstall` / `--uninstall` / `remove` / `--remove` / `unlink` | Removes a local or global installation. |
+| `help` / `-h` / `--help` | Shows CLI help. |
+| `-v` / `--version` | Shows the Studio version. |
+
+Platform selectors also accept a `--` prefix, as in `uninstall --global --codex --dry-run`. To use a directory name as the destination, pass `--target my-saas` or an explicit path such as `./my-saas`.
+
+| Option | Purpose |
+| --- | --- |
+| `-g`, `--global`, `global` | Targets the user's global installation. |
+| `-t <dir>`, `--target <dir>` | Sets the local target directory. The default is the current directory. |
+| `-m <mode>`, `--mode <mode>` | Selects `scaffold` (default) or `inject`. Use `--inject` as shorthand for `--mode inject`. |
+| `-f`, `--force`, `-y`, `--yes` | Allows overwrites or skips confirmation, depending on the operation. |
+| `-d`, `--dry-run` | Previews an installation, update, or uninstallation. |
+| `--clean-all`, `--all-scaffold` | Includes scaffold directories in a local uninstallation. |
+| `--keep-config`, `--keep-configs` | Preserves `project.yaml` during a local uninstallation. |
+
+### Repository npm scripts
+
+| Command | Purpose |
+| --- | --- |
+| `npm test` | Runs Studio integrity checks. |
+| `npm run test:bench` | Runs the SaaS-Bench benchmark runner. |
+| `npm run test:package` | Verifies the distribution package. |
+| `npm run test:client` | Checks native skill discovery in supported clients. |
+| `npm run sync:skills` | Syncs portable skills with their canonical definitions. |
+| `npm run sync:configs` | Regenerates client configurations. |
+| `npm run cli -- <command> [options]` | Runs the local CLI with the supplied arguments. |
+| `npm run cli:help` | Shows local CLI help. |
+| `npm run cli:uninstall` | Runs the local CLI uninstaller. |
 
 ---
 
@@ -536,7 +607,7 @@ Department Leads (ql-*, le-*, uxc-*):
 
 ## 🚀 End-to-End Cloud Deployment & Publication
 
-While traditional code generators stop at writing code, Basinfy SaaS Studio provides an exhaustive, battle-tested publication pipeline to take applications live:
+Studio's release workflows guide deployment preparation and verification. Set up the provider accounts, environments, and credentials your project needs. Run `/saas-release-checklist` for technical readiness and `/saas-launch-checklist` for launch preparation.
 
 ```mermaid
 flowchart LR
@@ -548,27 +619,28 @@ flowchart LR
     F --> G["7. Observability & GTM<br/>(Sentry, PostHog, Product Hunt)"]
 ```
 
-1. **Automated Cloud Deployments**: First-class automation for Vercel CLI (`vercel --prod`), Cloudflare Workers (`wrangler deploy`), and containerized Docker environments.
-2. **Database & Tenancy Hardening**: Automated zero-downtime migrations (`prisma migrate deploy`), connection pooling (PgBouncer), and verified PostgreSQL Row-Level Security (RLS).
-3. **Stripe Live Production Activation**: Secure transition from test keys to live mode (`pk_live_`, `sk_live_`), verified customer portal configuration, and raw-body HMAC signature webhook verification.
-4. **Email Deliverability Verification**: 100% verified SPF, DKIM, and DMARC DNS records with transactional email delivery tests (Resend / Postmark).
-5. **Observability & Incident Readiness**: Sentry error tracking with release tagging, PostHog product analytics, `/api/health` automated uptime monitors, and 72-hour launch on-call rosters.
-6. **Go-To-Market Launch Pack**: Product Hunt maker kits, social preview cards (OpenGraph), Terms of Service, and Privacy Policy compliance ready for day-one traffic.
+- **Deployment** — Verify builds, environment variables, domains, and rollback for the target platform.
+- **Data and billing** — Review migrations, backups, tenant isolation, and live payment configuration.
+- **Email and observability** — Check DNS records, transactional email delivery, health endpoints, and release monitoring.
 
 
 ---
 
 ## ⚙️ Configuration & Dual-Resolution
 
-The studio relies on a dual-layer configuration pattern evaluated dynamically at runtime by [`.claude/hooks/yaml-helper.sh`](.claude/hooks/yaml-helper.sh):
+Keep team-wide settings in [`project.yaml`](project.yaml). Use [`project.local.yaml.example`](project.local.yaml.example) as a starting point for `project.local.yaml`, which holds personal preferences. For an existing project installed with `inject`, verify that your repository ignores `project.local.yaml` before committing files.
+
+For keys that allow a local override, workflows use the local value first. See the [configuration resolution rules](.claude/docs/config-resolution.md) and the [settings reference](.claude/docs/effects-map.md).
 
 ```text
 [project.local.yaml]  (Developer overrides, gitignored)
-         ↓  deep merge
+         ↓
    [project.yaml]      (Team-wide single source of truth)
-         ↓  expansion
+         ↓
+   [legacy files]      (Where applicable)
+         ↓
    [modes.rigor]       (minimal | standard | full)
-         ↓  fallback
+         ↓
    [defaults]
 ```
 
@@ -580,6 +652,8 @@ project:
   name: "Acme SaaS"
   slug: "acme-saas"
   stage: "concept" # concept | systems-design | technical-setup | pre-production | production | polish | release
+  locale: "en"
+  user_profile: "developer" # founder | developer
 
 stack:
   frontend: "nextjs" # nextjs | react-vite | vue-nuxt
@@ -588,7 +662,8 @@ stack:
   orm: "prisma" # prisma | drizzle
   auth: "supabase-auth" # supabase-auth | clerk | authjs
   billing: "stripe" # stripe | paddle | lemonsqueezy
-  deployment: "vercel" # vercel | cloudflare | aws
+  deployment: "vercel" # vercel | cloudflare | flyio | aws-fargate
+  styling: "tailwind-shadcn"
 
 modes:
   rigor: "standard" # minimal (speed/hackathon) | standard (balanced) | full (enterprise)
@@ -602,6 +677,26 @@ performance:
   max_initial_bundle_kb: 200
   api_p95_latency_ms: 250
 ```
+
+Run `/saas-settings` in chat to view settings, `/saas-settings modes.review_mode` to check the effective value and its source, or `/saas-settings --local modes.review_mode=lean` to set that preference on your machine.
+
+- `project.user_profile` controls how choices are presented. `founder` uses business language and `developer` includes technical details.
+- `modes.rigor` controls workflow depth through `minimal`, `standard`, and `full`.
+- `modes.automation` controls when Studio asks for confirmation. `collaborative` asks at each stage, `guided` asks on major decisions, and `autonomous` records decisions as it proceeds while honoring required confirmations. See [automation modes](.claude/docs/automation-modes.md).
+- If you have a legacy `performance.target_fid_ms` setting, set an explicit `performance.target_inp_ms` in `project.yaml`. The starter uses 200 ms.
+
+### File map
+
+| Path | What it contains |
+| --- | --- |
+| [`.claude/skills/`](.claude/skills/) and [`.claude/agents/`](.claude/agents/) | Workflow definitions and specialist roles. |
+| [`.agents/skills/`](.agents/skills/) | Portable versions of skills for other clients. |
+| `design/prd/` and [`docs/specs/`](docs/specs/) | Workflows create new PRDs in `design/prd/`. Discovery also accepts existing PRDs in `docs/specs/` and `docs/prd/`. |
+| [`docs/architecture/`](docs/architecture/) | Architecture and decision records. |
+| [`design/tokens/`](design/tokens/) | Interface tokens such as color, typography, and spacing. |
+| `production/epics/`, `production/sprints/`, and `production/qa/` | Stories, plans, and test evidence produced by workflows. |
+| `production/session-state/active.md` | A checkpoint for resuming work in another session. |
+| [`templates/`](templates/) | Reusable templates for artifacts and integrations. |
 
 ---
 
@@ -798,7 +893,7 @@ The studio includes an autonomous testing and audit engine in [`studio-tests/`](
   ```bash
   python studio-tests/verify-integrity.py
   ```
-  Runs 13 rigorous checks verifying agent counts, skill schemas, director gate verdicts, hook executions, and deterministic script outputs.
+  Checks agent counts, skill schemas, director gate verdicts, hook execution, and script output.
 * **Skill Test Suite**:
   ```text
   /saas-skill-test
@@ -811,6 +906,39 @@ The studio includes an autonomous testing and audit engine in [`studio-tests/`](
   Executes an autonomous test-fix-retest loop to continuously refine prompt quality, reducing token bloat and eliminating ambiguity.
 
 ---
+
+## Troubleshooting
+
+| Symptom | What to check |
+| --- | --- |
+| `/saas-help` does not appear | Verify that you installed for the correct client and opened the project root. Start a new session and ask the client to load the `SKILL.md` if it uses a different discovery mechanism. |
+| Global installation works, but `project.yaml` is missing | Run a local installation from the project root. Use `--mode inject` in an existing repository. |
+| Bash or Python fails on Windows | Check `bash --version` and `python --version` in the client's environment. If Bash opens an unconfigured WSL distribution, use Git Bash or install the dependencies inside WSL. |
+| A setting has an unexpected value | Run `/saas-settings <key>` to see the source and check whether the key permits a local override. |
+| A session lost context | Open the project root and ask the client to resume from `production/session-state/active.md`, if present. Use `/saas-help` for an updated diagnosis. |
+
+## Contributing and testing
+
+Run these commands from the root of a Studio clone. See the [integrity workflow](.github/workflows/studio-integrity.yml) for the versions and checks used in CI.
+
+```bash
+python -m pip install PyYAML
+npm test
+npm run test:package
+npm run test:bench -- --verify-specs
+```
+
+To change a workflow, edit its canonical definition in `.claude/skills/` and run `npm run sync:skills` to update the portable copies. Check parity with `npm run sync:skills -- --verify`. When you change the client configuration generator, run `npm run sync:configs` and review the generated files.
+
+With the client CLI available, run `npm run test:client -- codex` to check native discovery. Sign in and add `--model` for a read-only case in a disposable project. This can consume account quota and supports `codex`, `claude`, and `antigravity`. Use `--executable <path>` if the CLI is outside `PATH`, `--client-model <model-id>` to select a model, and `--timeout <seconds>` to adjust the time limit.
+
+The Antigravity smoke test supplies temporary permissions for reading the disposable project and running its query helpers. Existing deny and ask rules still apply. Codex model tests launch the standalone CLI without the desktop runtime IPC variables.
+
+When [opening an issue](https://github.com/Basinfy/Basinfy-SaaS-Studio/issues), include your OS, AI client, Studio version, command, and error message. Remove tokens and other sensitive data from logs.
+
+## License
+
+Distributed under the [MIT license](LICENSE).
 
 <p align="center">
   <strong>Basinfy SaaS Studio</strong> — <em>Engineering discipline meets multi-agent autonomy.</em>

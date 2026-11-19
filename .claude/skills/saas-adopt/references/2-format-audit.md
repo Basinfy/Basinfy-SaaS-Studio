@@ -32,9 +32,8 @@ structure-check script:
 Bash: bash .claude/scripts/prd-structure-check.sh [path-to-prd]
 ```
 
-**Pass paths one at a time; do not invoke it bare.** The no-argument form sweeps
-`design/prd/` only, and a brownfield project's PRDs are not guaranteed to live
-there — pass whatever paths Phase 1 found. The script prints a `PRESENT:` list
+**Pass paths one at a time.** Use the actual paths Phase 1 found, including
+any files discovered outside the standard roots. The script prints a `PRESENT:` list
 and, when applicable, an `ABSENT:` list per file. It reports **presence only**
 and makes no REQUIRED/ADVISORY judgment (that is the tier logic below), and it
 already accepts `## Detailed Design` as satisfying the `Detailed Rules`
@@ -92,7 +91,7 @@ if the Status section exists.
 
 ### 2c: features-modules-index.md Format Audit
 
-If `design/prd/features-modules-index.md` exists:
+If Phase 1 found a systems index, audit it at its discovered path:
 
 1. **Parenthetical status values** — Grep for any Status cell containing
    parentheses: `"Needs Revision ("`, `"In Progress ("`, etc.

@@ -59,7 +59,7 @@ ${c.bold}COMMANDS:${c.reset}
   ${c.cyan}aider${c.reset}         Install specifically for Aider (.aider.conf.yml, .aiderignore)
   ${c.cyan}devin${c.reset}         Install specifically for Devin (.devin/, AGENTS.md)
   ${c.cyan}zed${c.reset}           Install specifically for Zed Editor (.zed/)
-  ${c.cyan}init${c.reset}          Interactive guided installation wizard (default)
+  ${c.cyan}init${c.reset}          Guided setup when run alone in an interactive terminal
   ${c.cyan}update${c.reset}        Check and update studio framework to latest version from GitHub
   ${c.cyan}uninstall${c.reset}     Safely uninstall Basinfy SaaS Studio (global or local project)
 
@@ -524,7 +524,9 @@ function installLocal(targetDir, targets, mode, force) {
 
   totalFiles += installCopy(path.join(PKG_ROOT, 'templates'), path.join(dest, 'templates'), force);
   totalFiles += installCopy(path.join(PKG_ROOT, 'scripts', 'seo'), path.join(dest, 'scripts', 'seo'), force);
-  totalFiles += installCopy(path.join(PKG_ROOT, 'studio-tests', 'catalog.yaml'), path.join(dest, 'studio-tests', 'catalog.yaml'), force);
+  for (const item of ['catalog.yaml', 'quality-rubric.md', 'skills', 'templates']) {
+    totalFiles += installCopy(path.join(PKG_ROOT, 'studio-tests', item), path.join(dest, 'studio-tests', item), force);
+  }
   totalFiles += installCopy(path.join(PKG_ROOT, '.basinfy', 'experience'), path.join(dest, '.basinfy', 'experience'), force);
 
   // 11. Scaffold Mode specifics (docs, design, production dirs — never copy Studio marketing README/banners or internal logs)
@@ -682,6 +684,12 @@ function parseArgs() {
     },
   };
 
+  function optionValue(index) {
+    const value = args[index + 1];
+    if (!value || value.startsWith('-')) throw new Error(`Missing value for ${args[index]}.`);
+    return value;
+  }
+
   for (let i = 0; i < args.length; i++) {
     const a = args[i];
     if (a === '-h' || a === '--help' || a === 'help') {
@@ -693,9 +701,14 @@ function parseArgs() {
     } else if (a === '-f' || a === '--force' || a === '-y' || a === '--yes') {
       parsed.force = true;
     } else if (a === '-t' || a === '--target') {
-      parsed.target = args[++i] || '.';
+      parsed.target = optionValue(i);
+      i++;
     } else if (a === '-m' || a === '--mode') {
-      parsed.mode = args[++i] || 'scaffold';
+      parsed.mode = optionValue(i);
+      i++;
+      if (!['scaffold', 'inject'].includes(parsed.mode)) {
+        throw new Error(`Unknown installation mode "${parsed.mode}". Use scaffold or inject.`);
+      }
     } else if (a === '--inject') {
       parsed.mode = 'inject';
     } else if (a === 'claude' || a === '--claude') {
@@ -753,8 +766,10 @@ function parseArgs() {
       parsed.cleanAll = true;
     } else if (a === '--keep-config' || a === '--keep-configs') {
       parsed.keepConfig = true;
-    } else if (!a.startsWith('-') && !parsed.command) {
+    } else if (!parsed.command && !a.startsWith('-') && (/[/\\]/.test(a) || a === '.' || a === '..')) {
       parsed.target = a;
+    } else {
+      throw new Error(`Unknown argument "${a}". Use --target for a destination or --help for supported commands.`);
     }
   }
 
@@ -851,7 +866,8 @@ function updateWorkspace(sourceRoot, targetDir, isGlobal = false) {
   }
 
   for (const item of ['agents', 'director-gates', 'docs', 'hooks', 'rules', 'runtime', 'scripts', 'skills']) copy(path.join('.claude', item));
-  for (const item of ['templates', 'scripts/seo', 'studio-tests/catalog.yaml', '.basinfy/experience']) copy(item);
+  for (const item of ['templates', 'scripts/seo', 'studio-tests/catalog.yaml', 'studio-tests/quality-rubric.md',
+    'studio-tests/skills', 'studio-tests/templates', '.basinfy/experience']) copy(item);
   for (const item of ['.agents', '.cursor', '.windsurf/rules', '.codex', '.vscode', '.github/prompts',
     '.github/copilot-instructions.md', '.continue', '.devin', '.zed', 'CLAUDE.md', '.mcp.json', 'AGENTS.md', 'GEMINI.md',
     'CODEX.md', '.cursorrules', '.windsurfrules', '.clinerules', 'CONVENTIONS.md', '.aider.conf.yml',
@@ -1110,6 +1126,7 @@ function uninstallLocal(targetDir, targets, dryRun = false, cleanAll = false, ke
     aider: ['.aider.conf.yml', '.aiderignore'],
     devin: ['.devin'],
     zed: ['.zed'],
+    agents: ['.agents'],
   };
   const files = new Set(Object.entries(integrations).flatMap(([client, items]) => targets.all || targets[client] ? items : []));
   if (targets.all) {
@@ -1259,7 +1276,14 @@ function executeUninstall(opts) {
 
 // Main execution routine
 function main() {
-  const opts = parseArgs();
+  let opts;
+  try {
+    opts = parseArgs();
+  } catch (error) {
+    console.error(error.message);
+    process.exitCode = 1;
+    return;
+  }
 
   if (opts.help) {
     printHelp();
@@ -1296,7 +1320,9 @@ function main() {
   }
 
   const hasSpecificTarget = Object.values(opts.targets).some(Boolean);
-  if (!hasSpecificTarget && !opts.global && opts.command !== 'all' && process.stdin.isTTY && process.argv.length <= 2) {
+  const wizardRequested = process.argv.length === 2 ||
+    (opts.command === 'init' && process.argv.length === 3);
+  if (wizardRequested && process.stdin.isTTY) {
     runInteractiveWizard();
     return;
   }

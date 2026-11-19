@@ -117,11 +117,7 @@ _update_auto_enabled() {
 
 update_check_apply() {
   local root="${SAAS_STUDIO_ROOT:-.}"
-  if [ -f "$root/bin/cli.js" ]; then
-    node "$root/bin/cli.js" update --target "$root" --force
-  else
-    npx github:Basinfy/Basinfy-SaaS-Studio update --target "$root" --force
-  fi
+  npx --yes github:Basinfy/Basinfy-SaaS-Studio update --target "$root"
 }
 
 update_check_notice() {
@@ -130,6 +126,7 @@ update_check_notice() {
   cache=$(_update_check_cache)
   if [ -f "$cache" ]; then
     while IFS= read -r line; do
+      line=${line%$'\r'}
       case "$line" in
         latest=*)  latest="${line#latest=}" ;;
         checked=*) checked="${line#checked=}" ;;
@@ -155,9 +152,13 @@ update_check_notice() {
   fi
   local is_newer=0
   if [ -n "$latest" ]; then
-    if [ -n "$installed_sha" ] && [ "${#latest}" -ge 7 ] && [ "${#installed_sha}" -ge 7 ]; then
-      [ "$latest" != "$installed_sha" ] && is_newer=1
-    elif _update_check_newer "$latest" "$UPDATE_CHECK_VERSION"; then
+    if [[ "$latest" =~ ^[a-f0-9]{7,40}$ && "$installed_sha" =~ ^[a-f0-9]{7,40}$ ]]; then
+      # Older caches stored a seven-character prefix of the installed commit.
+      if [[ "$installed_sha" != "$latest"* && "$latest" != "$installed_sha"* ]]; then
+        is_newer=1
+      fi
+    elif [[ "$latest" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] &&
+         _update_check_newer "$latest" "$UPDATE_CHECK_VERSION"; then
       is_newer=1
     fi
   fi
@@ -206,12 +207,13 @@ update_check_refresh() {
       c_body=$(wget -q -t 1 -T 5 -O - "$c_url" 2>/dev/null)
     fi
     if [ -n "$c_body" ]; then
-      tag=$(printf '%s' "$c_body" | grep -o '"sha"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"\([^"]*\)"$/\1/' | cut -c1-7)
+      tag=$(printf '%s' "$c_body" | grep -o '"sha"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"\([^"]*\)"$/\1/')
       err=""
     fi
   fi
   if [ -z "$tag" ] && [ -f "$cache" ]; then
     while IFS= read -r line; do
+      line=${line%$'\r'}
       case "$line" in latest=*) old="${line#latest=}" ;; esac
     done < "$cache"
     tag="$old"
@@ -246,5 +248,5 @@ if [ "${BASH_SOURCE[0]}" = "$0" ]; then
     apply|update) update_check_apply ;;
     *) echo "update-check.sh: usage: bash update-check.sh refresh|notice|apply" ;;
   esac
-  exit 0
+  exit $?
 fi

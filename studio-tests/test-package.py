@@ -20,6 +20,10 @@ def main():
         subprocess.run([npm, 'pack', '--pack-destination', directory, '--quiet'], cwd=ROOT, check=True)
         archive, = temporary.glob('*.tgz')
         with tarfile.open(archive) as package:
+            archived_paths = set(package.getnames())
+            for resource in ('LICENSE', 'docs/assets/banner.png'):
+                if f'package/{resource}' not in archived_paths:
+                    raise RuntimeError(f'Distribution archive missing {resource}')
             package.extractall(temporary, filter='data')
         cli = temporary / 'package' / 'bin' / 'cli.js'
         project = temporary / 'installed'
@@ -41,7 +45,9 @@ def main():
                 raise RuntimeError(f'{name} lost its Codex invocation policy')
         for resource in ('project.yaml', '.claude/hooks/yaml-helper.sh', '.claude/runtime/studio-core.cjs',
                          '.claude/docs/workflow-catalog.yaml', '.codex/studio-hook.cjs', 'studio-tests/catalog.yaml',
-                         'templates/seo/api-catalog-route.ts', '.basinfy/experience/README.md', '.mcp.json'):
+                         'studio-tests/quality-rubric.md', 'studio-tests/skills/gate/saas-gate-check.md',
+                         'studio-tests/templates/skill-test-spec.md', 'templates/seo/api-catalog-route.ts',
+                         '.basinfy/experience/README.md', '.mcp.json'):
             if not (project / resource).is_file():
                 raise RuntimeError(f'Installed package missing {resource}')
         if (project / '.github/workflows/studio-integrity.yml').exists():

@@ -86,10 +86,10 @@ per group of MVP features that ship together. Every epic names its slug, since
 
 ### `standard` and `full`: the design and the architecture
 
-1. **The system PRDs.** `bash .claude/scripts/prd-structure-check.sh` lists every
+1. **The system PRDs.** `bash .claude/scripts/prd-structure-check.sh --list` lists every
    system PRD; the product concept, systems index, pillars, cross-reviews and the other
    non-system documents are left out for you. Their count is **N**. N is 0: stop,
-   "No system PRDs found in `design/prd/` — run `/saas-design-system` first."
+   "No system PRDs found in `design/prd/`, `docs/specs/`, or `docs/prd/` — run `/saas-design-system` first." Keep the actual PRD path in epic links and in reads. If a slug exists in multiple roots, report the collision and use the first path in that directory order.
 2. **What is in scope.** Each PRD's `## Summary` quick reference gives its layer and
    priority. A PRD with no Summary (older PRDs predate it) takes its layer from
    `design/prd/features-modules-index.md`. Never treat an absent `## Summary` as an absent system:
@@ -99,7 +99,7 @@ per group of MVP features that ship together. Every epic names its slug, since
    "No `docs/architecture/architecture.md` — run `/saas-create-architecture` first." Never invent module boundaries.
 4. **For in-scope systems only**, by section, never whole:
    - each PRD's Overview and Acceptance Criteria
-     (`bash .claude/scripts/md-section.sh extract design/prd/<file>.md "Overview"`);
+     (`bash .claude/scripts/md-section.sh extract <actual-PRD-path> "Overview"`);
    - `bash .claude/scripts/adr-status.sh` for every ADR's status, layer and missing
      sections; then the PRD Requirements Addressed, Decision and Engine
      Compatibility sections of the ADRs that cover in-scope systems;
@@ -140,7 +140,7 @@ Foundation-layer requirements at `standard`; any other untraced requirement at
 ```
 ## Epic: [System Name]
 **Layer**: [Foundation | Core | Feature | Presentation]
-**PRD**: design/prd/[file].md   (at minimal: design/product-brief.md, MVP features [list])
+**PRD**: [actual PRD path]   (at minimal: design/product-brief.md, MVP features [list])
 **Architecture Module**: [module]
 **Governing ADRs**: [Accepted ADRs, or "none"]
 **Stack Risk**: [LOW | MEDIUM | HIGH — the highest among governing ADRs, else VERSION.md's]
@@ -198,7 +198,7 @@ whole at every density.
 # Epic: [System Name]
 
 > **Layer**: [Foundation | Core | Feature | Presentation]
-> **PRD**: design/prd/[file].md
+> **PRD**: [actual PRD path]
 > **Architecture Module**: [module]
 > **Status**: Ready
 > **Stories**: Not yet created — run `/saas-create-stories [epic-slug]`
@@ -223,7 +223,7 @@ whole at every density.
 ## Definition of Done
 
 - Every story implemented, reviewed and closed with `/saas-story-done`
-- Every acceptance criterion of design/prd/[file].md verified
+- Every acceptance criterion of the referenced PRD verified
 - Logic and Integration stories have passing tests in the test root
 - Visual/Feel and UI stories have retained screenshots in `production/qa/evidence/`
   (a lead sign-off too for Visual/Feel)

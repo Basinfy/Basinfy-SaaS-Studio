@@ -15,6 +15,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { spawnSync } = require('node:child_process');
 
 function resolveProjectRoot(explicitRoot) {
   if (explicitRoot && fs.existsSync(explicitRoot)) return path.resolve(explicitRoot);
@@ -325,6 +326,22 @@ function runCli() {
     return;
   }
 
+  if (cmd === 'resolve-config') {
+    const gitBash = process.platform === 'win32' && process.env.ProgramFiles
+      ? path.join(process.env.ProgramFiles, 'Git', 'bin', 'bash.exe')
+      : '';
+    const bash = gitBash && fs.existsSync(gitBash) ? gitBash : 'bash';
+    const helper = path.resolve(__dirname, '..', 'hooks', 'yaml-helper.sh');
+    const resolve = 'source "$1" || exit $?; shift; _YH_ROOT="$PWD"; resolve_config "$@"';
+    const result = spawnSync(bash, ['-c', resolve, 'studio-resolve-config', helper, ...positional.slice(1)], {
+      cwd: rootDir,
+      stdio: 'inherit',
+    });
+    if (result.error) console.error(`Could not run the configuration helper: ${result.error.message}`);
+    process.exitCode = result.status ?? 1;
+    return;
+  }
+
   if (cmd === 'hook') {
     const hookType = positional[1];
     let rawStdin = '';
@@ -362,6 +379,9 @@ function runCli() {
       return;
     }
   }
+
+  console.error(`Unknown runtime command: ${positional.join(' ')}`);
+  process.exitCode = 1;
 }
 
 if (require.main === module) {

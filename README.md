@@ -23,6 +23,8 @@
   <img src="https://img.shields.io/badge/Stacks-FastAPI_•_Next.js_•_Django_•_Postgres_•_Docker-8b5cf6.svg" alt="Stacks" />
 </p>
 
+[Instalação](#-instalação-rápida-via-npx-universal-multi-llm) · [Primeiros passos](#verifique-a-instalação) · [Comandos](#-os-108-comandos-slash-saas-) · [Solução de problemas](#solução-de-problemas)
+
 ---
 
 ## 💡 O que é o Basinfy SaaS Studio na Prática?
@@ -47,11 +49,11 @@ Em vez de você ter que ficar digitando prompts soltos como *"crie uma tela de l
    - **Quer revisar o código?** Digite `/saas-code-review` e `/saas-security-audit` para encontrar bugs, falhas de segurança e injeções antes de ir pro ar.
    - **Quer lançar?** Digite `/saas-release-checklist` e ele audita variáveis de ambiente, DNS, banco de dados e gateways de pagamento.
 
-3. **Ele nunca destrói seu código silenciosamente**:
-   Toda ação segue um protocolo estrito de colaboração: ele sempre pergunta antes de escrever ou alterar arquivos (`"Posso escrever isso no arquivo X?"`), mostra o rascunho e só aplica as mudanças com sua aprovação explícita.
+3. **Você escolhe o nível de automação**:
+   No modo colaborativo padrão, o estúdio solicita aprovação antes de aplicar as mudanças de uma etapa. Os modos guiado e autônomo seguem as regras de confirmação configuradas no projeto.
 
 4. **Funciona tanto para projetos novos quanto para repositórios existentes**:
-   - **Começando do zero?** Cria toda a estrutura, arquitetura, design tokens e banco de dados prontos para escalar.
+   - **Começando do zero?** A instalação prepara a estrutura do estúdio. Os fluxos seguintes ajudam a definir a arquitetura, o design e a implementação.
    - **Já tem um projeto em andamento?** Injeta os agentes e workflows no repositório sem alterar nenhuma linha do seu código atual, analisa em que estágio seu projeto está e te ajuda a evoluir a partir dali.
 
 5. **Modo Fundador / Usuário Leigo (`user_profile: founder`) — Do Zero ao SaaS sem Saber Programar**:
@@ -62,12 +64,15 @@ Em vez de você ter que ficar digitando prompts soltos como *"crie uma tela de l
 
 ## 🚀 Instalação Rápida via NPX (Universal Multi-LLM)
 
-Instale o **Basinfy SaaS Studio** com Node.js. Claude Code usa `.claude/skills/`. Codex, Antigravity, Gemini CLI, Cursor e GitHub Copilot podem descobrir as skills em `.agents/skills/`. Nos demais clientes, use o carregamento de skills do cliente, quando disponível, ou peça para abrir o `SKILL.md` do fluxo. As capacidades de delegação e hooks dependem do cliente. Os helpers usam Bash, e a suíte de integridade usa Python com PyYAML.
+### Pré-requisitos
 
-Use `npm run test:package` para testar o pacote de distribuição e `npm run test:client -- codex` para testar a descoberta nativa. Com o cliente autenticado, adicione `--model` para executar um caso de leitura em um projeto descartável. O teste com modelo aceita `codex`, `claude` e `antigravity`, usa as permissões do cliente e pode consumir a cota da conta.
+- **Instalação** — Node.js 18 ou superior com npm/NPX, Git e acesso ao GitHub. A CI usa Node.js 22. Confira com `node --version`, `npx --version` e `git --version`.
+- **Uso** — Abra a pasta do projeto em um cliente de IA compatível. Os auxiliares de shell e configuração usam Bash e Python 3. No Windows, use Git Bash para os auxiliares Bash ou execute o cliente e os auxiliares dentro do WSL.
+- **Testes do estúdio** — Use um clone do repositório, Bash e Python com PyYAML. Veja [como rodar as verificações](#contribuição-e-testes).
 
-### 1. Instalação Global (Recomendado)
-Torne todos os **50 agentes** e **108 comandos `/saas-*`** disponíveis globalmente em **qualquer projeto ou pasta do seu computador**:
+### 1. Instalação global
+
+Instale as skills e configurações de usuário nos clientes que oferecem descoberta global:
 
 ```bash
 # Instalação global para TODAS as ferramentas de IA da sua máquina:
@@ -84,13 +89,13 @@ npx github:Basinfy/Basinfy-SaaS-Studio windsurf --global
 > A instalação global disponibiliza skills nos clientes que aceitam diretórios de usuário. Rode a instalação local em cada projeto para adicionar a configuração, os scripts e o catálogo que os fluxos usam.
 
 ### 2. Instalação Local no Projeto & Scaffolding
-Crie um novo projeto SaaS do zero ou injete o estúdio em um repositório existente:
+Use `scaffold` (padrão) em uma pasta nova para criar a estrutura de documentação, design e entrega. O código da aplicação é desenvolvido nos fluxos seguintes. Use `inject` na raiz de um projeto existente para adicionar o estúdio e as integrações do cliente:
 
 ```bash
 # Assistente guiado interativo (faz perguntas e configura o ambiente):
 npx github:Basinfy/Basinfy-SaaS-Studio
 
-# Criar um novo projeto SaaS completo em uma pasta (ex: ./meu-saas-app):
+# Preparar a estrutura do estúdio em uma pasta nova:
 npx github:Basinfy/Basinfy-SaaS-Studio all --target ./meu-saas-app
 
 # Injetar o Estúdio de IA em um projeto existente (Next.js, FastAPI, Node) sem sobrescrever código:
@@ -101,6 +106,15 @@ npx github:Basinfy/Basinfy-SaaS-Studio vscode
 npx github:Basinfy/Basinfy-SaaS-Studio cursor
 npx github:Basinfy/Basinfy-SaaS-Studio codex
 ```
+
+### Verifique a instalação
+
+1. Abra a pasta de destino no seu cliente de IA e inicie uma nova sessão.
+2. Confira se existem `project.yaml` e `.claude/skills/saas-help/SKILL.md`. Instalações portáteis também incluem `.agents/skills/`.
+3. No chat, execute `/saas-help`. A resposta deve indicar a fase do projeto e sugerir o próximo passo. Se o cliente não exibir comandos slash, peça para usar a skill `saas-help` ou para ler o `SKILL.md` correspondente.
+4. Para um projeto novo, execute `/saas-start` ou descreva a ideia em linguagem natural. Para um projeto existente, execute `/saas-project-stage-detect` com a pasta do código aberta.
+
+Em um repositório existente, use `npx github:Basinfy/Basinfy-SaaS-Studio all --mode inject --dry-run` para conferir o destino e o modo antes de instalar. Depois da instalação, revise `git status --short` para ver os arquivos adicionados.
 
 ### 3. Instalação no WSL (Windows Subsystem for Linux)
 
@@ -162,21 +176,22 @@ Os arquivos locais, como `.agents/skills/` e `.claude/`, ficam relativos ao proj
 ## 📑 Sumário
 
 1. [O que é o Basinfy SaaS Studio na Prática?](#-o-que-é-o-basinfy-saas-studio-na-prática)
-2. [Instalação Rápida via NPX (Universal Multi-LLM)](#-instalação-rápida-via-npx-universal-multi-llm)
+2. [Instalação Rápida via NPX (Universal Multi-LLM)](#-instalação-rápida-via-npx-universal-multi-llm) · [Atualização](#-auto-updater-do-estúdio-sincronização-com-github) · [Desinstalação](#-desinstalação-do-estúdio-uninstall-seguro)
 3. [Visão Executiva](#-visão-executiva)
 4. [Stacks & Tecnologias Suportadas](#-stacks--tecnologias-suportadas)
 5. [Arquitetura do Estúdio](#-arquitetura-do-estúdio)
 6. [SOPs Determinísticos de Engenharia de Software](#-sops-determinísticos-de-engenharia-de-software)
 7. [A Hierarquia dos 50 Agentes](#-a-hierarquia-dos-50-agentes)
 8. [O Pipeline de Software em 7 Fases](#-o-pipeline-de-software-em-7-fases)
-9. [Os 108 Comandos Slash (`/saas-*`)](#-os-95-comandos-slash-saas-)
+9. [Os 108 Comandos Slash (`/saas-*`)](#-os-108-comandos-slash-saas-) · [Comandos de terminal](#comandos-de-terminal)
 10. [Director Gates & Controle de Qualidade](#-director-gates--controle-de-qualidade)
 11. [Segurança Empresarial & Perímetro Defensivo](#-segurança-empresarial--perímetro-defensivo)
 12. [Deploy em Nuvem & Publicação de Ponta a Ponta](#-deploy-em-nuvem--publicação-de-ponta-a-ponta)
-13. [Configuração & Resolução Dupla (`project.yaml`)](#-configuração--resolução-dupla-projectyaml)
-14. [Guia de Início Rápido & Workflows da Primeira Sessão](#-guia-de-início-rápido--workflows-da-primeira-sessão)
+13. [Configuração & Resolução Dupla (`project.yaml`)](#-configuração--resolução-dupla-projectyaml) · [Mapa de arquivos](#mapa-de-arquivos)
+14. [Guia de Início Rápido & Tutoriais Práticos](#-guia-de-início-rápido--tutoriais-práticos)
 15. [Descoberta Inteligente de Código & Protocolo Dinâmico Basinfy](#-descoberta-inteligente-de-código--protocolo-dinâmico-basinfy)
 16. [Verificação Automatizada & Autocura](#-verificação-automatizada--autocura)
+17. [Solução de problemas](#solução-de-problemas) · [Contribuição e testes](#contribuição-e-testes)
 
 ---
 
@@ -412,7 +427,7 @@ O ciclo de vida de desenvolvimento é estruturado em uma esteira contínua com p
 
 ## 🛠 Os 108 Comandos Slash (`/saas-*`)
 
-Todas as habilidades contam com namespace único e não conflitante:
+Execute os fluxos abaixo no chat da sua ferramenta de IA. Em clientes que carregam a skill portátil [`basinfy-saas-studio`](.agents/skills/basinfy-saas-studio/SKILL.md), também é possível invocá-la com o comando ou o assunto desejado.
 
 ### 🚀 Onboarding & Diagnóstico
 - `/saas-start`: Assistente guiado de primeira sessão para configurar o estúdio e stack.
@@ -435,6 +450,7 @@ Todas as habilidades contam com namespace único e não conflitante:
 - `/saas-architecture-review`: Realiza auditoria cruzada entre PRDs e decisões de arquitetura.
 - `/saas-design-system`: Cria a especificação completa de design system e componentes da aplicação.
 - `/saas-design-tokens`: Define tokens semânticos no Tailwind (cores, espaçamento, tipografia, bordas).
+- `/saas-frontend-taste`: Projeta, refina e verifica telas SaaS com foco em layout responsivo e textos concisos.
 - `/saas-design-review`: Audita interfaces construídas em relação aos tokens de design e usabilidade.
 - `/saas-ux-design`: Cria especificações detalhadas de telas, jornadas e fluxos de navegação.
 - `/saas-ux-review`: Valida padrões de interação, acessibilidade e microcopy de telas.
@@ -513,6 +529,20 @@ Todas as habilidades contam com namespace único e não conflitante:
 - `/saas-lgpd-eca-digital-minors`: Proteção e salvaguardas adicionais para o tratamento de dados de crianças e adolescentes (Art. 14 da LGPD e ECA Digital).
 - `/saas-lgpd-legacy-retrofit`: Plano de adequação e migração segura de bancos de dados legados para os requisitos de privacidade e RLS.
 
+### SEO, GEO e prontidão para agentes
+
+- `/saas-seo`: Orienta a escolha de fluxos de SEO, visibilidade em buscas com IA e prontidão para agentes.
+- `/saas-seo-audit`: Audita rastreabilidade, metadados, dados estruturados, Core Web Vitals e qualidade do conteúdo.
+- `/saas-seo-technical`: Verifica indexação, robots.txt, sitemaps, redirecionamentos e outros fundamentos técnicos.
+- `/saas-seo-schema`: Valida e gera dados estruturados em JSON-LD.
+- `/saas-seo-geo`: Avalia a visibilidade do conteúdo em mecanismos de busca e resposta com IA.
+- `/saas-seo-agentic`: Audita e implementa recursos para descoberta e acesso por agentes, como `llms.txt` e cartões MCP.
+- `/saas-seo-drift`: Compara snapshots de SEO para detectar regressões ao longo do tempo.
+- `/saas-seo-programmatic`: Planeja páginas geradas a partir de dados e modelos reutilizáveis.
+- `/saas-seo-competitor-pages`: Planeja páginas de comparação com concorrentes e alternativas.
+- `/saas-seo-sxo`: Avalia a experiência desde o resultado da busca até a conversão no site.
+- `/saas-seo-content`: Revisa clareza, credibilidade e qualidade editorial do conteúdo.
+
 ### 👥 Orquestração de Equipes Multidisciplinares
 - `/saas-team-core-feature`: Orquestra time completo para desenvolver uma funcionalidade central.
 - `/saas-team-auth-access`: Orquestra especialistas para implementar fluxos de login, RBAC e sessões.
@@ -523,11 +553,57 @@ Todas as habilidades contam com namespace único e não conflitante:
 - `/saas-team-qa`: Orquestra ciclo intensivo de testes automatizados e manuais.
 - `/saas-team-release`: Orquestra o time de DevOps, SRE e release manager para subida em produção.
 - `/saas-team-growth`: Orquestra time de growth para funis, eventos de telemetria e conversão.
+- `/saas-team-seo`: Coordena especialistas de crescimento, frontend, conteúdo, documentação e QA para SEO e prontidão para agentes.
 
 ### 🔧 Manutenção do Estúdio
 - `/saas-adopt`: Realiza auditoria brownfield em projetos existentes para adoção do estúdio.
 - `/saas-skill-test`: Testa a conformidade estrutural e comportamental das skills.
 - `/saas-skill-improve`: Loop contínuo de autocura e refinamento das habilidades do estúdio.
+
+## Comandos de terminal
+
+Use `npx github:Basinfy/Basinfy-SaaS-Studio [comando] [opções]` ou, a partir do repositório clonado, `node bin/cli.js [comando] [opções]`.
+
+| Comando | Uso |
+| --- | --- |
+| Sem argumentos ou `init` | Abre o assistente de instalação em um terminal interativo. Sem terminal interativo, usa os padrões da instalação. |
+| `all` | Instala o estúdio para todas as plataformas suportadas. |
+| `claude`, `cursor`, `windsurf`, `continue`, `aider`, `devin`, `zed` | Instala o estúdio para o cliente indicado. |
+| `antigravity` / `gemini` | Instala para Antigravity e Gemini CLI. |
+| `codex` / `chatgpt` | Instala para OpenAI Codex. |
+| `vscode`, `copilot` | Seleciona a integração para VS Code com GitHub Copilot ou apenas GitHub Copilot, respectivamente. |
+| `cline` / `roo` | Instala para Cline e Roo Code. |
+| `agents` / `opencode` | Instala os arquivos portáteis de agentes e skills. |
+| `update` / `--update` / `upgrade` | Verifica e aplica atualizações do estúdio. |
+| `uninstall` / `--uninstall` / `remove` / `--remove` / `unlink` | Remove a instalação local ou global. |
+| `help` / `-h` / `--help` | Exibe a ajuda da CLI. |
+| `-v` / `--version` | Exibe a versão do estúdio. |
+
+Os seletores de plataforma também aceitam o prefixo `--`, como em `uninstall --global --codex --dry-run`. Para usar um nome de pasta como destino, passe `--target meu-saas` ou um caminho explícito como `./meu-saas`.
+
+| Opção | Uso |
+| --- | --- |
+| `-g`, `--global`, `global` | Usa a instalação global do usuário. |
+| `-t <pasta>`, `--target <pasta>` | Define a pasta local de destino. O padrão é a pasta atual. |
+| `-m <modo>`, `--mode <modo>` | Seleciona `scaffold` (padrão) ou `inject`. Use `--inject` como atalho para `--mode inject`. |
+| `-f`, `--force`, `-y`, `--yes` | Autoriza sobrescrita ou dispensa confirmação, conforme a operação. |
+| `-d`, `--dry-run` | Simula instalação, atualização ou desinstalação. |
+| `--clean-all`, `--all-scaffold` | Inclui as pastas do scaffold na desinstalação local. |
+| `--keep-config`, `--keep-configs` | Preserva `project.yaml` na desinstalação local. |
+
+### Scripts npm do repositório
+
+| Comando | Uso |
+| --- | --- |
+| `npm test` | Executa as verificações de integridade do estúdio. |
+| `npm run test:bench` | Executa o runner de benchmarks SaaS-Bench. |
+| `npm run test:package` | Valida o pacote de distribuição. |
+| `npm run test:client` | Verifica a descoberta nativa de skills nos clientes. |
+| `npm run sync:skills` | Sincroniza as skills portáteis com as definições canônicas. |
+| `npm run sync:configs` | Regenera as configurações dos clientes. |
+| `npm run cli -- <comando> [opções]` | Executa a CLI local com os argumentos fornecidos. |
+| `npm run cli:help` | Exibe a ajuda da CLI local. |
+| `npm run cli:uninstall` | Executa a desinstalação pela CLI local. |
 
 ---
 
@@ -557,41 +633,66 @@ O estúdio incorpora mecanismos proativos de segurança em todas as camadas de c
 
 ## 🚀 Deploy em Nuvem & Publicação de Ponta a Ponta
 
-O estúdio suporta pipelines prontos para as principais plataformas em nuvem:
+Os fluxos de release orientam a preparação e a verificação do deploy. Configure as contas, os ambientes e as credenciais dos serviços que o seu projeto usa. Execute `/saas-release-checklist` para a verificação técnica e `/saas-launch-checklist` para preparar o lançamento.
 
 - **Vercel / Next.js**: Otimizado para Edge Middleware, Server Actions e ISR.
 - **Cloudflare Workers & Pages**: Latência ultra-baixa com CDN global.
 - **AWS / Docker / Kubernetes**: Conteinerização multi-stage e orquestração escalável.
-- **Supabase / PostgreSQL**: Migrações versionadas, backups automáticos e RLS auditado.
+- **Supabase / PostgreSQL**: Planejamento de migrações, backups e verificações de isolamento de dados com RLS.
 
 ---
 
 ## ⚙️ Configuração & Resolução Dupla (`project.yaml`)
 
-O estúdio adota o modelo de resolução dupla de configuração:
-- `project.yaml`: Configurações oficiais compartilhadas por toda a equipe (versionado no Git).
-- `project.local.yaml`: Sobrescritas específicas da máquina do desenvolvedor local (ignorado no Git).
+Mantenha a configuração compartilhada em [`project.yaml`](project.yaml). Use [`project.local.yaml.example`](project.local.yaml.example) como ponto de partida para `project.local.yaml`, que contém preferências pessoais. Em um projeto existente instalado com `inject`, confira se o próprio repositório ignora `project.local.yaml` antes de versionar arquivos.
+
+Para as chaves que aceitam sobrescrita, os fluxos consultam o valor local primeiro e depois o valor compartilhado. Na ausência de uma configuração explícita, podem usar os arquivos legados, os valores derivados de `modes.rigor` ou os padrões do estúdio. Consulte as [regras de resolução](.claude/docs/config-resolution.md) e o [mapa de efeitos](.claude/docs/effects-map.md).
 
 ```yaml
-# Exemplo de project.yaml
+schema_version: 1
+
 project:
-  name: "Meu SaaS Inc"
-  tier: "production"
+  name: "Meu SaaS"
   slug: "meu-saas"
+  stage: "concept"
+  locale: "pt-BR"
+  user_profile: "founder"
 
 stack:
-  frontend: "nextjs-app-router"
+  frontend: "nextjs"
   styling: "tailwind-shadcn"
   backend: "nextjs-server-actions"
-  database: "supabase-postgresql"
+  database: "supabase-postgres"
+  orm: "prisma"
   auth: "supabase-auth"
   billing: "stripe"
-  cloud: "vercel"
+  deployment: "vercel"
 
 modes:
-  review_mode: "solo"      # solo | team | strict
-  strict_gates: true       # exige passagem obrigatória por gates
+  rigor: "standard"
+  automation: "collaborative"
+  review_mode: "solo"
 ```
+
+No chat, use `/saas-settings` para ver a configuração, `/saas-settings modes.review_mode` para conferir o valor e sua origem ou `/saas-settings --local modes.review_mode=lean` para alterar essa preferência só na sua máquina.
+
+- `project.user_profile` define como o estúdio apresenta as escolhas. `founder` usa linguagem de negócio e `developer` inclui detalhes técnicos.
+- `modes.rigor` ajusta a profundidade do processo. Os níveis são `minimal`, `standard` e `full`.
+- `modes.automation` define quando o estúdio pede confirmação. `collaborative` pede aprovação por etapa, `guided` consulta nas decisões relevantes e `autonomous` segue com as decisões registradas, respeitando as confirmações exigidas. Veja os [modos de automação](.claude/docs/automation-modes.md).
+- Em projetos com o campo antigo `performance.target_fid_ms`, defina `performance.target_inp_ms` em `project.yaml`. O modelo atual usa 200 ms.
+
+### Mapa de arquivos
+
+| Caminho | O que você encontra |
+| --- | --- |
+| [`.claude/skills/`](.claude/skills/) e [`.claude/agents/`](.claude/agents/) | Definições dos fluxos e perfis dos especialistas. |
+| [`.agents/skills/`](.agents/skills/) | Versões portáteis das skills para outros clientes. |
+| `design/prd/` e [`docs/specs/`](docs/specs/) | Os fluxos criam novos PRDs em `design/prd/`. A descoberta também aceita PRDs existentes em `docs/specs/` e `docs/prd/`. |
+| [`docs/architecture/`](docs/architecture/) | Arquitetura e registros de decisões. |
+| [`design/tokens/`](design/tokens/) | Tokens de interface, como cores, tipografia e espaçamento. |
+| `production/epics/`, `production/sprints/` e `production/qa/` | Histórias, planejamento e evidências de testes produzidas ao longo do projeto. |
+| `production/session-state/active.md` | Checkpoint para retomar o trabalho em outra sessão. |
+| [`templates/`](templates/) | Modelos reutilizáveis de artefatos e integrações. |
 
 ---
 
@@ -750,9 +851,9 @@ Eleve o padrão de qualidade do seu código legado:
 
 | Necessidade | Comando de Instalação | Primeiro Comando na IA | Objetivo Central |
 | :--- | :--- | :--- | :--- |
-| **Projeto Novo (Do Zero)** | `npx github:Basinfy/Basinfy-SaaS-Studio all --target ./app` | `/saas-start` | Criar um SaaS completo da ideação ao deploy com arquitetura perfeita |
-| **Projeto Existente (Adição)** | `npx github:Basinfy/Basinfy-SaaS-Studio all --mode inject` | `/saas-project-stage-detect` | Adicionar 50 agentes e 96 fluxos sem alterar o código atual da aplicação |
-| **Instalação Global na Máquina** | `npx github:Basinfy/Basinfy-SaaS-Studio all --global` | `/saas-help` | Ter todos os comandos `/saas-*` disponíveis em qualquer pasta do PC |
+| **Projeto Novo (Do Zero)** | `npx github:Basinfy/Basinfy-SaaS-Studio all --target ./app` | `/saas-start` | Preparar a estrutura para começar a especificar e desenvolver o SaaS |
+| **Projeto Existente (Adição)** | `npx github:Basinfy/Basinfy-SaaS-Studio all --mode inject` | `/saas-project-stage-detect` | Adicionar o estúdio ao repositório e identificar a fase atual do projeto |
+| **Instalação Global na Máquina** | `npx github:Basinfy/Basinfy-SaaS-Studio all --global` | `/saas-help` | Disponibilizar skills no perfil dos clientes que aceitam descoberta global |
 
 ---
 
@@ -797,7 +898,34 @@ A suíte verifica:
 
 ---
 
+## Solução de problemas
+
+| Sintoma | O que conferir |
+| --- | --- |
+| `/saas-help` não aparece | Confira se instalou para o cliente correto e se a sessão está aberta na raiz do projeto. Reinicie a sessão e peça para carregar o `SKILL.md` se o cliente usar outro mecanismo de descoberta. |
+| Instalação global funciona, mas falta `project.yaml` | Execute a instalação local na raiz do projeto. Use `--mode inject` em um repositório existente. |
+| Falha de Bash ou Python no Windows | Verifique `bash --version` e `python --version` no ambiente usado pelo cliente. Se `bash` abrir um WSL sem configuração, use Git Bash ou configure as dependências no WSL. |
+| Configuração ignorada ou diferente da esperada | Use `/saas-settings <chave>` para identificar a origem do valor e confira se a chave aceita sobrescrita local. |
+| A sessão perdeu o contexto | Na raiz do projeto, peça para retomar a partir de `production/session-state/active.md`, caso exista. Use `/saas-help` para obter um diagnóstico atualizado. |
+
+## Contribuição e testes
+
+Execute os comandos abaixo na raiz de um clone do estúdio. A [CI de integridade](.github/workflows/studio-integrity.yml) fornece a referência de versões e verificações.
+
+```bash
+python -m pip install PyYAML
+npm test
+npm run test:package
+npm run test:bench -- --verify-specs
+```
+
+Para alterar um fluxo, edite a definição canônica em `.claude/skills/` e rode `npm run sync:skills` para atualizar as cópias portáteis. Use `npm run sync:skills -- --verify` para conferir a paridade. Quando alterar o gerador de configurações de clientes, rode `npm run sync:configs` e revise os arquivos gerados.
+
+Com a CLI do cliente disponível, `npm run test:client -- codex` verifica a descoberta nativa. O modo `--model` executa um caso de leitura em um projeto descartável, requer autenticação e pode consumir a cota da conta. Esse modo aceita `codex`, `claude` e `antigravity`.
+
+Ao [abrir um problema](https://github.com/Basinfy/Basinfy-SaaS-Studio/issues), inclua o sistema operacional, o cliente de IA, a versão do estúdio, o comando executado e a mensagem de erro. Remova tokens e dados sensíveis dos logs.
+
 ## 📄 Licença
 
-Distribuído sob a licença **MIT**. Veja `LICENSE` para mais informações.
+Distribuído sob a [licença MIT](LICENSE).
 Desenvolvido e mantido pela **Basinfy Community**.

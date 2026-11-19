@@ -14,7 +14,8 @@
 # 8. Acceptance Criteria
 #
 # Usage:
-#   bash .claude/scripts/prd-structure-check.sh                    # all PRDs in docs/specs/ and docs/prd/
+#   bash .claude/scripts/prd-structure-check.sh                    # all PRDs in supported roots
+#   bash .claude/scripts/prd-structure-check.sh --list             # list the discovered PRD paths
 #   bash .claude/scripts/prd-structure-check.sh docs/specs/auth.md # one specific PRD
 #
 # Output per PRD:
@@ -51,9 +52,8 @@ LABEL=(
 
 not_a_prd() {
   case "$(basename "$1")" in
-    product-concept.md|product-brief.md|product-pillars.md|features-index.md|features-modules-index.md) return 0 ;;
-    customer-journey-map.md|user-persona-profile.md|prd-cross-review-*.md|prd-cross-review-*.md) return 0 ;;
-    features-modules-index.md|product-concept.md|product-brief.md|product-pillars.md|brand-voice-tone-guide.md) return 0 ;;
+    concept.md|product-concept.md|product-brief.md|product-pillars.md|features-index.md|features-modules-index.md) return 0 ;;
+    customer-journey-map.md|user-persona-profile.md|prd-cross-review-*.md|brand-voice-tone-guide.md) return 0 ;;
     README.md|index.md) return 0 ;;
     *) return 1 ;;
   esac
@@ -107,6 +107,13 @@ check_file() {
   return 0
 }
 
+# List the same files used by the full audit, preserving their relative paths.
+LIST_ONLY=0
+if [ "${1:-}" = "--list" ]; then
+  LIST_ONLY=1
+  shift
+fi
+
 # Target file passed directly
 if [ $# -gt 0 ]; then
   for arg in "$@"; do
@@ -119,19 +126,23 @@ if [ $# -gt 0 ]; then
   exit 0
 fi
 
-# Auto-discovery across docs/specs, docs/prd, and design/prd
+# Auto-discovery across the Studio authoring path and supported import paths.
 FOUND=0
-for d in docs/specs docs/prd design/prd; do
+for d in design/prd docs/specs docs/prd; do
   [ -d "$d" ] || continue
   for f in "$d"/*.md; do
     [ -f "$f" ] || continue
     not_a_prd "$f" && continue
-    check_file "$f"
+    if [ "$LIST_ONLY" -eq 1 ]; then
+      printf '%s\n' "$f"
+    else
+      check_file "$f"
+    fi
     FOUND=1
   done
 done
 
-if [ $FOUND -eq 0 ]; then
+if [ "$FOUND" -eq 0 ] && [ "$LIST_ONLY" -eq 0 ]; then
   echo "prd-structure-check: no PRD files found to inspect"
 fi
 

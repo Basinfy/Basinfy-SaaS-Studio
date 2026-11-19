@@ -12,9 +12,9 @@ Then read silently before presenting anything else.
 
 ### Existence check
 - `project.stage` in `project.yaml` (fallback `production/stage.txt`) — if either is present, use that value (authoritative phase)
-- `design/prd/product-concept.md` (or, at the minimal tier, `design/product-brief.md`) — concept exists?
-- `design/prd/features-modules-index.md` — systems index exists?
-- Count PRD files: `design/prd/*.md` (excluding product-concept.md and features-modules-index.md)
+- Look for the product concept in `design/prd/product-concept.md`, then `docs/specs/product-concept.md` or `docs/specs/concept.md`. At the minimal tier, look for `design/product-brief.md`, then `docs/specs/product-brief.md`.
+- Look for the systems index in `design/prd/features-modules-index.md`, then `docs/specs/features-modules-index.md` or `docs/specs/features-index.md`.
+- Run `bash .claude/scripts/prd-structure-check.sh --list` to count system PRDs across `design/prd/`, `docs/specs/`, and `docs/prd/`. Record their actual paths for the audit. If a slug exists in multiple roots, report the collision and use the first path in that directory order.
 - Count ADR files: `docs/architecture/adr-*.md`
 - Count story files: `production/epics/**/*.md` (excluding EPIC.md)
 - `project.yaml` (`stack.frontend`) / `.claude/docs/technical-preferences.md` — engine configured?

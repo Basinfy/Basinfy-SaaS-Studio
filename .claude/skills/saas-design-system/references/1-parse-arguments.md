@@ -43,7 +43,7 @@ A system name or retrofit path is **required**. If missing:
 
 **Detect retrofit mode:**
 If the argument starts with `retrofit` or the argument is a file path to an
-existing `.md` file in `design/prd/`, enter **retrofit mode**:
+existing system PRD in `design/prd/`, `docs/specs/`, or `docs/prd/`, enter **retrofit mode** and keep the supplied file path:
 
 1. Read the existing PRD file. Read it by section: Use the project discovery protocol to find the relevant headings and read those sections. When the index cannot provide them, find the headings with a local text search and read the matching ranges.
 2. Identify which of the 8 **possible** sections are present (scan for section
@@ -60,7 +60,7 @@ existing `.md` file in `design/prd/`, enter **retrofit mode**:
 4. Present to the user before doing anything:
    ```
    ## Retrofit: [System Name]
-   File: design/prd/[filename].md
+   File: [actual PRD path]
 
    Sections already written (will not be touched):
    ✓ [section name]

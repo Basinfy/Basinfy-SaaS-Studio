@@ -11,6 +11,7 @@ from hashlib import sha256
 from pathlib import Path
 from shutil import copyfile
 from tempfile import TemporaryDirectory
+from time import time
 
 print("=================================================================")
 print("     BASINFY SAAS STUDIO — COMPREHENSIVE AUDIT & TEST        ")
@@ -226,6 +227,17 @@ check(rc == 0 and "tests/unit/.gitkeep" in out, "test-scaffold.sh saas --list li
 # 9.4 prd-structure-check.sh
 rc, out, err = run_bash([".claude/scripts/prd-structure-check.sh"])
 check(rc == 0, "prd-structure-check.sh passes on docs/specs PRDs", f"rc={rc}, err={err}")
+with TemporaryDirectory(prefix="studio-prds-") as fixture:
+    expected = ["design/prd/billing.md", "docs/specs/onboarding.md", "docs/prd/reporting.md"]
+    for relative in [*expected, "docs/specs/README.md", "design/prd/product-concept.md"]:
+        prd = Path(fixture, relative)
+        prd.parent.mkdir(parents=True, exist_ok=True)
+        prd.write_text("# Example\n", encoding="utf-8")
+    script = Path(fixture, ".claude/scripts/prd-structure-check.sh")
+    script.parent.mkdir(parents=True)
+    copyfile(".claude/scripts/prd-structure-check.sh", script)
+    rc, out, err = run_bash([".claude/scripts/prd-structure-check.sh", "--list"], fixture)
+    check(rc == 0 and out.splitlines() == expected, "PRD discovery preserves paths across supported roots", f"rc={rc}, out={out!r}, err={err}")
 
 # 9.5 write-guard.sh protection (observation output on existing file)
 rc, out, err = run_bash([".claude/scripts/write-guard.sh", "overwrite", "package.json"])
@@ -245,6 +257,43 @@ try:
     check(res.returncode == 0 and "Dry-run complete" in res.stdout, "bin/cli.js uninstall --dry-run simulates removal safely", f"rc={res.returncode}")
 except Exception as e:
     ERRORS.append(f"bin/cli.js uninstall check failed: {e}")
+
+for arguments, expected_error in (
+    (["codxe"], "Unknown argument"),
+    (["codex", "--mode", "injcet"], "Unknown installation mode"),
+    (["codex", "--target"], "Missing value for --target"),
+):
+    result = subprocess.run(["node", "bin/cli.js", "--dry-run", *arguments], capture_output=True, text=True)
+    check(result.returncode == 1 and expected_error in result.stderr,
+          f"CLI rejects invalid arguments {arguments}", result.stderr)
+
+with TemporaryDirectory(prefix="studio-update-hook-", ignore_cleanup_errors=True) as fixture:
+    project = Path(fixture)
+    hooks = project / ".claude" / "hooks"
+    hooks.mkdir(parents=True)
+    hook = hooks / "update-check.sh"
+    copyfile(".claude/hooks/update-check.sh", hook)
+    (project / "project.yaml").write_text("updates:\n  check: true\n", encoding="utf-8")
+    cache = project / "cache" / "saas-studio" / "latest-release"
+    cache.parent.mkdir(parents=True)
+    commit = "abcdef1234567890abcdef1234567890abcdef12"
+    (hooks.parent / "framework-version.json").write_text(json.dumps({"commit": commit}), encoding="utf-8")
+    environment = {**os.environ, "XDG_CACHE_HOME": cache.parents[1].as_posix()}
+    environment.pop("CI", None)
+    for cached_commit, should_notify in ((commit[:7], False), (commit, False), ("fedcba9", True)):
+        cache.write_text(f"checked={int(time())}\nlatest={cached_commit}\n", encoding="utf-8")
+        result = subprocess.run([BASH_EXE, ".claude/hooks/update-check.sh", "notice"], cwd=project,
+                                env=environment, capture_output=True)
+        check(result.returncode == 0 and bool(result.stdout.strip()) == should_notify,
+              f"Update notice compares installed commit with {cached_commit}", repr(result.stdout))
+    (project / "bin").mkdir()
+    (project / "bin" / "cli.js").write_text("console.log('application-cli');", encoding="utf-8")
+    stub = project / "bin" / "npx"
+    stub.write_bytes(b'#!/bin/bash\nprintf "%s\\n" "$@"\nexit 17\n')
+    stub.chmod(0o755)
+    rc, out, err = run_bash(["-c", 'PATH="$PWD/bin:$PATH" bash .claude/hooks/update-check.sh apply'], fixture)
+    check(rc == 17 and "github:Basinfy/Basinfy-SaaS-Studio" in out and "application-cli" not in out,
+          "Update hook invokes the Studio CLI and propagates its failure", out + err)
 
 for script in ("copy-lint.mjs", "consistency.mjs"):
     syntax = subprocess.run(
@@ -442,6 +491,15 @@ require('./bin/cli.js');
     result = subprocess.run(cli + ["uninstall", "all", "--target", str(project), "--force"], capture_output=True)
     check(result.returncode == 0 and not (project / ".agents/skills/saas-help/SKILL.md").exists() and custom.is_file(),
           "Removing all clients preserves user additions", f"rc={result.returncode}")
+
+    project = Path(fixture, "agents")
+    custom = project / ".agents/skills/saas-help/notes.md"
+    custom.write_text("user notes", encoding="utf-8")
+    result = subprocess.run(cli + ["uninstall", "agents", "--target", str(project), "--force"], capture_output=True)
+    check(result.returncode == 0 and custom.is_file() and
+          not (project / ".agents/skills/saas-help/SKILL.md").exists() and
+          (project / ".claude/skills/saas-help/SKILL.md").is_file(),
+          "Removing the portable integration preserves user additions and the shared runtime", f"rc={result.returncode}")
 
     project = Path(fixture, "codex")
     hook = project / ".codex/studio-hook.cjs"
@@ -738,6 +796,13 @@ with TemporaryDirectory(prefix="studio-coreroot-") as cr_tmp:
         (sp / "project.yaml").write_text(f'stack:\n  frontend: "{stack_val}"\n', encoding="utf-8")
         r_core = subprocess.run(["node", os.path.abspath(".claude/runtime/studio-core.cjs"), "resolve-code-root", "--root", str(sp)], capture_output=True, text=True)
         check(r_core.stdout.startswith(f"{expected_root}\t"), f"studio-core.cjs resolves {stack_val} -> {expected_root}", f"Got: {r_core.stdout!r}")
+    (Path(cr_tmp) / "project.yaml").write_text("project:\n  locale: en\n", encoding="utf-8")
+    runtime_config = subprocess.run(
+        ["node", ".claude/runtime/studio-core.cjs", "resolve-config", "--keys", "locale", "--root", cr_tmp],
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+    )
+    check(runtime_config.returncode == 0 and "locale: en (project.yaml)" in runtime_config.stdout,
+          "Node runtime resolves configuration from the requested project", runtime_config.stderr + runtime_config.stdout)
 
 parity = subprocess.run(
     [sys.executable, "scripts/sync-agent-skills.py", "--verify"],

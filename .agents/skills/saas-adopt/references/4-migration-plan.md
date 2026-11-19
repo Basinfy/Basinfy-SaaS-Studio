@@ -29,7 +29,7 @@ List each ADR as a separate checkable item.
 
 **Special case — PRDs missing sections:**
 For each affected PRD, list which sections are missing and the fix:
-`/saas-design-system retrofit design/prd/[filename].md`
+`/saas-design-system retrofit [actual PRD path]`
 
 **Infrastructure bootstrap ordering** — always present in this sequence:
 1. Fix ADR formats first (registry depends on reading ADR Status fields)
